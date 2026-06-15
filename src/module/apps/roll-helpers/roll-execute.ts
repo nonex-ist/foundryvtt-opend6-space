@@ -317,7 +317,9 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
     if (typeof (rollData.vehicle) !== 'undefined' && rollData.vehicle !== ''
         && (rollData.actor.type !== 'vehicle' && rollData.actor.type !== 'starship')) {
         const vehicle = await od6sutilities.getActorFromUuid(rollData.vehicle);
-        label = label + " " + game.i18n.localize('NONEX_IST_OD6S.FOR') + " " + vehicle!.name;
+        if (vehicle) {
+            label = label + " " + game.i18n.localize('NONEX_IST_OD6S.FOR') + " " + vehicle.name;
+        }
     }
 
     let useWildDie;
@@ -325,11 +327,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
     if(!game.settings.get('nonex-ist-od6s', 'use_wild_die')) {
         useWildDie = false;
     } else {
-        if(!rollData.wilddie) {
-            useWildDie = rollData.wilddie;
-        } else {
-            useWildDie = rollData.actor.system.use_wild_die;
-        }
+        useWildDie = rollData.wilddie;
     }
 
     if (useWildDie && rollMin < 1) {

@@ -180,7 +180,7 @@ export function applyDifficultyEffects(rollData: RollData): Modifier[] {
 
     if (rollData.subtype === 'rangedattack' ||
         rollData.subtype === 'vehiclerangedattack' ||
-        rollData.subtype === 'vehcilerangedweaponattack') {
+        rollData.subtype === 'vehiclerangedweaponattack') {
         if (!OD6S.mapRange && OD6S.ranges[mods.range].difficulty) {
             modifiers.push({
                 "name": game.i18n.localize(OD6S.ranges[mods.range].name),
@@ -321,7 +321,7 @@ export function applyDamageEffects(rollData: RollData): Modifier[] {
 
     if (rollData.subtype === 'rangedattack' ||
         rollData.subtype === 'vehiclerangedattack' ||
-        rollData.subtype === 'vehcilerangedweaponattack') {
+        rollData.subtype === 'vehiclerangedweaponattack') {
         if (OD6S.rangedAttackOptions[mods.attackoption].damage) {
             let value;
             if (OD6S.rangedAttackOptions[mods.attackoption].multi) {
