@@ -193,7 +193,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
                 if (!skill) return;
                 this.skillScore = applySkillDelete(skill.system.base, this.skillScore);
                 await this.actor.sheet.deleteItem(ev);
-                await this.actor.sheet.getData();
                 await this.render();
             });
         });
@@ -218,7 +217,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
                 this.skillScore = updated.skillScore;
                 this.specScore = updated.specScore;
                 await this.actor.sheet.deleteItem(ev);
-                await this.actor.sheet.getData();
                 await this.render();
             });
         });
@@ -245,7 +243,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
                         updates.push({_id: spec.id, "system.base": spec.system.base + 1});
                     }
                     await this.actor.updateEmbeddedDocuments("Item", updates);
-                    await this.actor.sheet.getData();
                     this.skillScore = this.skillScore - 1;
                 }
                 await this.render();
@@ -260,7 +257,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
                 const spec = this.actor.items.find((i: Item) => i._id === target.dataset.itemId);
                 if (spec) {
                     await spec.update({"system.base": (+target.dataset.base!) + 1});
-                    await this.actor.sheet.getData();
                     this.specScore = this.specScore - 1;
                 }
                 await this.render();
@@ -287,7 +283,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
                         updates.push({_id: spec.id, "system.base": spec.system.base - 1});
                     }
                     await this.actor.updateEmbeddedDocuments("Item", updates);
-                    await this.actor.sheet.getData();
                     this.skillScore = this.skillScore + 1;
                 }
                 await this.render();
@@ -302,7 +297,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
                 const spec = this.actor.items.find((i: Item) => i._id === target.dataset.itemId);
                 if (spec) {
                     await spec.update({"system.base": (+target.dataset.base!) - 1});
-                    await this.actor.sheet.getData();
                     this.specScore = this.specScore + 1;
                 }
                 await this.render();
@@ -390,7 +384,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
             const template = await od6sutilities.getItemByName(
                 this.characterTemplates.find((i) => i._id === this.selectedTemplate)!.name);
             await this.actor.sheet._addCharacterTemplate(template);
-            await this.actor.sheet.getData();
         }
         this.step = this.step + 1;
         await this.render();
@@ -456,7 +449,6 @@ export default class OD6SCreateCharacter extends HandlebarsApplicationMixin(Appl
             },
         };
         await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-        await this.actor.sheet.getData();
 
         if (this.specScore === 0) {
             this.specScore = (OD6S.pipsPerDice * OD6S.specStartingPipsPerDie) - add;
