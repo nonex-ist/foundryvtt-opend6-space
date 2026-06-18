@@ -239,13 +239,17 @@ const purchaseHandler: Handler<'purchase'> = (input) => ({
     seller: input.seller ?? '',
 });
 
+const isVehicleView = (actor: ActorView): actor is VehicleActorView | StarshipActorView =>
+    actor.type === 'vehicle' || actor.type === 'starship';
+
+const isCharacterView = (actor: ActorView): actor is CharacterActorView | NpcActorView =>
+    actor.type === 'character' || actor.type === 'npc';
+
 const vehicleUuidForActor = (actor: ActorView): string =>
-    actor.type === 'vehicle' || actor.type === 'starship'
-        ? actor.uuid
-        : actor.vehicle?.uuid ?? '';
+    isVehicleView(actor) ? actor.uuid : actor.vehicle?.uuid ?? '';
 
 const characterStrengthDamage = (actor: ActorView): number =>
-    (actor.type === 'character' || actor.type === 'npc') ? actor.strengthDamage ?? 0 : 0;
+    isCharacterView(actor) ? actor.strengthDamage ?? 0 : 0;
 
 type WeaponBucketCommon = Pick<RollData,
     'damagetype' | 'damagescore' | 'stundamagetype' | 'stundamagescore' |
@@ -344,7 +348,7 @@ const vehicleWeaponHandler: Handler<'vehicle-weapon'> = (input, ctx) => ({
 // ---- Action family helpers ----
 
 const characterAttributes = (actor: ActorView): Record<string, { score: number }> =>
-    (actor.type === 'character' || actor.type === 'npc') ? actor.attributes ?? {} : {};
+    isCharacterView(actor) ? actor.attributes ?? {} : {};
 
 const characterAttributeScore = (actor: ActorView, key: string): number =>
     characterAttributes(actor)[key]?.score ?? 0;
@@ -352,7 +356,7 @@ const characterAttributeScore = (actor: ActorView, key: string): number =>
 const actorScale = (actor: ActorView): number => actor.scale?.score ?? 0;
 
 const vehicleScaleForActor = (actor: ActorView, ctx: HandlerContext): number =>
-    (actor.type === 'vehicle' || actor.type === 'starship')
+    isVehicleView(actor)
         ? actor.scale?.score ?? 0
         : ctx.vehicleStats?.scale?.score ?? 0;
 
@@ -360,7 +364,7 @@ const vehicleRamForActor = (
     actor: ActorView,
     ctx: HandlerContext,
 ): { ram: number; ramDamage: number } =>
-    (actor.type === 'vehicle' || actor.type === 'starship')
+    isVehicleView(actor)
         ? { ram: actor.ram?.score ?? 0, ramDamage: actor.ram_damage?.score ?? 0 }
         : {
             ram: ctx.vehicleStats?.ram?.score ?? 0,

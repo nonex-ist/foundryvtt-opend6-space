@@ -53,34 +53,28 @@ export function lookupInjury(
 // ---- Foundry-dependent wrappers ----
 
 /**
+ * Resolve the deadliness-table index for an actor, honoring the `woundConfig`
+ * override. NOTE: `OD6S.deadlinessLevel[type]` is the cached raw setting and
+ * does NOT apply the `woundConfig === 1` override — prefer this helper.
+ */
+function getDeadlinessLevel(actorType: string): number {
+    if (OD6S.woundConfig === 1) return 3;
+    const settingKey = actorType === 'npc' ? 'npc-deadliness'
+        : actorType === 'creature' ? 'creature-deadliness'
+        : 'deadliness';
+    return game.settings.get('nonex-ist-od6s', settingKey) as number;
+}
+
+/**
  * Get the action penalty from the actor's wound level vs. the system wound levels
  */
 export function getWoundPenalty(actor: Actor): number {
     if (!isCharacterActor(actor)) return 0;
-
-    let deadlinessLevel: number;
-    if (OD6S.woundConfig === 1) {
-        deadlinessLevel = 3;
-    } else {
-        const settingKey = actor.type === 'npc' ? 'npc-deadliness'
-            : actor.type === 'creature' ? 'creature-deadliness'
-            : 'deadliness';
-        deadlinessLevel = game.settings.get('nonex-ist-od6s', settingKey) as number;
-    }
-    return lookupWoundPenalty(OD6S.deadliness[deadlinessLevel], actor.system.wounds.value);
+    return lookupWoundPenalty(OD6S.deadliness[getDeadlinessLevel(actor.type)], actor.system.wounds.value);
 }
 
 export function getWoundLevel(value: number, actor: Actor): string {
-    let deadlinessLevel: number;
-    if (OD6S.woundConfig === 1) {
-        deadlinessLevel = 3;
-    } else {
-        const settingKey = actor.type === 'npc' ? 'npc-deadliness'
-            : actor.type === 'creature' ? 'creature-deadliness'
-            : 'deadliness';
-        deadlinessLevel = game.settings.get('nonex-ist-od6s', settingKey) as number;
-    }
-    return lookupWoundLevel(OD6S.deadliness[deadlinessLevel], value);
+    return lookupWoundLevel(OD6S.deadliness[getDeadlinessLevel(actor.type)], value);
 }
 
 export function getInjury(damage: number, actorType: OD6SActorType | "system"): string {

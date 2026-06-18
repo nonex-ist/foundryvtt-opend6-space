@@ -4,7 +4,6 @@ import {
     findWoundLevelByCore,
     computeNewDamageLevel,
     computeNewWoundLevel,
-    type DeadlinessRow,
 } from "./wounds-math";
 import {isArmorItem, isCharacterActor, isVehicleActor} from "../../system/type-guards";
 import {debug} from "../../system/logger";
@@ -148,10 +147,6 @@ export async function applyIncapacitatedFailure(actor: Actor): Promise<void> {
     if (game.modules.get("dice-so-nice")?.active) game.dice3d.messageHookDisabled = false;
 
     await actor.toggleStatusEffect('unconscious', {overlay: false, active: true});
-}
-
-export function findFirstWoundLevel(_actor: Actor, table: Record<string, DeadlinessRow>, wound: string): string | undefined {
-    return findWoundLevelByCore(table, wound);
 }
 
 export function getWoundLevelFromBodyPoints(actor: Actor, bp?: number): string | undefined {
