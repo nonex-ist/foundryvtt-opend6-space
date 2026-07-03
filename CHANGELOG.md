@@ -26,6 +26,17 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 - Global JS namespace renamed from `game.od6s` to `game["nonex-ist-od6s"]`
   (the new id contains hyphens, so bracket access is required).
 
+### Fixed
+
+- Image path settings in the config menus (Wild Die faces, active-attribute
+  icons, initiative/custom-field images) accumulated a growing bracketed list
+  of paths on every submit. The templates rendered a plain `<input>` alongside
+  the form-associated `<file-picker>` element under the same `name`, so the
+  form serialized two entries per field into an array. The redundant `<input>`
+  is removed; the `<file-picker>` already provides the text field and browse
+  button. Existing corrupted values are overwritten the next time a valid
+  image is selected. (#181)
+
 ## [2.7.4] - 2026-06-02
 
 Second hotfix for the 2.7.2 manifest art: the package tile and thumbnail
