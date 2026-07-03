@@ -20,6 +20,7 @@ Built so my brother can keep having awesome adventures in space.
 
 | System version | Foundry VTT |
 | -------------- | ----------- |
+| 3.x            | v14         |
 | 2.x            | v14         |
 
 ## Requirements
@@ -49,6 +50,12 @@ Releases are signed with [cosign](https://docs.sigstore.dev/) keyless
 signing — see [CONTRIBUTING.md](CONTRIBUTING.md#verifying-a-release)
 for the verify command. Each release also ships a CycloneDX SBOM
 (`sbom.cdx.json`) and a SHA-256 checksum (`nonex-ist-od6s.zip.sha256`).
+
+## Upgrading
+
+Version 3.0 renamed the system ID (`od6s` → `nonex-ist-od6s`), so Foundry
+treats it as a new system rather than an in-place update. See
+[docs/UPGRADING.md](docs/UPGRADING.md) for the step-by-step migration.
 
 ## Configuration
 
