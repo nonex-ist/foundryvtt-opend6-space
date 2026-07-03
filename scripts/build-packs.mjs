@@ -11,7 +11,7 @@
 
 import fs from "fs";
 import path from "path";
-import yaml from "js-yaml";
+import { loadAll } from "js-yaml";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 
 const PACK_SRC = "./compendia";
@@ -108,7 +108,7 @@ async function buildPacks() {
     let count = 0;
     for (const yamlFile of yamlFiles) {
       const content = fs.readFileSync(path.join(srcDir, yamlFile), "utf8");
-      const docs = yaml.loadAll(content);
+      const docs = loadAll(content);
       for (const doc of docs) {
         if (!doc) continue;
         assignKeys(doc, collection);
