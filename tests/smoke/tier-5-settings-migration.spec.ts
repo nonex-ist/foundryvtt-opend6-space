@@ -1,5 +1,5 @@
 /**
- * Tier 5 — #181/3.0.1 legacy world-settings migration.
+ * Tier 5 — #183/3.0.1 legacy world-settings migration.
  *
  * The 3.0.0 system-id rename left world settings stranded under the old
  * `od6s.*` namespace. `migrateLegacySettings()` (migration.ts, gated at
@@ -104,8 +104,13 @@ test.describe.serial("legacy od6s.* world settings migration", () => {
 
     test.afterAll(async ({browser}) => {
         // Restore defaults so re-runs start clean and the smoke world isn't
-        // left with synthetic icon paths.
-        const page = await browser.newPage();
+        // left with synthetic icon paths. Use an explicit context with the
+        // config baseURL — browser.newPage() bypasses the fixtures' baseURL,
+        // and loginAndWaitReady() navigates to a relative "/".
+        const context = await browser.newContext({
+            baseURL: process.env.FOUNDRY_URL ?? "http://localhost:30000",
+        });
+        const page = await context.newPage();
         try {
             await loginAndWaitReady(page);
             await evalInWorld(
@@ -128,7 +133,7 @@ test.describe.serial("legacy od6s.* world settings migration", () => {
                 {oneKey: ONE_KEY, sixKey: SIX_KEY},
             );
         } finally {
-            await page.close();
+            await context.close();
         }
     });
 });
