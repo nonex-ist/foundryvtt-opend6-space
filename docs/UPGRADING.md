@@ -7,9 +7,11 @@ won't offer 3.0 to a world on the old `od6s` system. Install 3.0 fresh,
 then point your world at it.
 
 Your actors, items, scenes, and journals live in the world, not the system
-folder, so they carry over. On first load as GM the system also migrates
-your document flags **and your world settings** (Wild Die faces, labels,
-deadliness, etc.) from the old ID automatically — no manual re-entry.
+folder, so they carry over. On first load as GM the system migrates your
+document flags from the old ID automatically. From **3.0.1** onwards it also
+migrates your **world settings** (Wild Die faces, labels, deadliness, etc.) —
+so no manual re-entry. The `latest` manifest below always installs a version
+new enough; only a pinned `3.0.0` install migrates flags but not settings.
 
 ### Steps
 
@@ -34,5 +36,8 @@ deadliness, etc.) from the old ID automatically — no manual re-entry.
 - **A setting didn't carry over** — the migration skips any value you'd
   already set under the new ID, and drops settings this version no longer
   has. Re-set it under System Settings (step 6).
+- **Already upgraded to 3.0.0 and re-entered your settings?** — updating to
+  3.0.1 or newer copies any still-stranded `od6s.*` settings back on the next
+  load. It won't overwrite values you've already re-entered under the new ID.
 - **Blank character sheet** — unrelated; see
   [data-loss-recovery.md](data-loss-recovery.md).
