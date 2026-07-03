@@ -9,8 +9,6 @@
                     </select>
                 {{else}}
                     {{#if (eq setting.filePicker "image")}}
-                        <input type="{{setting.inputType}}" name="{{setting.key}}" data-dtype="{{setting.type.name}}"
-                               value="{{setting.value}}">
                         <file-picker name="{{setting.key}}" value="{{setting.value}}" type="image"></file-picker>
                     {{else}}
                         {{#if (eq setting.inputType "checkbox")}}
