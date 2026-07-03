@@ -56,13 +56,22 @@ const MIGRATION_STEPS: Array<{ since: string; run: () => Promise<void> }> = [
     since: "2.6.0",
     run: () => stampAllSchemaVersions(),
   },
+  {
+    // 3.0.0 system-id rename left world settings stranded under the old
+    // `od6s.*` namespace. Copy them onto `nonex-ist-od6s.*` so GMs don't
+    // re-enter Wild Die faces, labels, deadliness, etc. by hand.
+    since: "3.0.1",
+    run: () => migrateLegacySettings(),
+  },
 ];
 
 // Bumped manually for the 3.0.0 system-id rename. The pre-migration
 // `migrateLegacyOd6sFlags()` runs unconditionally inside `migrateWorld()`
 // before the version-gated steps, so older worlds (`<2.6.0`) have their
-// flag bag rewritten before the legacy steps reach for them.
-const CURRENT_MIGRATION_VERSION = "3.0.0";
+// flag bag rewritten before the legacy steps reach for them. 3.0.1 adds
+// the `migrateLegacySettings()` step so worlds that already ran the 3.0.0
+// flag migration still pick up their stranded `od6s.*` world settings.
+const CURRENT_MIGRATION_VERSION = "3.0.1";
 
 /**
  * Check if migration is needed and run it.
@@ -448,4 +457,67 @@ async function migrateLegacyOd6sFlags() {
   }
 
   debug("migration", `Rewrote legacy od6s flags on ${count} documents.`);
+}
+
+/**
+ * Copy world settings stranded under the old `od6s.*` namespace onto the
+ * current `nonex-ist-od6s.*` namespace after the 3.0.0 system-id rename.
+ *
+ * Settings are stored as `Setting` documents in the world settings
+ * collection, keyed by their full `<namespace>.<key>` string and holding a
+ * JSON-encoded `value`. For each legacy `od6s.<key>` we:
+ *   - skip keys the current system doesn't register (stale/removed settings);
+ *   - skip `migrationVersion` (internal bookkeeping, set explicitly elsewhere);
+ *   - skip any key the GM has already set under the new namespace, so a
+ *     re-run never clobbers a value they re-entered by hand;
+ *   - rewrite `systems/od6s/` asset paths to `systems/nonex-ist-od6s/`, which
+ *     also repairs values still pointing at the old default icon folder.
+ */
+async function migrateLegacySettings() {
+  debug("migration", "Copying legacy od6s.* world settings → nonex-ist-od6s.* ...");
+
+  // `storage` isn't in the project's GameSettings type stub; cast through any
+  // to reach it, then narrow the collection to the fields we read.
+  type LegacySetting = { key: string; value: unknown };
+  const worldSettings = (game.settings as any).storage.get("world") as
+    | Iterable<LegacySetting>
+    | undefined;
+  if (!worldSettings) return;
+
+  const existingKeys = new Set<string>();
+  for (const s of worldSettings) existingKeys.add(s.key);
+
+  let count = 0;
+  for (const setting of [...worldSettings]) {
+    const key: string = setting.key;
+    if (!key.startsWith("od6s.")) continue;
+
+    const suffix = key.slice("od6s.".length);
+    if (suffix === "migrationVersion") continue;
+
+    const newKey = `nonex-ist-od6s.${suffix}`;
+    if (!game.settings.settings.has(newKey)) continue;
+    if (existingKeys.has(newKey)) continue;
+
+    let value: unknown = setting.value;
+    if (typeof value === "string") {
+      try {
+        value = JSON.parse(value);
+      } catch {
+        // Not JSON-encoded — fall through with the raw string.
+      }
+    }
+    if (typeof value === "string" && value.includes("systems/od6s/")) {
+      value = value.replaceAll("systems/od6s/", "systems/nonex-ist-od6s/");
+    }
+
+    try {
+      await game.settings.set("nonex-ist-od6s", suffix, value as never);
+      count++;
+    } catch (err) {
+      logError("migration", `Failed to migrate setting ${key}:`, err);
+    }
+  }
+
+  debug("migration", `Migrated ${count} legacy world settings.`);
 }
