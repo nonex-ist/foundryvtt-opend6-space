@@ -10,6 +10,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-07-03
+
 ### Changed
 
 - `compatibility.verified` bumped from `14.363` to `14.364` to match the
