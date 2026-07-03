@@ -1,6 +1,6 @@
 {
   "name": "opend6-space",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "type": "module",
   "description": "OpenD6 Space system for Foundry VTT v14. Uses the rules from the OpenD6 Project SRD.",
   "scripts": {
