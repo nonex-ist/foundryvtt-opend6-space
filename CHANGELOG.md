@@ -10,6 +10,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-07-03
+
 ### Changed
 
 - **BREAKING:** System id renamed from `od6s` to `nonex-ist-od6s`. Foundry
