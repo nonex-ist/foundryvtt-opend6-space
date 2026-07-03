@@ -7,7 +7,7 @@
 
 import fs from "fs";
 import path from "path";
-import yaml from "js-yaml";
+import { loadAll } from "js-yaml";
 
 const PACK_SRC = "./compendia";
 const TRANSLATIONS_DEST = "./src/lang/translations/en";
@@ -34,7 +34,7 @@ function buildTranslations() {
 
     for (const yamlFile of yamlFiles) {
       const content = fs.readFileSync(path.join(srcDir, yamlFile), "utf8");
-      const docs = yaml.loadAll(content);
+      const docs = loadAll(content);
       for (const doc of docs) {
         if (!doc || !doc.name) continue;
         entries[doc.name] = {
