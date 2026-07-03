@@ -10,6 +10,11 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Changed
+
+- `compatibility.verified` bumped from `14.363` to `14.364` to match the
+  current recommended Foundry V14 build.
+
 ### Added
 
 - World settings stranded under the old `od6s.*` namespace after the 3.0.0
