@@ -10,6 +10,15 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Added
+
+- World settings stranded under the old `od6s.*` namespace after the 3.0.0
+  system-id rename are now migrated onto `nonex-ist-od6s.*` automatically on
+  first load, so GMs no longer have to re-enter Wild Die faces, labels,
+  deadliness, and other System Settings by hand. Values already set under
+  the new id are left untouched, and `systems/od6s/` asset paths are
+  rewritten to `systems/nonex-ist-od6s/`.
+
 ## [3.0.0] - 2026-07-03
 
 ### Changed

@@ -7,9 +7,9 @@ won't offer 3.0 to a world on the old `od6s` system. Install 3.0 fresh,
 then point your world at it.
 
 Your actors, items, scenes, and journals live in the world, not the system
-folder, so they carry over — and document flags migrate automatically on
-first load. **System settings** (Wild Die faces, labels, deadliness, etc.)
-do **not** carry over and must be re-entered once.
+folder, so they carry over. On first load as GM the system also migrates
+your document flags **and your world settings** (Wild Die faces, labels,
+deadliness, etc.) from the old ID automatically — no manual re-entry.
 
 ### Steps
 
@@ -21,9 +21,9 @@ do **not** carry over and must be re-entered once.
 4. **Repoint the world** (Foundry has no UI for this): with the world not
    running, edit `Data/worlds/<your-world>/world.json` and change
    `"system": "od6s"` to `"system": "nonex-ist-od6s"`.
-5. **Launch** the world as GM (flags migrate automatically) and enable
-   socketlib for it.
-6. **Re-enter** your values under Game Settings → Configure Settings →
+5. **Launch** the world as GM — flags and settings migrate automatically —
+   and enable socketlib for it.
+6. **Spot-check** your values under Game Settings → Configure Settings →
    System Settings.
 7. Once verified, uninstall the old `od6s` system.
 
@@ -31,6 +31,8 @@ do **not** carry over and must be re-entered once.
 
 - **"System is not installed" on launch** — step 2 didn't finish, or the
   `system` value has a typo; it must be exactly `"nonex-ist-od6s"`.
-- **Settings reset** — expected (step 6); your documents are unaffected.
+- **A setting didn't carry over** — the migration skips any value you'd
+  already set under the new ID, and drops settings this version no longer
+  has. Re-set it under System Settings (step 6).
 - **Blank character sheet** — unrelated; see
   [data-loss-recovery.md](data-loss-recovery.md).
