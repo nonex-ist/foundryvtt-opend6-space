@@ -121,6 +121,10 @@ actors/items. Any failure prints a screenshot path and trace zip for
   `testCollision` wall is clipped back to ~origin);
   `explosive_end_of_round=false` reveals the region (`visibility=2`);
   `explosive_end_of_round=true` defers the reveal (`visibility=1`).
+- **Tier 5** (`tier-5-settings-migration`): seeds legacy `od6s.*` world
+  settings, rewinds `migrationVersion`, reloads to re-fire `migrateWorld()`,
+  and asserts they are copied to `nonex-ist-od6s.*` with `systems/od6s/` paths
+  rewritten — while a value already set under the new id is left untouched.
 
 ---
 
@@ -314,6 +318,10 @@ Requires two browser clients connected to the same world.
 ---
 
 ## Tier 5 — Migration (manual)
+
+The `od6s` → `nonex-ist-od6s` settings migration is covered automatically by
+`tier-5-settings-migration` (see the suite list above). The checks below need
+a real pre-v2 world backup and stay manual.
 
 If a backup of a pre-v2 world exists:
 
