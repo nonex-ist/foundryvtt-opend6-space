@@ -1,72 +1,77 @@
- 
+import OD6SSettingsMenu from "./settings-menu-base";
 
-const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
+/**
+ * Built-in default label each custom-label setting falls back to when left
+ * blank (mirrors the fallbacks in settings/index.ts `updateConfig`). Shown as an
+ * input placeholder so an empty field advertises what it will display while
+ * staying genuinely unset. Keep in sync with `updateConfig`.
+ */
+function labelDefaultKeys(): Record<string, string> {
+    const P = "NONEX_IST_OD6S.";
+    const map: Record<string, string> = {
+        customize_species_label: P + "CHAR_SPECIES",
+        customize_type_label: P + "CHAR_TYPE",
+        customize_fate_points: P + "CHAR_FATE_POINTS",
+        customize_fate_points_short: P + "CHAR_FATE_POINTS_SHORT",
+        customize_use_a_fate_point: P + "USE_FATE_POINT",
+        customize_currency_label: P + "CHAR_CREDITS",
+        customize_vehicle_toughness: P + "TOUGHNESS",
+        customize_starship_toughness: P + "TOUGHNESS",
+        customize_manifestations: P + "CHAR_MANIFESTATIONS",
+        customize_manifestation: P + "CHAR_MANIFESTATION",
+        customize_metaphysics_name: P + "CHAR_METAPHYSICS",
+        customize_metaphysics_name_short: P + "CHAR_METAPHYSICS_SHORT",
+        customize_metaphysics_extranormal: P + "CHAR_METAPHYSICS_EXTRANORMAL",
+        customize_metaphysics_skill_channel: P + "METAPHYSICS_SKILL_CHANNEL",
+        customize_metaphysics_skill_sense: P + "METAPHYSICS_SKILL_SENSE",
+        customize_metaphysics_skill_transform: P + "METAPHYSICS_SKILL_TRANSFORM",
+        customize_body_points_name: P + "BODY_POINTS",
+    };
+    for (const a of ["agility", "strength", "mechanical", "knowledge", "perception", "technical"]) {
+        const u = a.toUpperCase();
+        map[`customize_${a}_name`] = `${P}CHAR_${u}`;
+        map[`customize_${a}_name_short`] = `${P}CHAR_${u}_SHORT`;
+    }
+    // Custom attributes (CA1–4) moved to their own menu — see config-custom-attributes.ts.
+    return map;
+}
 
-export default class od6sCustomLabelsConfiguration extends HandlebarsApplicationMixin(ApplicationV2) {
-
-    requiresWorldReload = false;
+export default class od6sCustomLabelsConfiguration extends OD6SSettingsMenu {
+    static SETTINGS_CATEGORY = "od6sLabel";
 
     static DEFAULT_OPTIONS = {
         id: "nonex-ist-od6s-customlabels-configuration",
-        classes: ["nonex-ist-od6s", "settings-config"],
-        tag: "form",
-        window: {
-            title: "NONEX_IST_OD6S.CONFIG_CUSTOM_LABELS",
-            resizable: true,
-            minimizable: true,
-        },
-        position: {
-            width: 600,
-            height: "auto",
-        },
-        form: {
-            handler: od6sCustomLabelsConfiguration.#onSubmit,
-            submitOnChange: true,
-            closeOnSubmit: false,
-        },
-        actions: {
-            closeForm: od6sCustomLabelsConfiguration.#onCloseForm,
-        },
+        window: {title: "NONEX_IST_OD6S.CONFIG_CUSTOM_LABELS"},
     };
 
-    static PARTS = {
-        form: {
-            template: "systems/nonex-ist-od6s/templates/settings/settings-v2.html",
-        },
-    };
-
-    async _prepareContext(_options?: object): Promise<object> {
-        const settings = Array.from(game.settings.settings)
-            .filter((s: any) => s[1].od6sLabel)
-            .map((i: any) => i[1]);
-
-        for (const s of settings) {
-            s.inputType = s.type === Boolean ? "checkbox" : "text";
-            s.choice = typeof s.choices !== "undefined";
-            s.value = game.settings.get(s.namespace, s.key);
-        }
-
-        return {settings};
+    protected override placeholderKeys(): Record<string, string> {
+        return labelDefaultKeys();
     }
 
-    static async #onSubmit(
-        this: od6sCustomLabelsConfiguration,
-        _event: Event,
-        _form: HTMLFormElement,
-        formData: any,
-    ): Promise<void> {
-        const data = formData.object;
-        for (const setting in data) {
-            await game.settings.set("nonex-ist-od6s", setting, data[setting]);
-            const s = game.settings.settings.get("nonex-ist-od6s." + setting);
-            if (s?.requiresReload) this.requiresWorldReload = true;
-        }
-    }
-
-    static async #onCloseForm(this: od6sCustomLabelsConfiguration): Promise<void> {
-        if (this.requiresWorldReload) {
-            await foundry.applications.settings.SettingsConfig.reloadConfirm({world: true});
-        }
-        await this.close();
+    protected override settingGroups(): Array<{label: string; keys: string[]}> {
+        const P = "NONEX_IST_OD6S.";
+        const attr = ["agility", "strength", "mechanical", "knowledge", "perception", "technical"]
+            .flatMap((a) => [`customize_${a}_name`, `customize_${a}_name_short`]);
+        return [
+            {label: P + "CONFIG_LABELS_GROUP_SHEET", keys: ["customize_species_label", "customize_type_label"]},
+            {label: P + "CONFIG_LABELS_GROUP_ATTRIBUTES", keys: attr},
+            {label: P + "CONFIG_LABELS_GROUP_FATE", keys: [
+                "customize_fate_points", "customize_fate_points_short", "customize_use_a_fate_point",
+            ]},
+            {label: P + "CONFIG_LABELS_GROUP_METAPHYSICS", keys: [
+                "customize_metaphysics_name", "customize_metaphysics_name_short",
+                "customize_metaphysics_extranormal", "customize_metaphysics_skill_channel",
+                "customize_metaphysics_skill_sense", "customize_metaphysics_skill_transform",
+            ]},
+            {label: P + "CONFIG_LABELS_GROUP_MANIFESTATIONS", keys: [
+                "customize_manifestations", "customize_manifestation",
+            ]},
+            {label: P + "CONFIG_LABELS_GROUP_VEHICLES", keys: [
+                "customize_vehicle_toughness", "customize_starship_toughness",
+            ]},
+            {label: P + "CONFIG_LABELS_GROUP_OTHER", keys: [
+                "customize_currency_label", "customize_body_points_name",
+            ]},
+        ];
     }
 }
