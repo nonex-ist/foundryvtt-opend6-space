@@ -99,7 +99,7 @@ test.describe.serial("legacy od6s.* world settings migration", () => {
         // Pre-existing new-id value left untouched (no clobber).
         expect(result.six).toBe(PRESET_SIX);
         // Migration ran and stamped the current version.
-        expect(result.version).toBe("3.0.1");
+        expect(result.version).toBe("3.0.2");
     });
 
     test.afterAll(async ({browser}) => {

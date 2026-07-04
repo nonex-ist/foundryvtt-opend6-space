@@ -1,94 +1,41 @@
-/**
- * config-rules — ApplicationV2 pilot.
- *
- * V2 PATTERN (replicate this for the other 12 config forms):
- *
- *   1. extend HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)
- *   2. static DEFAULT_OPTIONS replaces v1's `defaultOptions` getter; window
- *      title goes under `window.title`, dimensions under `position`, form
- *      handler/submitOnChange/closeOnSubmit under `form`. There is no
- *      `submitOnClose` in v2 — handle final submit via the close action.
- *   3. static PARTS declares the template parts. For a single-part form,
- *      one entry named "form" works.
- *   4. _prepareContext replaces v1's `getData()` (must be async).
- *   5. The form handler is a static function declared in DEFAULT_OPTIONS.form.handler;
- *      it receives (event, form, formData). `formData.object` holds the parsed values.
- *   6. Action buttons declare `data-action="X"` in the template; map to handlers
- *      via DEFAULT_OPTIONS.actions.X.
- *
- * Templates can no longer use {{#select}} or {{checked}} — those v1 helpers
- * were removed in v14. Use {{selectOptions}}, {{#each}} with
- * `{{#if (eq key X)}}selected{{/if}}`, or conditional `checked` instead.
- * See settings-v2.html.
- */
+import OD6SSettingsMenu from "./settings-menu-base";
 
-const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
-
-export default class od6sRulesConfiguration extends HandlebarsApplicationMixin(ApplicationV2) {
-
-    requiresWorldReload = false;
+export default class od6sRulesConfiguration extends OD6SSettingsMenu {
+    static SETTINGS_CATEGORY = "od6sRules";
 
     static DEFAULT_OPTIONS = {
         id: "nonex-ist-od6s-rules-configuration",
-        classes: ["nonex-ist-od6s", "settings-config"],
-        tag: "form",
-        window: {
-            title: "NONEX_IST_OD6S.CONFIG_RULES_OPTIONS_MENU",
-            resizable: true,
-            minimizable: true,
-        },
-        position: {
-            width: 600,
-            height: "auto",
-        },
-        form: {
-            handler: od6sRulesConfiguration.#onSubmit,
-            submitOnChange: true,
-            closeOnSubmit: false,
-        },
-        actions: {
-            closeForm: od6sRulesConfiguration.#onCloseForm,
-        },
+        window: {title: "NONEX_IST_OD6S.CONFIG_RULES_OPTIONS_MENU"},
     };
 
-    static PARTS = {
-        form: {
-            template: "systems/nonex-ist-od6s/templates/settings/settings-v2.html",
-        },
-    };
-
-    async _prepareContext(_options?: object): Promise<object> {
-        const settings = Array.from(game.settings.settings)
-            .filter((s) => s[1].od6sRules)
-            .map((i) => i[1]);
-
-        for (const s of settings) {
-            s.inputType = s.type === Boolean ? "checkbox" : "text";
-            s.choice = typeof s.choices !== "undefined";
-            s.value = game.settings.get(s.namespace, s.key);
-        }
-
-        return {settings};
-    }
-
-    static async #onSubmit(
-        this: od6sRulesConfiguration,
-        _event: Event,
-        _form: HTMLFormElement,
-        formData: { object: Record<string, unknown> },
-    ): Promise<void> {
-        const data = formData.object;
-        for (const setting in data) {
-            await game.settings.set("nonex-ist-od6s", setting, data[setting]);
-            const s = game.settings.settings.get("nonex-ist-od6s." + setting);
-            if (s?.requiresReload) this.requiresWorldReload = true;
-        }
-    }
-
-    static async #onCloseForm(this: od6sRulesConfiguration): Promise<void> {
-        if (this.requiresWorldReload) {
-            await foundry.applications.settings.SettingsConfig.reloadConfirm({world: true});
-        }
-        await this.close();
+    protected override settingGroups(): Array<{label: string; keys: string[]}> {
+        const P = "NONEX_IST_OD6S.";
+        return [
+            {label: P + "CONFIG_RULES_GROUP_DAMAGE", keys: [
+                "bodypoints", "track_stuns", "stun_damage_increment", "stun_dice",
+                "highhitdamage", "strength_damage", "weapon_armor_damage",
+                "random_hit_locations", "passenger_damage_dice",
+            ]},
+            {label: P + "CONFIG_RULES_GROUP_COMBAT", keys: [
+                "fastcombat", "melee_difficulty", "hide_advantages_disadvantages",
+            ]},
+            {label: P + "CONFIG_RULES_GROUP_SCALE", keys: [
+                "dice_for_scale", "vehicle_difficulty", "sensors", "map_range_to_difficulty",
+            ]},
+            {label: P + "CONFIG_RULES_GROUP_EXPLOSIVES", keys: [
+                "dice_for_grenades", "explosive_end_of_round", "hide_explosive_templates", "explosive_zones",
+            ]},
+            {label: P + "CONFIG_RULES_GROUP_SKILLS", keys: [
+                "specialization_dice", "pip_per_dice", "flat_skills", "skill_used", "spec_link",
+                "metaphysics_attribute_optional",
+            ]},
+            {label: P + "CONFIG_RULES_GROUP_CURRENCY", keys: [
+                "cost", "funds_fate",
+            ]},
+            {label: P + "CONFIG_RULES_GROUP_CHARGEN", keys: [
+                "initial_attributes", "initial_skills", "initial_character_points",
+                "initial_fate_points", "initial_move",
+            ]},
+        ];
     }
 }

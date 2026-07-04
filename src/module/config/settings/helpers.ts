@@ -3,6 +3,7 @@ import OD6S from "../config-od6s";
 type CategoryFlag =
     | "od6sLabel"
     | "od6sCustomField"
+    | "od6sCustomAttribute"
     | "od6sDeadliness"
     | "od6sDifficulty"
     | "od6sMiscRules";
@@ -51,14 +52,14 @@ export function defineLabel(
     key: string,
     i18nKey: string,
     apply: (value: string) => void,
-    opts: { requiresReload?: boolean } = {},
+    opts: { requiresReload?: boolean; category?: CategoryFlag } = {},
 ): void {
     defineSetting<string>(key, {
         i18nKey,
         type: String,
         default: "",
         requiresReload: opts.requiresReload ?? true,
-        category: "od6sLabel",
+        category: opts.category ?? "od6sLabel",
         onChange: (value) => {
             if (value) apply(value);
         },

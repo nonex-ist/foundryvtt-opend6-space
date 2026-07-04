@@ -124,4 +124,235 @@
 // with it. See _forms.scss for the full flex chain that makes this work.
 .nonex-ist-od6s.settings-config > .window-content {
   overflow-y: auto;
+  padding: 10px 14px 0;
+}
+
+// ── OpenD6 settings-dialog form styling ──────────────────────────────────
+// The system's config submenus (Custom Labels, Automation, Appearance, …)
+// share a simple label / control / hint structure. Give them a compact,
+// themed layout: the control sits on the right, the hint reads muted below,
+// and rows are separated by hairline rules so long lists stay scannable.
+.nonex-ist-od6s.settings-config {
+  // Grouped panels (e.g. Appearance) wrap rows in labelled sections.
+  fieldset {
+    border: 1px solid $c-border;
+    border-radius: 3px;
+    padding: 2px 12px 6px;
+    margin: 0 0 12px;
+    min-width: 0;
+
+    > legend {
+      color: $c-accent;
+      font-family: $font-display;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.75em;
+      padding: 0 6px;
+    }
+  }
+
+  .form-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 240px);
+    align-items: center;
+    gap: 3px 14px;
+    margin: 0;
+    padding: 9px 2px;
+    border: none;
+    border-bottom: 1px solid rgba($c-border, 0.4);
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    > label {
+      grid-column: 1;
+      margin: 0;
+      font-weight: 500;
+      color: $c-text-primary;
+      line-height: 1.25;
+    }
+
+    .form-fields {
+      grid-column: 2;
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      margin: 0;
+
+      > input,
+      > select {
+        width: 100%;
+        margin: 0;
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+        margin-left: auto;
+        transform: scale(1.15);
+      }
+
+      input[type="color"] {
+        width: 42px;
+        height: 24px;
+        padding: 1px;
+        margin-left: auto;
+        cursor: pointer;
+      }
+
+      input[type="range"] {
+        flex: 1;
+      }
+
+      .range-value {
+        flex: 0 0 auto;
+        min-width: 2.5ch;
+        text-align: right;
+        font-family: $font-numeric;
+        color: $c-accent;
+        font-size: 0.85em;
+      }
+    }
+
+    // Hints span the full width beneath the row, muted so labels lead.
+    .notes {
+      grid-column: 1 / -1;
+      margin: 2px 0 0;
+      padding: 0;
+      font-size: 0.8em;
+      font-style: italic;
+      line-height: 1.3;
+      color: $c-text-muted;
+      border: none;
+    }
+  }
+
+  // Custom Attributes grid: name / abbreviation / active in aligned columns.
+  .ca-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 8px 0 4px;
+
+    .ca-row {
+      display: grid;
+      grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr) minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 2px;
+      border-bottom: 1px solid rgba($c-border, 0.4);
+
+      > input {
+        width: 100%;
+        margin: 0;
+      }
+
+      input[type="checkbox"] {
+        justify-self: center;
+        transform: scale(1.15);
+      }
+    }
+
+    .ca-head {
+      border-bottom: 1px solid $c-border;
+      color: $c-text-muted;
+      font-size: 0.72em;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+
+      span:last-child {
+        text-align: center;
+      }
+    }
+
+    .ca-index {
+      font-weight: 500;
+      color: $c-text-primary;
+    }
+  }
+
+  // Custom Fields cards: label / control pairs plus a wrap of actor-type
+  // visibility toggles, one fieldset per field.
+  .custom-field-card {
+    margin-bottom: 12px;
+  }
+
+  .cf-grid {
+    display: grid;
+    grid-template-columns: minmax(80px, auto) minmax(0, 1fr);
+    align-items: center;
+    gap: 8px 12px;
+
+    > label {
+      color: $c-text-primary;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
+  .cf-actors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+
+    .cf-actor {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85em;
+      color: $c-text-muted;
+      white-space: nowrap;
+
+      input[type="checkbox"] {
+        margin: 0;
+      }
+    }
+  }
+
+  // Sticky action bar so the submit/close button is always reachable.
+  .submit {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 8px -14px 0;
+    padding: 8px 14px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0), $c-panel-deep 45%);
+    border-top: 1px solid $c-border;
+
+    // Left-aligned reassurance that the panel live-saves; button stays right.
+    .save-note {
+      margin-right: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: $c-text-muted;
+      font-size: 0.8em;
+      font-style: italic;
+
+      i {
+        color: $c-good;
+        font-style: normal;
+      }
+    }
+
+    button {
+      width: auto;
+      margin: 0;
+      padding: 4px 18px;
+      font-family: $font-display;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.8em;
+    }
+  }
 }

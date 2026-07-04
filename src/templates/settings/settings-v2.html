@@ -1,30 +1,42 @@
-<div>
-    {{#each settings as |setting s|}}
-        <div class="form-group">
-            <label for="{{setting.key}}">{{localize setting.name}}</label>
-            <div class="form-fields">
-                {{#if setting.choice}}
-                    <select name="{{setting.key}}" id="{{setting.key}}">
-                        {{selectOptions setting.choices selected=setting.value localize=true}}
-                    </select>
+{{#*inline "settingField"}}
+    <div class="form-group">
+        <label for="{{key}}">{{localize name}}</label>
+        <div class="form-fields">
+            {{#if choice}}
+                <select name="{{key}}" id="{{key}}">
+                    {{selectOptions choices selected=value localize=true}}
+                </select>
+            {{else}}
+                {{#if (eq filePicker "image")}}
+                    <file-picker name="{{key}}" value="{{value}}" type="image"></file-picker>
                 {{else}}
-                    {{#if (eq setting.filePicker "image")}}
-                        <file-picker name="{{setting.key}}" value="{{setting.value}}" type="image"></file-picker>
+                    {{#if (eq inputType "checkbox")}}
+                        <input type="checkbox" name="{{key}}" id="{{key}}" data-dtype="{{type.name}}"
+                               {{#if value}}checked{{/if}} data-field="{{type.name}}">
                     {{else}}
-                        {{#if (eq setting.inputType "checkbox")}}
-                            <input type="checkbox" name="{{setting.key}}" data-dtype="{{setting.type.name}}"
-                                   {{#if setting.value}}checked{{/if}} data-field="{{setting.type.name}}">
-                        {{else}}
-                            <input type="{{setting.inputType}}" name="{{setting.key}}" data-dtype="{{setting.type.name}}"
-                                   value="{{setting.value}}" data-field="{{setting.type.name}}">
-                        {{/if}}
+                        <input type="{{inputType}}" name="{{key}}" id="{{key}}" data-dtype="{{type.name}}"
+                               value="{{value}}" placeholder="{{placeholder}}" data-field="{{type.name}}">
                     {{/if}}
                 {{/if}}
-            </div>
-            <p class="notes">{{{localize setting.hint}}}</p>
+            {{/if}}
         </div>
+        {{#if hint}}<p class="notes">{{{localize hint}}}</p>{{/if}}
+    </div>
+{{/inline}}
+
+<div>
+    {{#each groups as |group|}}
+        {{#if group.label}}
+            <fieldset>
+                <legend>{{group.label}}</legend>
+                {{#each group.settings}}{{> settingField}}{{/each}}
+            </fieldset>
+        {{else}}
+            {{#each group.settings}}{{> settingField}}{{/each}}
+        {{/if}}
     {{/each}}
     <div class="submit">
-        <button type="submit" name="close" data-action="closeForm">{{localize "Submit"}}</button>
+        <span class="save-note"><i class="fas fa-circle-check"></i> {{localize "NONEX_IST_OD6S.SETTINGS_AUTOSAVE_NOTE"}}</span>
+        <button type="button" name="close" data-action="closeForm">{{localize "Close"}}</button>
     </div>
 </div>

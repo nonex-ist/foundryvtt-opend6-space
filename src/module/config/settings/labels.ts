@@ -113,16 +113,20 @@ export function registerLabelSettings() {
             {requiresReload: false});
     }
 
-    // Custom attributes ca1–ca4.
+    // Custom attributes ca1–ca4: registered here for their onChange wiring, but
+    // categorised as `od6sCustomAttribute` so they surface in the dedicated
+    // Custom Attributes menu (name + abbreviation + active in one place) rather
+    // than mixed into Custom Labels. See apps/config-custom-attributes.ts.
     for (const i of [1, 2, 3, 4] as const) {
         const attr = `ca${i}` as const;
         defineLabel(`customize_${attr}_name`,
             `NONEX_IST_OD6S.CONFIG_CUSTOMIZE_CA${i}_NAME`,
-            v => OD6S.attributes[attr].name = v);
+            v => OD6S.attributes[attr].name = v,
+            {category: "od6sCustomAttribute"});
         defineLabel(`customize_${attr}_name_short`,
             `NONEX_IST_OD6S.CONFIG_CUSTOMIZE_CA${i}_NAME_SHORT`,
             v => OD6S.attributes[attr].shortName = v,
-            {requiresReload: false});
+            {requiresReload: false, category: "od6sCustomAttribute"});
     }
 
     defineLabel("customize_body_points_name",

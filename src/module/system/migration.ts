@@ -30,6 +30,7 @@
 
 import { debug, error as logError, isDebugEnabled } from "./logger";
 import { SCHEMA_VERSION_KEY } from "./schema-version";
+import { collectLegacyLabelUpdates } from "./migration-labels";
 
 /**
  * Migration steps in version order. Each entry runs when the world's stored
@@ -63,6 +64,15 @@ const MIGRATION_STEPS: Array<{ since: string; run: () => Promise<void> }> = [
     since: "3.0.1",
     run: () => migrateLegacySettings(),
   },
+  {
+    // #189: labels persisted as i18n keys in `system` data still point at the
+    // retired `OD6S.*` root, so migrated sheets show the raw reference (e.g.
+    // `OD6S.Char_Char_Points_Short`) instead of the localized label.
+    since: "3.0.2",
+    run: async () => {
+      await repairLegacyLabelKeys();
+    },
+  },
 ];
 
 // Bumped manually for the 3.0.0 system-id rename. The pre-migration
@@ -70,8 +80,10 @@ const MIGRATION_STEPS: Array<{ since: string; run: () => Promise<void> }> = [
 // before the version-gated steps, so older worlds (`<2.6.0`) have their
 // flag bag rewritten before the legacy steps reach for them. 3.0.1 adds
 // the `migrateLegacySettings()` step so worlds that already ran the 3.0.0
-// flag migration still pick up their stranded `od6s.*` world settings.
-const CURRENT_MIGRATION_VERSION = "3.0.1";
+// flag migration still pick up their stranded `od6s.*` world settings. 3.0.2
+// adds `repairLegacyLabelKeys()` to rewrite `OD6S.*` label keys still stored
+// in document `system` data (#189).
+const CURRENT_MIGRATION_VERSION = "3.0.2";
 
 /**
  * Check if migration is needed and run it.
@@ -520,4 +532,101 @@ async function migrateLegacySettings() {
   }
 
   debug("migration", `Migrated ${count} legacy world settings.`);
+}
+
+/** Summary of a `repairLegacyLabelKeys()` sweep, for logs and the DM tools UI. */
+export interface LabelRepairSummary {
+  /** Documents (actors + items) that had at least one key rewritten. */
+  documents: number;
+  /** Total individual label fields rewritten across those documents. */
+  fields: number;
+}
+
+/**
+ * #189: several labels are persisted as i18n key strings inside `system` data
+ * (e.g. `system.characterpoints.short_label`) and rendered with `{{localize}}`.
+ * The 3.0.0 rename moved the i18n root `OD6S.* → NONEX_IST_OD6S.*`, but stored
+ * values on migrated documents still point at the retired root, so sheets show
+ * the raw reference (e.g. `OD6S.Char_Char_Points_Short`) instead of the label.
+ *
+ * Sweep every actor + item's `system` source and rewrite any string still
+ * pointing at `OD6S.*` to the current key, but only when that key actually
+ * resolves — see `collectLegacyLabelUpdates`. Attribute labels are ignored by
+ * the sheet (it reads names from runtime config), but rewriting them here is
+ * harmless and keeps the stored data consistent.
+ *
+ * Exported and idempotent (a second pass finds nothing) so a GM can re-run it
+ * from the Maintenance tools without a version bump — the automatic migration
+ * step below and the DM-triggered action share this one implementation.
+ */
+export async function repairLegacyLabelKeys(): Promise<LabelRepairSummary> {
+  debug("migration", "Rewriting stored OD6S.* label keys → NONEX_IST_OD6S.* ...");
+  const summary: LabelRepairSummary = { documents: 0, fields: 0 };
+
+  const hasKey = (key: string) => game.i18n.has(key);
+
+  const collect = (doc: any): Record<string, string> =>
+    collectLegacyLabelUpdates(doc.system?.toObject?.() ?? doc.system, hasKey);
+
+  const tally = (updates: Record<string, string>) => {
+    summary.documents += 1;
+    summary.fields += Object.keys(updates).length;
+  };
+
+  // Rewrite one actor (directory or synthetic token) plus its embedded items.
+  const repairActor = async (actor: any, suffix = "") => {
+    const changes = collect(actor);
+    if (Object.keys(changes).length > 0) {
+      logActorBefore("label-keys", actor, suffix);
+      // dot-path keys update in place, so this works for both directory actors
+      // and synthetic (unlinked-token) actors that carry their own delta.
+      await actor.update(changes);
+      logActorAfter("label-keys", actor, suffix);
+      tally(changes);
+    }
+    const itemUpdates: Array<Record<string, unknown>> = [];
+    for (const item of actor.items) {
+      const u = collect(item);
+      if (Object.keys(u).length > 0) {
+        itemUpdates.push({ _id: item.id, ...u });
+        tally(u);
+      }
+    }
+    if (itemUpdates.length > 0) {
+      await actor.updateEmbeddedDocuments("Item", itemUpdates);
+    }
+  };
+
+  for (const actor of game.actors) {
+    await repairActor(actor);
+  }
+
+  // World-level items
+  const worldItemUpdates: Array<Record<string, unknown>> = [];
+  for (const item of game.items) {
+    const u = collect(item);
+    if (Object.keys(u).length > 0) {
+      worldItemUpdates.push({ _id: item.id, ...u });
+      tally(u);
+    }
+  }
+  if (worldItemUpdates.length > 0) {
+    await Item.updateDocuments(worldItemUpdates);
+  }
+
+  // Unlinked token actors carry their own `system` delta, so repair them too.
+  // Linked tokens share the directory actor already handled above.
+  for (const scene of game.scenes) {
+    for (const token of scene.tokens) {
+      // `actorLink` isn't in the project's TokenDocument stub; reach it via any.
+      if ((token as any).actorLink || !token.actor) continue;
+      await repairActor(token.actor, ` (token in ${scene.name})`);
+    }
+  }
+
+  debug(
+    "migration",
+    `Rewrote ${summary.fields} legacy label keys across ${summary.documents} documents.`,
+  );
+  return summary;
 }

@@ -1,72 +1,25 @@
- 
+import OD6SSettingsMenu from "./settings-menu-base";
 
-const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
-
-export default class od6sAutomationConfiguration extends HandlebarsApplicationMixin(ApplicationV2) {
-
-    requiresWorldReload = false;
+export default class od6sAutomationConfiguration extends OD6SSettingsMenu {
+    static SETTINGS_CATEGORY = "od6sAutomation";
 
     static DEFAULT_OPTIONS = {
         id: "nonex-ist-od6s-automation-configuration",
-        classes: ["nonex-ist-od6s", "settings-config"],
-        tag: "form",
-        window: {
-            title: "NONEX_IST_OD6S.CONFIG_AUTOMATION_OPTIONS_MENU",
-            resizable: true,
-            minimizable: true,
-        },
-        position: {
-            width: 600,
-            height: "auto",
-        },
-        form: {
-            handler: od6sAutomationConfiguration.#onSubmit,
-            submitOnChange: true,
-            closeOnSubmit: false,
-        },
-        actions: {
-            closeForm: od6sAutomationConfiguration.#onCloseForm,
-        },
+        window: {title: "NONEX_IST_OD6S.CONFIG_AUTOMATION_OPTIONS_MENU"},
     };
 
-    static PARTS = {
-        form: {
-            template: "systems/nonex-ist-od6s/templates/settings/settings-v2.html",
-        },
-    };
-
-    async _prepareContext(_options?: object): Promise<object> {
-        const settings = Array.from(game.settings.settings)
-            .filter((s: any) => s[1].od6sAutomation)
-            .map((i: any) => i[1]);
-
-        for (const s of settings) {
-            s.inputType = s.type === Boolean ? "checkbox" : "text";
-            s.choice = typeof s.choices !== "undefined";
-            s.value = game.settings.get(s.namespace, s.key);
-        }
-
-        return {settings};
-    }
-
-    static async #onSubmit(
-        this: od6sAutomationConfiguration,
-        _event: Event,
-        _form: HTMLFormElement,
-        formData: any,
-    ): Promise<void> {
-        const data = formData.object;
-        for (const setting in data) {
-            await game.settings.set("nonex-ist-od6s", setting, data[setting]);
-            const s = game.settings.settings.get("nonex-ist-od6s." + setting);
-            if (s?.requiresReload) this.requiresWorldReload = true;
-        }
-    }
-
-    static async #onCloseForm(this: od6sAutomationConfiguration): Promise<void> {
-        if (this.requiresWorldReload) {
-            await foundry.applications.settings.SettingsConfig.reloadConfirm({world: true});
-        }
-        await this.close();
+    protected override settingGroups(): Array<{label: string; keys: string[]}> {
+        const P = "NONEX_IST_OD6S.";
+        return [
+            {label: P + "CONFIG_AUTOMATION_GROUP_ROLLS", keys: [
+                "auto_opposed", "auto_prompt_player_resistance", "auto_skill_used",
+            ]},
+            {label: P + "CONFIG_AUTOMATION_GROUP_STATUS", keys: [
+                "auto_stunned", "auto_incapacitated", "auto_mortally_wounded", "auto_status",
+            ]},
+            {label: P + "CONFIG_AUTOMATION_GROUP_DAMAGE", keys: [
+                "auto_explosive", "auto_armor_damage",
+            ]},
+        ];
     }
 }
