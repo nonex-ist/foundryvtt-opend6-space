@@ -10,6 +10,48 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Changed
+
+- System settings are now grouped into logical clusters (Customization, Points
+  & Dice, Rules & Combat, Automation, Appearance, Tools) instead of appearing in
+  an arbitrary order. The loose display and chat-colour toggles that used to sit
+  scattered in the main settings tab are collected into a new **Appearance**
+  menu, so the system's settings category shows tidy menu buttons. Setting keys
+  and scopes are unchanged, so existing worlds keep their saved values. The
+  Appearance menu stays open to players for their own client-scoped preferences
+  (chat colours, sheet opacity) while keeping world display toggles GM-only.
+- Settings panels now look and behave consistently: a shared base class backs
+  the list-style menus, every panel uses the same compact form styling and a
+  single **Close** button, custom-label fields show their built-in default as a
+  placeholder, and a footer note reminds you that **changes are saved
+  automatically**. Custom Labels wording was also tightened (concise labels +
+  hints that explain what each setting changes). Long panels (Custom Labels,
+  Rules Options, Automation) are split into labelled sections for readability.
+- Custom attributes (CA1–4) are consolidated into a dedicated **Custom
+  Attributes** menu — name, abbreviation, and active toggle per attribute in one
+  place — instead of being split between Custom Labels and Active Attributes.
+  (Display order still lives in Attribute Sorting.)
+- The **Custom Fields** menu was overhauled: each field is now a single card
+  (name, abbreviation, data type, and which actor types show it) instead of
+  sixteen loose rows, so it's clear which controls belong to which field.
+
+### Added
+
+- **Maintenance** settings menu (GM-only) with a **Repair legacy labels** tool
+  that re-runs the #189 stored-label repair on demand — handy after importing
+  actors from an old-id world once the one-shot migration has already passed.
+  It shares the same idempotent routine as the automatic migration and reports
+  how many labels it rewrote.
+
+### Fixed
+
+- Labels persisted as i18n keys in actor/item `system` data (character points,
+  fate points, character type, species, and vehicle/starship header fields)
+  were left pointing at the retired `OD6S.*` root after the 3.0.0 rename, so
+  migrated sheets showed the raw reference (e.g. `OD6S.Char_Char_Points_Short`)
+  instead of the label. A one-shot migration now rewrites these to the current
+  `NONEX_IST_OD6S.*` keys on first load. (#189)
+
 ## [3.0.1] - 2026-07-03
 
 ### Changed
