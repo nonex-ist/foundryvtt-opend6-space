@@ -2,7 +2,7 @@
   "id": "nonex-ist-od6s",
   "title": "OpenD6 Space",
   "description": "OpenD6 Space System for FoundryVTT",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14.364",
