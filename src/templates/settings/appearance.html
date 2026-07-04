@@ -7,17 +7,17 @@
         <label for="{{key}}">{{localize name}}</label>
         <div class="form-fields">
             {{#if (eq widget "checkbox")}}
-                <input type="checkbox" name="{{key}}" data-dtype="Boolean" {{#if value}}checked{{/if}}>
+                <input type="checkbox" name="{{key}}" id="{{key}}" data-dtype="Boolean" {{#if value}}checked{{/if}}>
             {{else}}
                 {{#if (eq widget "range")}}
-                    <input type="range" name="{{key}}" data-dtype="Number" value="{{value}}"
+                    <input type="range" name="{{key}}" id="{{key}}" data-dtype="Number" value="{{value}}"
                            min="{{range.min}}" max="{{range.max}}" step="{{range.step}}">
                     <span class="range-value">{{value}}</span>
                 {{else}}
                     {{#if (eq widget "color")}}
-                        <input type="color" name="{{key}}" data-dtype="String" value="{{value}}">
+                        <input type="color" name="{{key}}" id="{{key}}" data-dtype="String" value="{{value}}">
                     {{else}}
-                        <input type="text" name="{{key}}" data-dtype="String" value="{{value}}">
+                        <input type="text" name="{{key}}" id="{{key}}" data-dtype="String" value="{{value}}">
                     {{/if}}
                 {{/if}}
             {{/if}}

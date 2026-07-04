@@ -81,7 +81,7 @@ const MIGRATION_STEPS: Array<{ since: string; run: () => Promise<void> }> = [
 // flag bag rewritten before the legacy steps reach for them. 3.0.1 adds
 // the `migrateLegacySettings()` step so worlds that already ran the 3.0.0
 // flag migration still pick up their stranded `od6s.*` world settings. 3.0.2
-// adds `migrateLegacyLabelKeys()` to rewrite `OD6S.*` label keys still stored
+// adds `repairLegacyLabelKeys()` to rewrite `OD6S.*` label keys still stored
 // in document `system` data (#189).
 const CURRENT_MIGRATION_VERSION = "3.0.2";
 

@@ -11,10 +11,10 @@
                     <file-picker name="{{key}}" value="{{value}}" type="image"></file-picker>
                 {{else}}
                     {{#if (eq inputType "checkbox")}}
-                        <input type="checkbox" name="{{key}}" data-dtype="{{type.name}}"
+                        <input type="checkbox" name="{{key}}" id="{{key}}" data-dtype="{{type.name}}"
                                {{#if value}}checked{{/if}} data-field="{{type.name}}">
                     {{else}}
-                        <input type="{{inputType}}" name="{{key}}" data-dtype="{{type.name}}"
+                        <input type="{{inputType}}" name="{{key}}" id="{{key}}" data-dtype="{{type.name}}"
                                value="{{value}}" placeholder="{{placeholder}}" data-field="{{type.name}}">
                     {{/if}}
                 {{/if}}
