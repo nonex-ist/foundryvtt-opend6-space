@@ -1,4 +1,5 @@
 import OD6S from "../config/config-od6s";
+import {rebuildActorMask} from "./custom-field-mask";
 
 const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
 
@@ -87,12 +88,7 @@ export default class od6sCustomFieldsConfiguration extends HandlebarsApplication
             if (key.endsWith("_actor_types")) {
                 // The field submits a hidden current-mask value plus one entry per
                 // ticked actor type; rebuild the mask from those.
-                const raw = data[key];
-                const arr = (Array.isArray(raw) ? raw : [raw]).map(String);
-                let value = Number(arr[0]) || 0;
-                for (const type in OD6S.actorMasks) {
-                    value = od6sCustomFieldsConfiguration.#updateActorTypes(value, type, arr.includes(type));
-                }
+                const value = rebuildActorMask(data[key], OD6S.actorMasks);
                 if (Number(game.settings.get(NS, key)) === value) continue;
                 await game.settings.set(NS, key, value as never);
             } else {
@@ -102,11 +98,6 @@ export default class od6sCustomFieldsConfiguration extends HandlebarsApplication
             const s = game.settings.settings.get(`${NS}.${key}`);
             if (s?.requiresReload) this.requiresWorldReload = true;
         }
-    }
-
-    static #updateActorTypes(value: number, type: string, on: boolean): number {
-        const bit = 1 << OD6S.actorMasks[type];
-        return on ? value | bit : value & ~bit;
     }
 
     static async #onCloseForm(this: od6sCustomFieldsConfiguration): Promise<void> {

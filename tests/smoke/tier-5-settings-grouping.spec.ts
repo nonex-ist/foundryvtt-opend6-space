@@ -110,6 +110,51 @@ test.describe.serial("settings grouping", () => {
             .toBe(!before);
     });
 
+    test("a shared base-class panel (Automation) persists a change", async ({page}) => {
+        await loginAndWaitReady(page);
+
+        // Automation is an OD6SSettingsMenu subclass — this exercises the shared
+        // base's live-save path that all eight list panels rely on.
+        const before = await evalInWorld(page, (ns: string) => window.game.settings.get(ns, "auto_opposed") as boolean, NS);
+
+        const toggled = await evalInWorld(
+            page,
+            async (ns: string) => {
+                const menu = window.game.settings.menus.get(`${ns}.automation_menu`);
+                const app = new menu.type();
+                await app.render(true);
+                const el: HTMLElement | undefined = (app as {element?: HTMLElement}).element;
+                const box = el?.querySelector<HTMLInputElement>('input[name="auto_opposed"]');
+                if (!box) return false;
+                box.checked = !box.checked;
+                box.dispatchEvent(new Event("change", {bubbles: true}));
+                return true;
+            },
+            NS,
+        );
+        expect(toggled, "auto_opposed checkbox found and toggled").toBe(true);
+
+        await expect
+            .poll(async () => evalInWorld(page, (ns: string) => window.game.settings.get(ns, "auto_opposed"), NS), {
+                timeout: 8_000,
+                message: "auto_opposed should persist via the base-class save path",
+            })
+            .toBe(!before);
+
+        // Restore and close.
+        await evalInWorld(
+            page,
+            async (p: {ns: string; v: boolean}) => {
+                await window.game.settings.set(p.ns, "auto_opposed", p.v);
+                const app = [...window.foundry.applications.instances.values()].find(
+                    (a: {id?: string}) => a.id === "nonex-ist-od6s-automation-configuration",
+                ) as {close?: () => Promise<unknown>} | undefined;
+                await app?.close?.();
+            },
+            {ns: NS, v: before},
+        );
+    });
+
     test.afterAll(async ({browser}) => {
         const context = await browser.newContext({
             baseURL: process.env.FOUNDRY_URL ?? "http://localhost:30000",

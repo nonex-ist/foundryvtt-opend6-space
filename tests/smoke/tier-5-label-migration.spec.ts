@@ -39,6 +39,12 @@ const EXPECTED = {
 // it untouched rather than mint a new broken `NONEX_IST_OD6S.*` reference.
 const REMOVED_KEY = "OD6S.Some_Removed_Label";
 
+// Names for the item/token coverage test's synthetic docs.
+const ITEM_ACTOR = "smoke-mig-item-actor";
+const TOKEN_SRC = "smoke-mig-token-src";
+const WORLD_ITEM = "smoke-mig-world-item";
+const MIG_SCENE = "smoke-mig-scene";
+
 test.describe.serial("legacy OD6S.* stored-label migration", () => {
     test("rewrites stored label keys on an already-switched world so sheets localize", async ({page}) => {
         await loginAndWaitReady(page);
@@ -128,6 +134,86 @@ test.describe.serial("legacy OD6S.* stored-label migration", () => {
         expect(result.version).toBe("3.0.2");
     });
 
+    test("repairs legacy labels on world items, embedded items, and unlinked token actors", async ({page}) => {
+        await loginAndWaitReady(page);
+
+        const seeded = await evalInWorld(
+            page,
+            async (p: {names: Record<string, string>; skill: string; type: string}) => {
+                type Named = {name: string; delete: () => Promise<unknown>};
+                const drop = async (coll: Iterable<Named>, names: string[]) => {
+                    for (const d of [...coll].filter((x) => names.includes(x.name))) await d.delete();
+                };
+                await drop(window.game.actors, [p.names.itemActor, p.names.tokenSrc]);
+                await drop(window.game.items, [p.names.worldItem]);
+                await drop(window.game.scenes, [p.names.scene]);
+
+                // World item + an actor with an embedded item, both with legacy labels.
+                const wItem = await window.Item.create(
+                    {name: p.names.worldItem, type: "skill", system: {label: p.skill}},
+                    {render: false},
+                );
+                const actor = await window.Actor.create({name: p.names.itemActor, type: "character"}, {render: false});
+                const [eItem] = await actor.createEmbeddedDocuments("Item", [
+                    {name: "emb", type: "skill", system: {label: p.skill}},
+                ]);
+
+                // Unlinked token whose delta carries a legacy label the base lacks.
+                const proto = await window.Actor.create({name: p.names.tokenSrc, type: "character"}, {render: false});
+                const scene = await window.Scene.create({name: p.names.scene, width: 1000, height: 1000});
+                const [tok] = await scene.createEmbeddedDocuments("Token", [
+                    {name: "tok", x: 0, y: 0, actorId: proto.id, actorLink: false, delta: {system: {chartype: {label: p.type}}}},
+                ]);
+
+                await window.game.settings.set("nonex-ist-od6s", "migrationVersion", "3.0.1");
+
+                return {
+                    worldItemId: wItem.id,
+                    actorId: actor.id,
+                    embItemId: eItem.id,
+                    sceneId: scene.id,
+                    tokenId: tok.id,
+                    wLabel: wItem.system.toObject().label,
+                    eLabel: actor.items.get(eItem.id).system.toObject().label,
+                    tLabel: scene.tokens.get(tok.id).actor.system.toObject().chartype.label,
+                };
+            },
+            {
+                names: {itemActor: ITEM_ACTOR, tokenSrc: TOKEN_SRC, worldItem: WORLD_ITEM, scene: MIG_SCENE},
+                skill: "OD6S.Char_Skills",
+                type: "OD6S.Char_Type",
+            },
+        );
+
+        // Preconditions — the legacy labels persisted on each document type.
+        expect(seeded.wLabel).toBe("OD6S.Char_Skills");
+        expect(seeded.eLabel).toBe("OD6S.Char_Skills");
+        expect(seeded.tLabel).toBe("OD6S.Char_Type");
+
+        await loginAndWaitReady(page);
+
+        const result = await evalInWorld(
+            page,
+            (p: {worldItemId: string; actorId: string; embItemId: string; sceneId: string; tokenId: string}) => {
+                const wItem = window.game.items.get(p.worldItemId);
+                const actor = window.game.actors.get(p.actorId);
+                const scene = window.game.scenes.get(p.sceneId);
+                const tok = scene?.tokens.get(p.tokenId);
+                return {
+                    wLabel: wItem.system.toObject().label,
+                    eLabel: actor.items.get(p.embItemId).system.toObject().label,
+                    tLabel: tok?.actor?.system.toObject().chartype.label,
+                };
+            },
+            seeded,
+        );
+
+        // Every document type had its legacy label rewritten.
+        expect(result.wLabel).toBe("NONEX_IST_OD6S.CHAR_SKILLS");
+        expect(result.eLabel).toBe("NONEX_IST_OD6S.CHAR_SKILLS");
+        expect(result.tLabel).toBe("NONEX_IST_OD6S.CHAR_TYPE");
+    });
+
     test.afterAll(async ({browser}) => {
         // Remove the synthetic actor so re-runs start clean. Use an explicit
         // context with the config baseURL — browser.newPage() bypasses the
@@ -140,12 +226,16 @@ test.describe.serial("legacy OD6S.* stored-label migration", () => {
             await loginAndWaitReady(page);
             await evalInWorld(
                 page,
-                async (p: {name: string}) => {
-                    type WorldActor = {name: string; delete: () => Promise<unknown>};
-                    const leftover = ([...window.game.actors] as WorldActor[]).filter(a => a.name === p.name);
-                    for (const a of leftover) await a.delete();
+                async (p: {actorNames: string[]; itemNames: string[]; sceneNames: string[]}) => {
+                    type Named = {name: string; delete: () => Promise<unknown>};
+                    const drop = async (coll: Iterable<Named>, names: string[]) => {
+                        for (const d of [...coll].filter((x) => names.includes(x.name))) await d.delete();
+                    };
+                    await drop(window.game.actors, p.actorNames);
+                    await drop(window.game.items, p.itemNames);
+                    await drop(window.game.scenes, p.sceneNames);
                 },
-                {name: ACTOR_NAME},
+                {actorNames: [ACTOR_NAME, ITEM_ACTOR, TOKEN_SRC], itemNames: [WORLD_ITEM], sceneNames: [MIG_SCENE]},
             );
         } finally {
             await context.close();
