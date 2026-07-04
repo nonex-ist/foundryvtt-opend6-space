@@ -1,9 +1,18 @@
- 
 import OD6S from "../config/config-od6s";
-
 
 const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
 
+const NS = "nonex-ist-od6s";
+
+/**
+ * Custom Fields menu — define up to four extra info fields (name, abbreviation,
+ * data type, and which actor types show them). Each field is presented as a
+ * self-contained card rather than a flat run of sixteen unrelated rows.
+ *
+ * Actor-type visibility is stored as a bitmask (`OD6S.actorMasks`); the card
+ * renders a hidden input carrying the current mask plus one checkbox per actor
+ * type, and #onSubmit rebuilds the mask from whichever boxes are ticked.
+ */
 export default class od6sCustomFieldsConfiguration extends HandlebarsApplicationMixin(ApplicationV2) {
 
     requiresWorldReload = false;
@@ -38,50 +47,66 @@ export default class od6sCustomFieldsConfiguration extends HandlebarsApplication
     };
 
     async _prepareContext(_options?: object): Promise<object> {
-        const settings = Array.from(game.settings.settings)
-            .filter((s: any) => s[1].od6sCustomField)
-            .map((i: any) => i[1]);
+        const actorTypes = Object.keys(OD6S.actorMasks);
+        const typeChoices = {
+            number: game.i18n.localize("NONEX_IST_OD6S.NUMBER"),
+            string: game.i18n.localize("NONEX_IST_OD6S.STRING"),
+        };
 
-        for (const s of settings) {
-            s.inputType = s.type === Boolean ? "checkbox" : "text";
-            s.choice = typeof s.choices !== "undefined";
-            s.value = game.settings.get(s.namespace, s.key);
-        }
+        const fields = [1, 2, 3, 4].map((i) => {
+            const mask = Number(game.settings.get(NS, `custom_field_${i}_actor_types`)) || 0;
+            return {
+                index: i,
+                nameKey: `custom_field_${i}`,
+                shortKey: `custom_field_${i}_short`,
+                typeKey: `custom_field_${i}_type`,
+                actorTypesKey: `custom_field_${i}_actor_types`,
+                name: game.settings.get(NS, `custom_field_${i}`),
+                short: game.settings.get(NS, `custom_field_${i}_short`),
+                type: game.settings.get(NS, `custom_field_${i}_type`),
+                mask,
+                actors: actorTypes.map((t) => ({
+                    type: t,
+                    label: game.i18n.localize(`TYPES.Actor.${t}`),
+                    checked: (mask & (1 << OD6S.actorMasks[t])) !== 0,
+                })),
+            };
+        });
 
-        return {settings};
+        return {fields, typeChoices};
     }
 
     static async #onSubmit(
         this: od6sCustomFieldsConfiguration,
         _event: Event,
         _form: HTMLFormElement,
-        formData: any,
+        formData: {object: Record<string, unknown>},
     ): Promise<void> {
         const data = formData.object;
-        for (const setting in data) {
-            if (setting.includes("actor_types")) {
-                let value = data[setting][0];
+        for (const key in data) {
+            if (key.endsWith("_actor_types")) {
+                // The field submits a hidden current-mask value plus one entry per
+                // ticked actor type; rebuild the mask from those.
+                const raw = data[key];
+                const arr = (Array.isArray(raw) ? raw : [raw]).map(String);
+                let value = Number(arr[0]) || 0;
                 for (const type in OD6S.actorMasks) {
-                    value = data[setting].includes(type)
-                        ? od6sCustomFieldsConfiguration.#updateActorTypes(value, type, true)
-                        : od6sCustomFieldsConfiguration.#updateActorTypes(value, type, false);
+                    value = od6sCustomFieldsConfiguration.#updateActorTypes(value, type, arr.includes(type));
                 }
-                await game.settings.set("nonex-ist-od6s", setting, value);
+                if (Number(game.settings.get(NS, key)) === value) continue;
+                await game.settings.set(NS, key, value as never);
             } else {
-                await game.settings.set("nonex-ist-od6s", setting, data[setting]);
+                if (game.settings.get(NS, key) === data[key]) continue;
+                await game.settings.set(NS, key, data[key] as never);
             }
-            const s = game.settings.settings.get("nonex-ist-od6s." + setting);
+            const s = game.settings.settings.get(`${NS}.${key}`);
             if (s?.requiresReload) this.requiresWorldReload = true;
         }
     }
 
-    static #updateActorTypes(value: any, type: any, op: boolean): number {
-        if (op) {
-            value |= (1 << OD6S.actorMasks[type]);
-        } else {
-            value &= ~(1 << OD6S.actorMasks[type]);
-        }
-        return value;
+    static #updateActorTypes(value: number, type: string, on: boolean): number {
+        const bit = 1 << OD6S.actorMasks[type];
+        return on ? value | bit : value & ~bit;
     }
 
     static async #onCloseForm(this: od6sCustomFieldsConfiguration): Promise<void> {

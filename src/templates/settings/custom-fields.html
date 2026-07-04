@@ -1,51 +1,38 @@
-<div>
-    {{#each settings as |setting s|}}
-        <div class="form-group">
-            <label for="{{setting.key}}">{{localize setting.name}}</label>
-            <div class="form-fields">
-                {{#if setting.choice}}
-                    <select name="{{setting.key}}" id="{{setting.key}}">
-                        {{selectOptions setting.choices selected=setting.value localize=true}}
-                    </select>
-                {{else}}
-                    {{#if setting.actorType}}
-                        <input type="hidden" name="{{setting.key}}" value="{{setting.value}}">
-                        <input type="checkbox" name="{{setting.key}}"
-                               {{#if (getActorTypeConfig setting.value 'character')}}checked{{/if}}
-                               value="character" title="{{localize 'ACTOR.TypeCharacter'}}">
-                        <input type="checkbox" name="{{setting.key}}"
-                               {{#if (getActorTypeConfig setting.value 'npc')}}checked{{/if}}
-                               value="npc" title="{{localize 'ACTOR.TypeNpc'}}">
-                        <input type="checkbox" name="{{setting.key}}"
-                               {{#if (getActorTypeConfig setting.value 'creature')}}checked{{/if}}
-                               value="creature" title="{{localize 'ACTOR.TypeCreature'}}">
-                        <input type="checkbox" name="{{setting.key}}"
-                               {{#if (getActorTypeConfig setting.value 'vehicle')}}checked{{/if}}
-                               value="vehicle" title="{{localize 'ACTOR.TypeVehicle'}}">
-                        <input type="checkbox" name="{{setting.key}}"
-                               {{#if (getActorTypeConfig setting.value 'starship')}}checked{{/if}}
-                               value="starship" title="{{localize 'ACTOR.TypeStarship'}}">
-                    {{else}}
-                        {{#if (eq setting.filePicker "image")}}
-                            <file-picker name="{{setting.key}}" value="{{setting.value}}" type="image"></file-picker>
-                        {{else}}
-                            {{#if (eq setting.inputType "checkbox")}}
-                                <input type="checkbox" name="{{setting.key}}"
-                                       data-dtype="{{setting.type.name}}"
-                                       {{#if setting.value}}checked{{/if}}>
-                            {{else}}
-                                <input type="{{setting.inputType}}" name="{{setting.key}}"
-                                       data-dtype="{{setting.type.name}}"
-                                       value="{{setting.value}}">
-                            {{/if}}
-                        {{/if}}
-                    {{/if}}
-                {{/if}}
+<div class="nonex-ist-od6s-custom-fields">
+    <p class="notes">{{localize "NONEX_IST_OD6S.CONFIG_CUSTOM_FIELDS_HINT"}}</p>
+
+    {{#each fields}}
+    <fieldset class="custom-field-card">
+        <legend>{{localize "NONEX_IST_OD6S.CONFIG_CF_CARD"}} {{index}}</legend>
+        <div class="cf-grid">
+            <label for="{{nameKey}}">{{localize "NONEX_IST_OD6S.CONFIG_CF_NAME"}}</label>
+            <input type="text" name="{{nameKey}}" id="{{nameKey}}" value="{{name}}"
+                   placeholder="{{localize 'NONEX_IST_OD6S.CONFIG_CF_NAME_PLACEHOLDER'}}">
+
+            <label for="{{shortKey}}">{{localize "NONEX_IST_OD6S.CONFIG_CF_SHORT"}}</label>
+            <input type="text" name="{{shortKey}}" id="{{shortKey}}" value="{{short}}">
+
+            <label for="{{typeKey}}">{{localize "NONEX_IST_OD6S.CONFIG_CF_TYPE"}}</label>
+            <select name="{{typeKey}}" id="{{typeKey}}">
+                {{selectOptions ../typeChoices selected=type}}
+            </select>
+
+            <label>{{localize "NONEX_IST_OD6S.CONFIG_CF_SHOW_ON"}}</label>
+            <div class="cf-actors">
+                <input type="hidden" name="{{actorTypesKey}}" value="{{mask}}">
+                {{#each actors}}
+                <label class="cf-actor">
+                    <input type="checkbox" name="{{../actorTypesKey}}" value="{{type}}" {{#if checked}}checked{{/if}}>
+                    {{label}}
+                </label>
+                {{/each}}
             </div>
-            <p class="notes">{{{localize setting.hint}}}</p>
         </div>
+    </fieldset>
     {{/each}}
+
     <div class="submit">
-        <button type="submit" name="close" data-action="closeForm">{{localize "Submit"}}</button>
+        <span class="save-note"><i class="fas fa-circle-check"></i> {{localize "NONEX_IST_OD6S.SETTINGS_AUTOSAVE_NOTE"}}</span>
+        <button type="button" name="close" data-action="closeForm">{{localize "Close"}}</button>
     </div>
 </div>
