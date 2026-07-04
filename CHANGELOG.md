@@ -10,6 +10,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-07-04
+
 ### Changed
 
 - System settings are now grouped into logical clusters (Customization, Points
