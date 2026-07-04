@@ -1,0 +1,28 @@
+<div class="nonex-ist-od6s-custom-attributes">
+    <p class="notes">{{localize "NONEX_IST_OD6S.CONFIG_CUSTOM_ATTRIBUTES_HINT"}}</p>
+
+    <div class="ca-grid">
+        <div class="ca-row ca-head">
+            <span></span>
+            <span>{{localize "NONEX_IST_OD6S.CONFIG_CA_COL_NAME"}}</span>
+            <span>{{localize "NONEX_IST_OD6S.CONFIG_CA_COL_SHORT"}}</span>
+            <span>{{localize "NONEX_IST_OD6S.CONFIG_CA_COL_ACTIVE"}}</span>
+        </div>
+        {{#each rows}}
+        <div class="ca-row">
+            <label class="ca-index" for="{{nameKey}}">
+                {{localize "NONEX_IST_OD6S.CONFIG_CUSTOM_ATTRIBUTE_ROW"}} {{index}}
+            </label>
+            <input type="text" name="{{nameKey}}" id="{{nameKey}}"
+                   value="{{name}}" placeholder="{{namePlaceholder}}">
+            <input type="text" name="{{shortKey}}" value="{{short}}" placeholder="{{shortPlaceholder}}">
+            <input type="checkbox" name="{{activeKey}}" data-dtype="Boolean" {{#if active}}checked{{/if}}>
+        </div>
+        {{/each}}
+    </div>
+
+    <div class="submit">
+        <span class="save-note"><i class="fas fa-circle-check"></i> {{localize "NONEX_IST_OD6S.SETTINGS_AUTOSAVE_NOTE"}}</span>
+        <button type="button" name="close" data-action="closeForm">{{localize "Close"}}</button>
+    </div>
+</div>

@@ -18,8 +18,6 @@ const OPACITY_KEY = 'chat_background_opacity';
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
-let colorPickerHookRegistered = false;
-
 function applyOne(key: ChatColorKey, value: unknown) {
     const raw = typeof value === 'string' && HEX.test(value) ? value : DEFAULTS[key];
     document.documentElement.style.setProperty(`--nonex-ist-od6s-chat-color-${key}`, raw);
@@ -45,7 +43,8 @@ export function registerChatColorSettings() {
             name: game.i18n.localize(`NONEX_IST_OD6S.CONFIG_CHAT_COLOR_${k.toUpperCase()}`),
             hint: game.i18n.localize(`NONEX_IST_OD6S.CONFIG_CHAT_COLOR_${k.toUpperCase()}_DESCRIPTION`),
             scope: 'client',
-            config: true,
+            config: false,
+            od6sAppearance: true,
             type: String,
             default: DEFAULTS[k],
             onChange: (value: string) => applyOne(k, value),
@@ -56,26 +55,13 @@ export function registerChatColorSettings() {
         name: game.i18n.localize('NONEX_IST_OD6S.CONFIG_CHAT_BACKGROUND_OPACITY'),
         hint: game.i18n.localize('NONEX_IST_OD6S.CONFIG_CHAT_BACKGROUND_OPACITY_DESCRIPTION'),
         scope: 'client',
-        config: true,
+        config: false,
+        od6sAppearance: true,
         type: Number,
         default: 1,
         range: {min: 0, max: 2, step: 0.05},
         onChange: (value: number) => applyOpacity(value),
     });
-
-    // Upgrade the four text inputs to <input type="color"> in the settings UI.
-    // settings-od6s.ts re-runs registerSettings() on every renderSettingsConfig,
-    // so guard against accumulating handlers per settings-window open.
-    if (!colorPickerHookRegistered) {
-        colorPickerHookRegistered = true;
-        Hooks.on('renderSettingsConfig', (_app: any, html: any) => {
-            const root: HTMLElement = html?.jquery ? html[0] : html;
-            Object.values(SETTING_BY_KEY).forEach(key => {
-                const input = root.querySelector<HTMLInputElement>(`input[name="nonex-ist-od6s.${key}"]`);
-                if (input && input.type !== 'color') input.type = 'color';
-            });
-        });
-    }
 
     applyChatColors();
 }

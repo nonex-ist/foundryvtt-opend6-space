@@ -1,0 +1,48 @@
+{{!--
+    Appearance settings: display/sheet toggles + chat-colour pickers, grouped
+    into labelled sections. Widgets are inferred in config-appearance.ts.
+--}}
+{{#*inline "settingField"}}
+    <div class="form-group">
+        <label for="{{key}}">{{localize name}}</label>
+        <div class="form-fields">
+            {{#if (eq widget "checkbox")}}
+                <input type="checkbox" name="{{key}}" data-dtype="Boolean" {{#if value}}checked{{/if}}>
+            {{else}}
+                {{#if (eq widget "range")}}
+                    <input type="range" name="{{key}}" data-dtype="Number" value="{{value}}"
+                           min="{{range.min}}" max="{{range.max}}" step="{{range.step}}">
+                    <span class="range-value">{{value}}</span>
+                {{else}}
+                    {{#if (eq widget "color")}}
+                        <input type="color" name="{{key}}" data-dtype="String" value="{{value}}">
+                    {{else}}
+                        <input type="text" name="{{key}}" data-dtype="String" value="{{value}}">
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        </div>
+        <p class="notes">{{{localize hint}}}</p>
+    </div>
+{{/inline}}
+
+<div class="nonex-ist-od6s-appearance">
+    {{#if display.length}}
+        <fieldset>
+            <legend>{{localize "NONEX_IST_OD6S.CONFIG_APPEARANCE_DISPLAY"}}</legend>
+            {{#each display}}{{> settingField}}{{/each}}
+        </fieldset>
+    {{/if}}
+
+    {{#if chat.length}}
+        <fieldset>
+            <legend>{{localize "NONEX_IST_OD6S.CONFIG_APPEARANCE_CHAT"}}</legend>
+            {{#each chat}}{{> settingField}}{{/each}}
+        </fieldset>
+    {{/if}}
+
+    <div class="submit">
+        <span class="save-note"><i class="fas fa-circle-check"></i> {{localize "NONEX_IST_OD6S.SETTINGS_AUTOSAVE_NOTE"}}</span>
+        <button type="button" name="close" data-action="closeForm">{{localize "Close"}}</button>
+    </div>
+</div>
