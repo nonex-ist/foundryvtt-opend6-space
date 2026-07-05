@@ -10,6 +10,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-07-05
+
 ### Fixed
 
 - Rolling a skill or attribute with a penalty entered no longer requires two
