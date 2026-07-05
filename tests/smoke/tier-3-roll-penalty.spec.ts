@@ -94,3 +94,30 @@ test("penalty change updates the resulting-dice preview in place", async ({page}
         if (dlg) { try { await (dlg as any).close(); } catch { /* ignore */ } }
     });
 });
+
+test("clearing a penalty field still produces a valid roll", async ({page}) => {
+    await loginAndWaitReady(page);
+    await ensureSkillActor(page);
+    const before = await openRollDialog(page);
+
+    const dialog = page.locator("#nonex-ist-od6s-roll-dialog");
+    await expect(dialog).toBeVisible();
+
+    // Enter then clear the penalty. A cleared number input reports
+    // `valueAsNumber === NaN`; before normalization that NaN flowed into the
+    // dice math and broke roll-string generation (no valid message). The
+    // handler now coerces it to 0.
+    const penalty = dialog.locator("#actionpenalty");
+    await penalty.fill("3");
+    await penalty.fill("");
+    await dialog.locator(".dialog-submit").click();
+
+    await expect(dialog, "dialog closes on submit").toBeHidden();
+    const info = await evalInWorld(page, async () => {
+        const msgs = [...window.game.messages.values()];
+        const total = (msgs[msgs.length - 1] as any)?.rolls?.[0]?.total;
+        return {count: window.game.messages.size as number, isFinite: Number.isFinite(total)};
+    });
+    expect(info.count, "a roll message was created").toBe(before + 1);
+    expect(info.isFinite, "roll total is finite (cleared penalty coerced to 0)").toBe(true);
+});
