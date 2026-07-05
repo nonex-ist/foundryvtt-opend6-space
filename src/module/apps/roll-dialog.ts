@@ -3,6 +3,7 @@ import {od6sutilities} from "../system/utilities";
 import OD6S, {type CharacterPointLimits} from "../config/config-od6s";
 import {od6sroll} from "./roll";
 import {isCharacterActor} from "../system/type-guards";
+import {MESSAGE_MODES} from "../hooks/chat-mode";
 import type {RollData} from "./roll-helpers/roll-data";
 
 
@@ -74,8 +75,8 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         }
         if (typeof this.rollData.rollmode !== "string") {
             this.rollData.rollmode = (game.user.isGM && game.settings.get("nonex-ist-od6s", "hide-gm-rolls"))
-                ? "gmroll"
-                : "publicroll";
+                ? MESSAGE_MODES.GM
+                : MESSAGE_MODES.PUBLIC;
         }
         return this.rollData;
     }
@@ -88,10 +89,42 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     #submitted = false;
 
+    /**
+     * Refresh the "resulting dice" preview (`{{setDice ...}}`) in place, without
+     * re-rendering the whole dialog.
+     *
+     * A full `render()` on every numeric-modifier `change` re-rendered the form —
+     * and because `change` fires on blur, clicking the Roll button blurred the
+     * focused penalty input, tore down the DOM (including the submit button)
+     * mid-click, and swallowed the first click. Patching just the preview text
+     * keeps the submit button alive so a single click rolls (issue #193). Mirrors
+     * the `setDice` Handlebars helper: dice minus the four penalties, clamped ≥ 0.
+     */
+    #updateDicePreview(): void {
+        const root = this.element as HTMLElement | null;
+        const preview = root?.querySelector<HTMLElement>(".roll-dice-preview");
+        if (!preview) return;
+        const rd = this.rollData;
+        const dice = (+rd.dice || 0)
+            - (+rd.actionpenalty || 0)
+            - (+rd.woundpenalty || 0)
+            - (+rd.stunnedpenalty || 0)
+            - (+rd.otherpenalty || 0);
+        preview.textContent = String(dice > 0 ? dice : 0);
+    }
+
     _onRender(_context: object, _options: object): void {
         const root = this.element as HTMLElement;
         const find = (sel: string): HTMLElement | null => root.querySelector(sel);
         const findAll = (sel: string): NodeListOf<HTMLElement> => root.querySelectorAll(sel);
+
+        // Clearing a number input yields `valueAsNumber === NaN`; coerce to a
+        // safe default so it doesn't propagate into dice/difficulty math on
+        // submit.
+        const numField = (ev: Event, fallback = 0): number => {
+            const raw = (ev.target as HTMLInputElement).valueAsNumber;
+            return Number.isFinite(raw) ? raw : fallback;
+        };
 
         find(".cpup")?.addEventListener("click", async () => {
             let rollType = this.rollData.type;
@@ -149,15 +182,15 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         find("#scaledice")?.addEventListener("change", (ev) => {
-            this.rollData.scaledice = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.scaledice = numField(ev);
         });
 
         find("#bonusdice")?.addEventListener("change", (ev) => {
-            this.rollData.bonusdice = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.bonusdice = numField(ev);
         });
 
         find("#bonuspips")?.addEventListener("change", (ev) => {
-            this.rollData.bonuspips = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.bonuspips = numField(ev);
         });
 
         find(".timer input")?.addEventListener("change", async (ev) => {
@@ -216,34 +249,34 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             this.rollData.stun = !this.rollData.stun;
         });
 
-        find("#difficulty")?.addEventListener("change", async (ev) => {
-            this.rollData.difficulty = +(ev.target as HTMLInputElement).valueAsNumber;
-            await this.render();
+        find("#difficulty")?.addEventListener("change", (ev) => {
+            this.rollData.difficulty = numField(ev);
         });
 
-        find("#actionpenalty")?.addEventListener("change", async (ev) => {
-            this.rollData.actionpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
-            await this.render();
+        find("#actionpenalty")?.addEventListener("change", (ev) => {
+            this.rollData.actionpenalty = numField(ev);
+            this.#updateDicePreview();
         });
 
-        find("#woundpenalty")?.addEventListener("change", async (ev) => {
-            this.rollData.woundpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
-            await this.render();
+        find("#woundpenalty")?.addEventListener("change", (ev) => {
+            this.rollData.woundpenalty = numField(ev);
+            this.#updateDicePreview();
         });
 
-        find("#stunnedpenalty")?.addEventListener("change", async (ev) => {
-            this.rollData.stunnedpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
-            await this.render();
+        find("#stunnedpenalty")?.addEventListener("change", (ev) => {
+            this.rollData.stunnedpenalty = numField(ev);
+            this.#updateDicePreview();
         });
 
-        find("#otherpenalty")?.addEventListener("change", async (ev) => {
-            this.rollData.otherpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
-            await this.render();
+        find("#otherpenalty")?.addEventListener("change", (ev) => {
+            this.rollData.otherpenalty = numField(ev);
+            this.#updateDicePreview();
         });
 
-        find("#shots")?.addEventListener("change", async (ev) => {
-            this.rollData.shots = +(ev.target as HTMLInputElement).valueAsNumber;
-            await this.render();
+        find("#shots")?.addEventListener("change", (ev) => {
+            // Shots feeds `(shots - 1)` multishot math; an empty field means a
+            // single shot, so fall back to 1 (0 would flip the penalty into a bonus).
+            this.rollData.shots = numField(ev, 1);
         });
 
         find("#target")?.addEventListener("change", async (ev) => {
@@ -298,10 +331,8 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             await this.render();
         });
 
-        find("#miscmod")?.addEventListener("change", async (ev) => {
-            const raw = (ev.target as HTMLInputElement).valueAsNumber;
-            this.rollData.modifiers.miscmod = Number.isFinite(raw) ? raw : 0;
-            await this.render();
+        find("#miscmod")?.addEventListener("change", (ev) => {
+            this.rollData.modifiers.miscmod = numField(ev);
         });
 
         find("#vehiclespeed")?.addEventListener("change", (ev) => {

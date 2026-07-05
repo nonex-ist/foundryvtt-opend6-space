@@ -10,6 +10,26 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Fixed
+
+- Rolling a skill or attribute with a penalty entered no longer requires two
+  clicks — a single click on **Roll** now submits. The penalty field's `change`
+  event (fired on blur when the Roll button is pressed) previously re-rendered
+  the dialog and swallowed the first click; the resulting-dice preview now
+  updates in place instead. (#193)
+- Restored the **Use a Character Point** right-click option on roll chat cards,
+  which was silently non-functional on Foundry V14 — it was bound to a hook
+  Foundry no longer emits and used jQuery on what is now a plain HTML element.
+
+### Changed
+
+- Migrated the roll and chat pipeline off Foundry V14-deprecated APIs
+  (`Roll#toMessage` / `Combat#rollInitiative` `rollMode` → `messageMode`,
+  `CONST.DICE_ROLL_MODES` → message-mode keys, and
+  `SortingHelpers.performIntegerSort` → `foundry.utils.performIntegerSort`),
+  eliminating the deprecation warnings these logged on every roll. Chat-message
+  visibility classification still reads legacy values on historical messages.
+
 ## [3.1.0] - 2026-07-04
 
 ### Changed

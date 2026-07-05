@@ -4,6 +4,7 @@ import { boolCheck } from "./converters";
 import { getDiceFromScore } from "./dice";
 import { getActorFromUuid } from "./actors";
 import { isCharacterActor, isVehicleActor, isWeaponItem } from "../type-guards";
+import { MESSAGE_MODES } from "../../hooks/chat-mode";
 
 /**
  * Resolve a target actor's dodge score for the auto-explosive evade check.
@@ -220,15 +221,15 @@ export async function detonateExplosives(combat: Combat): Promise<void> {
                 await origMessage.unsetFlag('nonex-ist-od6s', 'isExplosive');
                 // Blind rolls also populate `whisper`, so the blind check
                 // must come first or it would never be reached.
-                let rollMode = CONST.DICE_ROLL_MODES.PUBLIC;
+                let messageMode: string = MESSAGE_MODES.PUBLIC;
                 if (origMessage.blind) {
-                    rollMode = CONST.DICE_ROLL_MODES.BLIND;
+                    messageMode = MESSAGE_MODES.BLIND;
                 } else if (origMessage.whisper.length > 0) {
-                    rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+                    messageMode = MESSAGE_MODES.GM;
                 }
                 await ChatMessage.deleteDocuments([origMessage.id]);
                 cloneMessage.flags["nonex-ist-od6s"].canUseCp = false;
-                cloneMessage.rolls[0].toMessage(cloneMessage, {rollMode});
+                cloneMessage.rolls[0].toMessage(cloneMessage, {messageMode});
             }
         }
     }

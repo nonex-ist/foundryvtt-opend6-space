@@ -18,6 +18,7 @@ import {od6sroll} from "../../apps/roll";
 import {od6sutilities} from "../../system/utilities";
 import OD6S from "../../config/config-od6s";
 import type {IncomingRollData} from "../../apps/roll-helpers/roll-data";
+import {MESSAGE_MODES} from "../../hooks/chat-mode";
 
 /**
  * Minimal sheet shape consumed by these helpers. Matches the pattern in
@@ -164,15 +165,15 @@ export async function rollBodyPoints(sheet: RollSheetLike): Promise<void> {
 
     const label = game.i18n.localize("NONEX_IST_OD6S.ROLLING") + " " + game.i18n.localize(OD6S.bodyPointsName);
 
-    let rollMode: string = CONST.DICE_ROLL_MODES.PUBLIC;
+    let messageMode: string = MESSAGE_MODES.PUBLIC;
     if (game.user.isGM && game.settings.get("nonex-ist-od6s", "hide-gm-rolls")) {
-        rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+        messageMode = MESSAGE_MODES.GM;
     }
     const roll = await new Roll(rollString).evaluate();
     await roll.toMessage({
         speaker: ChatMessage.getSpeaker(),
         flavor: label,
-    }, {rollMode, create: true});
+    }, {messageMode, create: true});
 
     await sheet.document.update({"system.wounds.body_points.max": roll.total});
 }

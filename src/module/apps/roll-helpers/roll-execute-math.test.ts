@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
     computeHighHitDamage,
     computeWildDieReduction,
-    resolveRollMode,
+    resolveMessageMode,
     applyDicePenalties,
     buildRollString,
     detectWildDieResult,
@@ -94,33 +94,33 @@ describe('computeWildDieReduction', () => {
     });
 });
 
-describe('resolveRollMode', () => {
-    it('defaults to publicroll for non-GM with no explicit choice', () => {
-        expect(resolveRollMode({ isGM: false, hideGmRolls: false })).toBe('publicroll');
-        expect(resolveRollMode({ isGM: false, hideGmRolls: true })).toBe('publicroll');
+describe('resolveMessageMode', () => {
+    it('defaults to public for non-GM with no explicit choice', () => {
+        expect(resolveMessageMode({ isGM: false, hideGmRolls: false })).toBe('public');
+        expect(resolveMessageMode({ isGM: false, hideGmRolls: true })).toBe('public');
     });
 
-    it('switches to gmroll for a GM with hide-gm-rolls enabled', () => {
-        expect(resolveRollMode({ isGM: true, hideGmRolls: true })).toBe('gmroll');
+    it('switches to gm for a GM with hide-gm-rolls enabled', () => {
+        expect(resolveMessageMode({ isGM: true, hideGmRolls: true })).toBe('gm');
     });
 
-    it('stays publicroll for a GM without hide-gm-rolls', () => {
-        expect(resolveRollMode({ isGM: true, hideGmRolls: false })).toBe('publicroll');
+    it('stays public for a GM without hide-gm-rolls', () => {
+        expect(resolveMessageMode({ isGM: true, hideGmRolls: false })).toBe('public');
     });
 
     it('explicit dialog choice always wins over hide-gm-rolls', () => {
         // Pin the contract for issue #77's footer mode selector: even a GM
-        // who has hide-gm-rolls on can still pick publicroll/blindroll/selfroll
+        // who has hide-gm-rolls on can still pick public/blind/self
         // and have it stick.
-        expect(resolveRollMode({ explicit: 'publicroll', isGM: true, hideGmRolls: true })).toBe('publicroll');
-        expect(resolveRollMode({ explicit: 'blindroll',  isGM: true, hideGmRolls: true })).toBe('blindroll');
-        expect(resolveRollMode({ explicit: 'selfroll',   isGM: true, hideGmRolls: true })).toBe('selfroll');
-        expect(resolveRollMode({ explicit: 'gmroll',     isGM: false, hideGmRolls: false })).toBe('gmroll');
+        expect(resolveMessageMode({ explicit: 'public', isGM: true, hideGmRolls: true })).toBe('public');
+        expect(resolveMessageMode({ explicit: 'blind',  isGM: true, hideGmRolls: true })).toBe('blind');
+        expect(resolveMessageMode({ explicit: 'self',   isGM: true, hideGmRolls: true })).toBe('self');
+        expect(resolveMessageMode({ explicit: 'gm',     isGM: false, hideGmRolls: false })).toBe('gm');
     });
 
     it('treats empty/null explicit as no choice', () => {
-        expect(resolveRollMode({ explicit: '', isGM: true, hideGmRolls: true })).toBe('gmroll');
-        expect(resolveRollMode({ explicit: null, isGM: false, hideGmRolls: false })).toBe('publicroll');
+        expect(resolveMessageMode({ explicit: '', isGM: true, hideGmRolls: true })).toBe('gm');
+        expect(resolveMessageMode({ explicit: null, isGM: false, hideGmRolls: false })).toBe('public');
     });
 });
 

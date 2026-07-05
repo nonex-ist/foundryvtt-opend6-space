@@ -72,5 +72,19 @@ describe('deriveRollMode', () => {
                 flags: { "nonex-ist-od6s": { rollMode: 'garbage' } },
             })).toBe('public');
         });
+
+        // New messages persist the v14 messageMode value (gm/self/blind/public);
+        // classification must honour it exactly like the legacy strings above.
+        it('classifies new messageMode flag values (gm/self/blind/public)', () => {
+            const base = { whisper: ['gm1'], author: { id: 'gm1' } };
+            expect(deriveRollMode({ ...base, flags: { "nonex-ist-od6s": { rollMode: 'gm' } } })).toBe('gm');
+            expect(deriveRollMode({ ...base, flags: { "nonex-ist-od6s": { rollMode: 'self' } } })).toBe('self');
+            expect(deriveRollMode({ ...base, flags: { "nonex-ist-od6s": { rollMode: 'blind' } } })).toBe('blind');
+            expect(deriveRollMode({
+                whisper: ['gm1'],
+                author: { id: 'u1' },
+                flags: { "nonex-ist-od6s": { rollMode: 'public' } },
+            })).toBe('public');
+        });
     });
 });

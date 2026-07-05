@@ -4,7 +4,7 @@ dotenv: [".env"]
 
 vars:
   # Foundry image tag. Defaults to the floating `14` major; pin to a
-  # specific build (e.g. `14.361`) via .env when you want reproducible
+  # specific build (e.g. `14.364`) via .env when you want reproducible
   # runs against the system.json `compatibility.verified` value.
   FOUNDRY_VERSION: '{{.FOUNDRY_VERSION | default "14"}}'
   CONTAINER_NAME: nonex-ist-od6s-foundry
@@ -17,13 +17,20 @@ vars:
   # explicitly so commands aren't sensitive to ambient state. Override via
   # .env (NERDCTL_NAMESPACE=k8s.io) if your container lives elsewhere.
   NERDCTL_NAMESPACE: '{{.NERDCTL_NAMESPACE | default "default"}}'
-  # Resolve the container runtime once. Prefer docker; fall back to
-  # `nerdctl --namespace=<ns>` so every downstream invocation targets the
-  # same namespace without each task remembering to pass the flag.
+  # Resolve the container runtime once. Prefer whichever runtime actually
+  # holds the Foundry container — otherwise a running Docker daemon hijacks
+  # detection even when the container lives in containerd (nerdctl), and
+  # `docker ps` never finds it. Only when neither runtime has the container
+  # yet (initial `foundry:start`) do we fall back to whichever daemon is up.
+  # The trailing `--namespace=<ns>` is carried on the nerdctl value so every
+  # downstream invocation targets the same namespace.
   CONTAINER_RT:
     sh: |
-      if docker info >/dev/null 2>&1; then echo docker
-      elif nerdctl info >/dev/null 2>&1; then echo "nerdctl --namespace={{.NERDCTL_NAMESPACE}}"
+      ns="{{.NERDCTL_NAMESPACE}}"; name="{{.CONTAINER_NAME}}"
+      if docker ps -a --format '{{"{{.Names}}"}}' 2>/dev/null | grep -qx "$name"; then echo docker
+      elif nerdctl --namespace="$ns" ps -a --format '{{"{{.Names}}"}}' 2>/dev/null | grep -qx "$name"; then echo "nerdctl --namespace=$ns"
+      elif docker info >/dev/null 2>&1; then echo docker
+      elif nerdctl info >/dev/null 2>&1; then echo "nerdctl --namespace=$ns"
       else echo none
       fi
 

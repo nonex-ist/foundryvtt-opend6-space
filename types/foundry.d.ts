@@ -92,6 +92,11 @@ declare namespace foundry {
         function getProperty(object: object, key: string): any;
         function setProperty(object: object, key: string, value: any): boolean;
         function randomID(length?: number): string;
+        // v13+ home of the sort helper (was `foundry.utils.SortingHelpers.performIntegerSort`).
+        function performIntegerSort<T>(
+            source: T,
+            options: { target: T | undefined | null; siblings: T[]; sortKey?: string; sortBefore?: boolean }
+        ): { target: T; update: Record<string, any> }[];
     }
 
     namespace applications {
@@ -1301,15 +1306,6 @@ interface FormDataExtended {
 declare var FormDataExtended: {
     new (form: HTMLFormElement): FormDataExtended;
 };
-
-// ---- SortingHelpers ----
-
-declare class SortingHelpers {
-    static performIntegerSort<T>(
-        source: T,
-        options: { target: T | undefined | null; siblings: T[]; sortKey?: string; sortBefore?: boolean }
-    ): { target: T; update: Record<string, any> }[];
-}
 
 // ---- jQuery (for v1 Application migration period) ----
 

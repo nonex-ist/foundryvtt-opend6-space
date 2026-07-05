@@ -74,7 +74,7 @@ export function computeWildDieReduction(
     return { discardedIndex: highest, newTotal };
 }
 
-export interface ResolveRollModeInput {
+export interface ResolveMessageModeInput {
     /** Per-roll mode chosen in the dialog, if any. Wins over hide-gm-rolls. */
     explicit?: string | null;
     isGM: boolean;
@@ -82,13 +82,14 @@ export interface ResolveRollModeInput {
 }
 
 /**
- * Resolve the rollMode passed to ChatMessage. An explicit dialog choice always
- * wins; otherwise GMs with `hide-gm-rolls` get gmroll, everyone else publicroll.
+ * Resolve the `messageMode` passed to ChatMessage (a key of
+ * `CONFIG.ChatMessage.modes`). An explicit dialog choice always wins; otherwise
+ * GMs with `hide-gm-rolls` get `gm`, everyone else `public`.
  */
-export function resolveRollMode(input: ResolveRollModeInput): string {
+export function resolveMessageMode(input: ResolveMessageModeInput): string {
     if (typeof input.explicit === "string" && input.explicit.length > 0) return input.explicit;
-    if (input.isGM && input.hideGmRolls) return "gmroll";
-    return "publicroll";
+    if (input.isGM && input.hideGmRolls) return "gm";
+    return "public";
 }
 
 export interface DicePenalties {
