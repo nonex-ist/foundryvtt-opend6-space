@@ -162,6 +162,9 @@ Hooks.on('i18nInit', () => {
     game.i18n.translations.ITEM.TypeManifestation = OD6S.manifestationName;
 })
 
-Hooks.on("getOD6SChatLogEntryContext", async (html, options) => {
-    await OD6SChat.chatContextMenu(html, options);
+// v14 fires `getChatMessageContextOptions` (the old `getChatLogEntryContext` /
+// our custom `getOD6SChatLogEntryContext` is never emitted). The menuItems
+// array is the second hook argument.
+Hooks.on("getChatMessageContextOptions", (_application, options) => {
+    OD6SChat.chatContextMenu(options);
 })
