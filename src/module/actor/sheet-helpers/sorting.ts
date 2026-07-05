@@ -37,7 +37,7 @@ export function onSortItem(sheet: ActorSheetLike, event: DragEvent, itemData: So
     }
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(source, {target, siblings});
+    const sortUpdates = foundry.utils.performIntegerSort(source, {target, siblings});
     const updateData = sortUpdates.map((u) => {
         const update = u.update;
         update._id = u.target!._id;
@@ -69,7 +69,7 @@ export async function onSortCrew(sheet: ActorSheetLike, event: DragEvent, data: 
         }
     }
 
-    const sortUpdates = SortingHelpers.performIntegerSort(source, {target, siblings});
+    const sortUpdates = foundry.utils.performIntegerSort(source, {target, siblings});
 
     const updateData = sortUpdates.map((u) => {
         const update = u.update;
@@ -113,7 +113,7 @@ export async function onSortCargoItem(sheet: ActorSheetLike, event: DragEvent, i
     const target = siblings.find((s: Item) => s._id === targetId);
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(source, {target: target, siblings});
+    const sortUpdates = foundry.utils.performIntegerSort(source, {target: target, siblings});
     const updateData = sortUpdates.map((u) => {
         const update = u.update;
         update._id = u.target!._id;
@@ -144,7 +144,7 @@ export async function onSortContainerItem(sheet: ActorSheetLike, event: DragEven
     if (target && (source!.type !== target.type)) return;
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(source, {target: target, siblings});
+    const sortUpdates = foundry.utils.performIntegerSort(source, {target: target, siblings});
     const updateData = sortUpdates.map((u) => {
         const update = u.update;
         update._id = u.target!._id;

@@ -1,5 +1,6 @@
 import {od6sutilities} from "../system/utilities";
 import {InitRollDialog} from "./init-roll-dialog";
+import {MESSAGE_MODES} from "../hooks/chat-mode";
 
 export class od6sInitRoll {
 
@@ -96,10 +97,11 @@ export class od6sInitRoll {
         const messageOptions: any = {
             'flags.nonex-ist-od6s.canUseCp': true
         };
-        if (game.user.isGM && game.settings.get('nonex-ist-od6s', 'hide-gm-rolls')) messageOptions.rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
-        await game.combats.active.rollInitiative(rollData.combatantId, {
-            "formula": rollString,
-            "messageOptions": messageOptions
-        });
+        const initOptions: {formula: string; messageOptions: any; messageMode?: string} = {
+            formula: rollString,
+            messageOptions,
+        };
+        if (game.user.isGM && game.settings.get('nonex-ist-od6s', 'hide-gm-rolls')) initOptions.messageMode = MESSAGE_MODES.GM;
+        await game.combats.active.rollInitiative(rollData.combatantId, initOptions);
     }
 }

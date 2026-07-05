@@ -1,6 +1,7 @@
 import {od6sutilities} from "../../system/utilities";
 import OD6S from "../../config/config-od6s";
 import {isVehicleActor} from "../../system/type-guards";
+import {MESSAGE_MODES} from "../../hooks/chat-mode";
 import {
     isCrewMemberByFlag,
     canRemoveFromCrew,
@@ -224,16 +225,16 @@ async function rollVehicleCollision(
         }
     }
 
-    let rollMode: string = CONST.DICE_ROLL_MODES.PUBLIC;
+    let messageMode: string = MESSAGE_MODES.PUBLIC;
     if (game.user.isGM && game.settings.get("nonex-ist-od6s", "hide-gm-rolls")) {
-        rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+        messageMode = MESSAGE_MODES.GM;
     }
 
     const rollMessage = await roll.toMessage({
         speaker: ChatMessage.getSpeaker({actor: game.actors.find((a: Actor) => a.id === actor.id)}),
         flavor: label,
         flags: {"nonex-ist-od6s": flags},
-    }, {rollMode, create: true});
+    }, {messageMode, create: true});
 
     if (flags.wild === true && OD6S.wildDieOneDefault === 2 && OD6S.wildDieOneAuto === 0) {
         type DieResult = { result: number; discarded?: boolean; active?: boolean };

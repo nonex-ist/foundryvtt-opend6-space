@@ -2,6 +2,7 @@ import OD6S from "../../config/config-od6s";
 import { getDiceFromScore } from "./dice";
 import { getScoreFromSkill } from "./skills";
 import { isCharacterActor, isWeaponItem } from "../type-guards";
+import { MESSAGE_MODES } from "../../hooks/chat-mode";
 
 /**
  * Calculate Strength Damage die code from a Strength die count.
@@ -104,15 +105,15 @@ export async function getWeaponRange(actor: Actor, item: Item): Promise<Record<s
             origRange: range,
         };
         const label = game.i18n.localize('NONEX_IST_OD6S.RANGE_ROLL') + ": " + item.name;
-        let rollMode = CONST.DICE_ROLL_MODES.PUBLIC;
-        if (game.user.isGM && game.settings.get('nonex-ist-od6s', 'hide-gm-rolls')) rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+        let messageMode: string = MESSAGE_MODES.PUBLIC;
+        if (game.user.isGM && game.settings.get('nonex-ist-od6s', 'hide-gm-rolls')) messageMode = MESSAGE_MODES.GM;
         await roll.toMessage({
             speaker: ChatMessage.getSpeaker(),
             flavor: label,
             flags: {
                 "nonex-ist-od6s": flags
             },
-        }, {rollMode, create: true})
+        }, {messageMode, create: true})
     }
     return newRanges;
 }

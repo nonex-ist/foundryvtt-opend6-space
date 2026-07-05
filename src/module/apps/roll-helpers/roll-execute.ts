@@ -11,7 +11,7 @@ import type {RollData, RollMessageFlags} from "./roll-data";
 import {
     computeHighHitDamage,
     computeWildDieReduction,
-    resolveRollMode,
+    resolveMessageMode,
     applyDicePenalties,
     buildRollString,
     detectWildDieResult,
@@ -53,7 +53,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
     }
 
     rollData.isknown = true;
-    const rollMode: string = resolveRollMode({
+    const messageMode: string = resolveMessageMode({
         explicit: typeof rollData.rollmode === "string" ? rollData.rollmode : null,
         isGM: !!game.user.isGM,
         hideGmRolls: !!game.settings.get('nonex-ist-od6s', 'hide-gm-rolls'),
@@ -175,7 +175,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
     const scaleDice = damageAssembly.scaleDice;
 
     const flags: RollMessageFlags = {
-        "rollMode": rollMode,
+        "rollMode": messageMode,
         "actorId": rollData.actor.id,
         "targetName": targetName,
         "targetId": targetId,
@@ -388,7 +388,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
             flavor: label,
             flags: {"nonex-ist-od6s": flags}
         },
-        {rollMode, create: true}
+        {messageMode, create: true}
     );
 
     if (flags.wild === true && OD6S.wildDieOneDefault === 2 && OD6S.wildDieOneAuto === 0) {

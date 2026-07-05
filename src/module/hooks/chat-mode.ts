@@ -18,7 +18,32 @@ export interface DeriveRollModeInput {
     flags?: { "nonex-ist-od6s"?: { rollMode?: string } } | null;
 }
 
+/**
+ * Canonical Foundry v14 message-visibility modes — keys of
+ * `CONFIG.ChatMessage.modes`, passed as the `messageMode` option to
+ * `Roll#toMessage` / `Combat#rollInitiative`. Replaces the deprecated
+ * `CONST.DICE_ROLL_MODES`, whose `PUBLIC`/`PRIVATE`/`BLIND`/`SELF` returned the
+ * old `publicroll`/`gmroll`/`blindroll`/`selfroll` strings.
+ */
+export const MESSAGE_MODES = {
+    PUBLIC: 'public',
+    GM:     'gm',
+    BLIND:  'blind',
+    SELF:   'self',
+} as const satisfies Record<string, RollMode>;
+
+/**
+ * Classify a persisted mode flag into one of the four modes. Accepts both the
+ * current `messageMode` values and the legacy pre-v14 `publicroll`/… strings
+ * that historical chat messages still carry in `flags.nonex-ist-od6s.rollMode`.
+ */
 const PERSISTED_TO_MODE: Record<string, RollMode> = {
+    // current messageMode keys
+    public: 'public',
+    gm:     'gm',
+    blind:  'blind',
+    self:   'self',
+    // legacy pre-v14 rollMode strings (still present on older messages)
     publicroll: 'public',
     gmroll:     'gm',
     blindroll:  'blind',

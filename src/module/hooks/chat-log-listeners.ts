@@ -7,6 +7,7 @@ import {OD6SEditDamage} from "../apps/edit-damage";
 import {OD6SChooseTarget} from "../apps/choose-target";
 import {OD6SHandleWildDieForm} from "../apps/handle-wild-die";
 import {error as logError} from "../system/logger";
+import {MESSAGE_MODES} from "./chat-mode";
 
 // Delegated event helper: attaches a listener on a parent that fires when a child matching selector is the target.
 // Wraps the handler so async failures leave a `[nonex-ist-od6s:chat-log]` breadcrumb instead of unhandled rejections.
@@ -257,8 +258,8 @@ export function registerChatLogListeners() {
                 }
             }
 
-            let rollMode = CONST.DICE_ROLL_MODES.PUBLIC;
-            if (game.user.isGM && game.settings.get('nonex-ist-od6s', 'hide-gm-rolls')) rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+            let messageMode: string = MESSAGE_MODES.PUBLIC;
+            if (game.user.isGM && game.settings.get('nonex-ist-od6s', 'hide-gm-rolls')) messageMode = MESSAGE_MODES.GM;
 
             const rollMessage = await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({actor: game.actors.find(a => a.id === data.actor)}),
@@ -266,7 +267,7 @@ export function registerChatLogListeners() {
                 flags: {
                     "nonex-ist-od6s": flags
                 },
-            }, {rollMode, create: true});
+            }, {messageMode, create: true});
 
             if (flags.wild === true && OD6S.wildDieOneDefault === 2 && OD6S.wildDieOneAuto === 0) {
                 const replacementRoll = JSON.parse(JSON.stringify(rollMessage.rolls[0].toJSON()));

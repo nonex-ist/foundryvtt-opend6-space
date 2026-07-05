@@ -1,4 +1,5 @@
 import {od6sInitRoll} from "../apps/init-roll";
+import {MESSAGE_MODES} from "../hooks/chat-mode";
 
 export class OD6SCombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
     /**
@@ -12,10 +13,10 @@ export class OD6SCombatTracker extends foundry.applications.sidebar.tabs.CombatT
             void od6sInitRoll._onInitRollDialog(this.viewed, combatant);
             return undefined;
         }
-        const messageOptions: Record<string, unknown> = {};
+        const options: {messageMode?: string} = {};
         if (game.user.isGM && game.settings.get("nonex-ist-od6s", "hide-gm-rolls")) {
-            messageOptions.rollMode = CONST.DICE_ROLL_MODES.PRIVATE;
+            options.messageMode = MESSAGE_MODES.GM;
         }
-        return this.viewed.rollInitiative([combatant.id], {messageOptions});
+        return this.viewed.rollInitiative([combatant.id], options);
     }
 }

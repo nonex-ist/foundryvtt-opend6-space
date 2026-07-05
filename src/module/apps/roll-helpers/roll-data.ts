@@ -105,6 +105,7 @@ export interface RollData {
     stun: boolean;
     attackerScale: number;
     modifiers: RollModifiers;
+    /** messageMode chosen in the roll dialog (`public`/`gm`/`blind`/`self`). */
     rollmode?: string;
     /**
      * Region id of the explosive blast template tied to this roll. Set by
@@ -194,9 +195,11 @@ export interface RollMessageFlags {
     targets?: unknown;
     originalroll?: unknown;
     /**
-     * Persisted roll mode chosen at message creation. Read by chat-mode.ts so
+     * Persisted message-visibility mode chosen at message creation — a
+     * `messageMode` key (`public`/`gm`/`blind`/`self`). Read by chat-mode.ts so
      * the renderer can distinguish self vs gm in single-GM worlds, where
-     * `whisper === [author.id]` is ambiguous.
+     * `whisper === [author.id]` is ambiguous. (Historical messages may still
+     * carry the legacy `publicroll`/… values; chat-mode.ts maps both.)
      */
     rollMode?: string;
     /**
