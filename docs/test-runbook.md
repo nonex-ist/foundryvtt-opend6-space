@@ -96,6 +96,16 @@ actors/items. Any failure prints a screenshot path and trace zip for
   chat message created, zero v14 deprecation warnings.
 - **Tier 3b** (`tier-3-skill-roll`): skill item roll → dialog opens → submit
   → chat message created.
+- **Tier 3b** (`tier-3-roll-penalty`, regression #193): enter a penalty then
+  click Roll **once** (real pointer events) → dialog closes and exactly one
+  chat message is created — the penalty `change` (fired on blur by the click)
+  must not re-render and swallow the click. Also: penalty change updates the
+  `.roll-dice-preview` in place.
+- **Tier 3b** (`tier-3-chat-cp-menu`, v14 regression): the "Use a Character
+  Point" entry registers on the `getChatMessageContextOptions` hook, is
+  `visible` for an owned character's roll message (HTMLElement row) while CP
+  remain, and `onClick` spends one point. Message is created via
+  `roll.toMessage(..., {messageMode})`, covering the message-mode migration.
 - **Tier 3c** (`tier-3-wounds`): wound transitions Healthy → Wounded →
   Severely Wounded; `toggleStatusEffect` fires without schema errors.
 - **Tier 3d** (`tier-3-combat`): scene + combat creation, combatant added,
