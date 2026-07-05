@@ -241,32 +241,42 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             this.rollData.stun = !this.rollData.stun;
         });
 
+        // Clearing a number input yields `valueAsNumber === NaN`; coerce to a
+        // safe default so it doesn't propagate into dice/difficulty math on
+        // submit (matches the `#miscmod` handling below).
+        const numField = (ev: Event, fallback = 0): number => {
+            const raw = (ev.target as HTMLInputElement).valueAsNumber;
+            return Number.isFinite(raw) ? raw : fallback;
+        };
+
         find("#difficulty")?.addEventListener("change", (ev) => {
-            this.rollData.difficulty = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.difficulty = numField(ev);
         });
 
         find("#actionpenalty")?.addEventListener("change", (ev) => {
-            this.rollData.actionpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.actionpenalty = numField(ev);
             this.#updateDicePreview();
         });
 
         find("#woundpenalty")?.addEventListener("change", (ev) => {
-            this.rollData.woundpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.woundpenalty = numField(ev);
             this.#updateDicePreview();
         });
 
         find("#stunnedpenalty")?.addEventListener("change", (ev) => {
-            this.rollData.stunnedpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.stunnedpenalty = numField(ev);
             this.#updateDicePreview();
         });
 
         find("#otherpenalty")?.addEventListener("change", (ev) => {
-            this.rollData.otherpenalty = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.otherpenalty = numField(ev);
             this.#updateDicePreview();
         });
 
         find("#shots")?.addEventListener("change", (ev) => {
-            this.rollData.shots = +(ev.target as HTMLInputElement).valueAsNumber;
+            // Shots feeds `(shots - 1)` multishot math; an empty field means a
+            // single shot, so fall back to 1 (0 would flip the penalty into a bonus).
+            this.rollData.shots = numField(ev, 1);
         });
 
         find("#target")?.addEventListener("change", async (ev) => {
@@ -322,8 +332,7 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         find("#miscmod")?.addEventListener("change", (ev) => {
-            const raw = (ev.target as HTMLInputElement).valueAsNumber;
-            this.rollData.modifiers.miscmod = Number.isFinite(raw) ? raw : 0;
+            this.rollData.modifiers.miscmod = numField(ev);
         });
 
         find("#vehiclespeed")?.addEventListener("change", (ev) => {
