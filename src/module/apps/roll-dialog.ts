@@ -118,6 +118,14 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         const find = (sel: string): HTMLElement | null => root.querySelector(sel);
         const findAll = (sel: string): NodeListOf<HTMLElement> => root.querySelectorAll(sel);
 
+        // Clearing a number input yields `valueAsNumber === NaN`; coerce to a
+        // safe default so it doesn't propagate into dice/difficulty math on
+        // submit.
+        const numField = (ev: Event, fallback = 0): number => {
+            const raw = (ev.target as HTMLInputElement).valueAsNumber;
+            return Number.isFinite(raw) ? raw : fallback;
+        };
+
         find(".cpup")?.addEventListener("click", async () => {
             let rollType = this.rollData.type;
             const actor = this.rollData.actor;
@@ -174,15 +182,15 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         find("#scaledice")?.addEventListener("change", (ev) => {
-            this.rollData.scaledice = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.scaledice = numField(ev);
         });
 
         find("#bonusdice")?.addEventListener("change", (ev) => {
-            this.rollData.bonusdice = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.bonusdice = numField(ev);
         });
 
         find("#bonuspips")?.addEventListener("change", (ev) => {
-            this.rollData.bonuspips = +(ev.target as HTMLInputElement).valueAsNumber;
+            this.rollData.bonuspips = numField(ev);
         });
 
         find(".timer input")?.addEventListener("change", async (ev) => {
@@ -240,14 +248,6 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         find("#stun")?.addEventListener("click", async () => {
             this.rollData.stun = !this.rollData.stun;
         });
-
-        // Clearing a number input yields `valueAsNumber === NaN`; coerce to a
-        // safe default so it doesn't propagate into dice/difficulty math on
-        // submit (matches the `#miscmod` handling below).
-        const numField = (ev: Event, fallback = 0): number => {
-            const raw = (ev.target as HTMLInputElement).valueAsNumber;
-            return Number.isFinite(raw) ? raw : fallback;
-        };
 
         find("#difficulty")?.addEventListener("change", (ev) => {
             this.rollData.difficulty = numField(ev);
