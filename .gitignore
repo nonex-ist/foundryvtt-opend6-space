@@ -32,6 +32,10 @@ Thumbs.db
 # Secrets
 .env
 
+# MCP config — holds a machine-absolute path to scripts/mcp-*-auth.sh,
+# so it is per-clone and never committed. Regenerate with `task setup:mcp`.
+.mcp.json
+
 # Foundry test instance data
 .foundry-data/
 

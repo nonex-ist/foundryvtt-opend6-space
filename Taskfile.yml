@@ -82,6 +82,7 @@ tasks:
     cmds:
       - task: check:prereqs
       - task: setup:secrets
+      - task: setup:mcp
       - task: setup:deps
       - task: build
       - echo ""
@@ -125,6 +126,32 @@ tasks:
         done < .env.1password
         mv "$TMPENV" .env; trap - EXIT
         echo "Secrets materialized to .env"
+
+  setup:mcp:
+    desc: Generate .mcp.json wiring the github + context7 MCPs to this clone's auth helpers
+    silent: true
+    cmds:
+      - |
+        gh_helper="{{.ROOT_DIR}}/scripts/mcp-github-auth.sh"
+        c7_helper="{{.ROOT_DIR}}/scripts/mcp-context7-auth.sh"
+        chmod +x "$gh_helper" "$c7_helper"
+        cat > .mcp.json <<EOF
+        {
+          "mcpServers": {
+            "github": {
+              "type": "http",
+              "url": "https://api.githubcopilot.com/mcp",
+              "headersHelper": "$gh_helper"
+            },
+            "context7": {
+              "type": "http",
+              "url": "https://mcp.context7.com/mcp",
+              "headersHelper": "$c7_helper"
+            }
+          }
+        }
+        EOF
+        echo "✓ .mcp.json written (github → $gh_helper, context7 → $c7_helper)"
 
   # ── Build ────────────────────────────────────────────────────────
 
