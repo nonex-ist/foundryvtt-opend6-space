@@ -10,6 +10,16 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Fixed
+
+- Custom Field 1 now saves correctly on character actors. The character schema
+  accidentally overrode `custom1` with a bare string field while the sheet
+  bound `system.custom1.value`, so entered values were destroyed on save
+  (stored as the literal `[object Object]`). The schema now matches the common
+  `{ value }` shape used by fields 2–4 and all other actor types; stored
+  plain-string values are migrated on load and the unrecoverable cast artifact
+  is cleared. (#190)
+
 ## [3.1.1] - 2026-07-05
 
 ### Fixed
