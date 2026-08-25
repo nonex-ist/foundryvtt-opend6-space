@@ -1,9 +1,15 @@
 import { attributesSchema } from "./fields/attributes";
 import { commonSchema } from "./fields/common";
+import { migrateCharacterSource } from "./character-migration";
 
 const fields = foundry.data.fields;
 
 export default class CharacterData extends foundry.abstract.TypeDataModel {
+  static migrateData(source: Record<string, unknown>) {
+    migrateCharacterSource(source);
+    return super.migrateData(source);
+  }
+
   static defineSchema() {
     return {
       ...attributesSchema(),
@@ -65,7 +71,6 @@ export default class CharacterData extends foundry.abstract.TypeDataModel {
         label: new fields.StringField({ initial: "NONEX_IST_OD6S.METAPHYSICS_EXTRANORMAL" }),
         value: new fields.BooleanField({ initial: false }),
       }),
-      custom1: new fields.StringField({ initial: "" }),
       vehicle: new fields.ObjectField({ initial: {} }),
     };
   }
