@@ -237,13 +237,20 @@ tasks:
       - sh: '{{.CONTAINER_RT}} ps --format ''{{"{{.Names}}"}}'' 2>/dev/null | grep -q ''^{{.CONTAINER_NAME}}$'''
         msg: "Foundry container is not running. Run 'task foundry:start' first."
     cmds:
-      - mkdir -p test-results
       - |
-        # Tee combined stdout+stderr to test-results/smoke.log while still
-        # streaming to the terminal. Preserves Playwright's exit code via
-        # PIPESTATUS so the task fails when tests fail.
+        # Tee combined stdout+stderr to a temp file while still streaming to
+        # the terminal, then move it into test-results/ afterwards. Teeing
+        # straight into test-results/ loses the log: Playwright wipes its
+        # outputDir at startup, after tee has already opened the file.
+        # pipefail keeps Playwright's exit code so the task fails when tests
+        # fail; the log is moved into place either way.
         set -o pipefail
-        pnpm run test:smoke 2>&1 | tee test-results/smoke.log
+        log="$(mktemp)"
+        status=0
+        pnpm run test:smoke 2>&1 | tee "$log" || status=$?
+        mkdir -p test-results
+        mv "$log" test-results/smoke.log
+        exit $status
       - echo ""
       - echo "Logs   → test-results/smoke.log"
       - echo "JSON   → test-results/smoke-report.json"
