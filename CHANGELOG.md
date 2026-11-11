@@ -10,6 +10,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-11-11
+
 ### Changed
 
 - Custom Fields and Custom Attributes are no longer capped at four fixed slots
