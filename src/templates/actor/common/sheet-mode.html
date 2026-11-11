@@ -14,14 +14,14 @@
                 <button type="button" class="session-reset-button">{{localize 'NONEX_IST_OD6S.RESET_SESSION'}}</button>
             {{/if}}
         {{/if}}
+        {{#if (ne actor.system.sheetmode.value "normal")}}
+            <div class="sheet-mode-banner" role="status">
+                {{#if (eq actor.system.sheetmode.value "advance")}}
+                    {{localize 'NONEX_IST_OD6S.SHEET_MODE_NOT_NORMAL_BANNER' mode=(localize 'NONEX_IST_OD6S.SHEETMODE_ADVANCE')}}
+                {{else}}
+                    {{localize 'NONEX_IST_OD6S.SHEET_MODE_NOT_NORMAL_BANNER' mode=(localize 'NONEX_IST_OD6S.SHEETMODE_FREEDIT')}}
+                {{/if}}
+            </div>
+        {{/if}}
     </div>
-    {{#if (ne actor.system.sheetmode.value "normal")}}
-        <div class="sheet-mode-banner" role="status">
-            {{#if (eq actor.system.sheetmode.value "advance")}}
-                {{localize 'NONEX_IST_OD6S.SHEET_MODE_NOT_NORMAL_BANNER' mode=(localize 'NONEX_IST_OD6S.SHEETMODE_ADVANCE')}}
-            {{else}}
-                {{localize 'NONEX_IST_OD6S.SHEET_MODE_NOT_NORMAL_BANNER' mode=(localize 'NONEX_IST_OD6S.SHEETMODE_FREEDIT')}}
-            {{/if}}
-        </div>
-    {{/if}}
 </section>

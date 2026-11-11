@@ -271,8 +271,11 @@
   }
 
   .sheet-mode-banner {
-    margin-top: 4px;
-    padding: 4px 10px;
+    // Inline with the mode select: must not add a footer row (the sheet
+    // body would shrink and push tab content out of view).
+    flex: 0 1 auto;
+    margin: 0 0 0 8px;
+    padding: 1px 8px;
     border: 1px solid $c-warning;
     border-left-width: 4px;
     border-radius: 3px;

@@ -48,8 +48,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 - Confirmation prompts for removing an embedded pilot, deleting an effect,
   resetting the stun counter and Session Reset; the item delete prompt names
   the item.
-- A banner shows when a sheet is in Advance or Free Edit mode (rolling is
-  disabled there).
+- A notice next to the sheet-mode selector shows when a sheet is in Advance
+  or Free Edit mode (rolling is disabled there).
 - Selecting a card for an opposed roll is now highlighted and can be undone
   by clicking it again; Apply Damage warns when the target token is not on
   the active scene; chat card errors surface as notifications.
