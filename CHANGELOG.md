@@ -10,6 +10,8 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-11-11
+
 ### Fixed
 
 - 41 localization keys referenced by sheets, chat cards and settings were
@@ -68,6 +70,9 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
   `en.json`; lint warning ceiling lowered from 720/1100 to 195.
 - Dev dependencies updated (audit findings 48 → 3); removed finished one-off
   codemod scripts and dead V1 `activateListeners` stubs.
+- Pinned Node bumped to 24.22.2; smoke coverage added for the sheet-mode
+  notice and read-only sheets, plus a naming check for Babele compendium
+  translation files (which also fixed the `specialabilities` file names).
 
 ## [3.2.0] - 2026-11-11
 
