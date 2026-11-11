@@ -91,6 +91,7 @@ declare namespace foundry {
         function isNewerVersion(v1: string, v2: string): boolean;
         function getProperty(object: object, key: string): any;
         function setProperty(object: object, key: string, value: any): boolean;
+        function expandObject(object: object): Record<string, any>;
         function randomID(length?: number): string;
         // v13+ home of the sort helper (was `foundry.utils.SortingHelpers.performIntegerSort`).
         function performIntegerSort<T>(
@@ -109,6 +110,7 @@ declare namespace foundry {
                 /** v14 accepts boolean (legacy `force`) or an options object */
                 render(options?: object | boolean, _options?: object): Promise<this>;
                 close(options?: object): Promise<this>;
+                _onClose(options?: object): void;
                 _onRender(context: object, options: object): void;
                 _prepareContext(options?: object): Promise<object>;
                 _configureRenderOptions(options: object): void;

@@ -31,6 +31,8 @@
 import { debug, error as logError, isDebugEnabled } from "./logger";
 import { SCHEMA_VERSION_KEY } from "./schema-version";
 import { collectLegacyLabelUpdates } from "./migration-labels";
+import { legacyCustomAttributeDefs, legacyCustomFieldDefs } from "./custom-slots";
+import { readRawWorldSetting } from "../config/settings/custom-slots";
 
 /**
  * Migration steps in version order. Each entry runs when the world's stored
@@ -73,6 +75,16 @@ const MIGRATION_STEPS: Array<{ since: string; run: () => Promise<void> }> = [
       await repairLegacyLabelKeys();
     },
   },
+  {
+    // #199: the four fixed custom-field / custom-attribute slots became
+    // dynamic lists stored in the `custom_fields` / `custom_attributes`
+    // settings. Convert the legacy per-slot settings into definition arrays;
+    // per-actor `customN` values move via `migrateData` (see
+    // `data/actor/custom-fields-migration.ts`), and `caN` attribute data keeps
+    // its keys because migrated definitions reuse the `ca1`–`ca4` ids.
+    since: "3.2.0",
+    run: () => migrateCustomSlotSettings(),
+  },
 ];
 
 // Bumped manually for the 3.0.0 system-id rename. The pre-migration
@@ -82,8 +94,10 @@ const MIGRATION_STEPS: Array<{ since: string; run: () => Promise<void> }> = [
 // the `migrateLegacySettings()` step so worlds that already ran the 3.0.0
 // flag migration still pick up their stranded `od6s.*` world settings. 3.0.2
 // adds `repairLegacyLabelKeys()` to rewrite `OD6S.*` label keys still stored
-// in document `system` data (#189).
-const CURRENT_MIGRATION_VERSION = "3.0.2";
+// in document `system` data (#189). 3.2.0 adds `migrateCustomSlotSettings()`
+// to convert the fixed custom-field/attribute slot settings into the dynamic
+// definition arrays (#199).
+const CURRENT_MIGRATION_VERSION = "3.2.0";
 
 /**
  * Check if migration is needed and run it.
@@ -125,6 +139,12 @@ export async function migrateWorld() {
     // Record completion
     await game.settings.set("nonex-ist-od6s", "migrationVersion", CURRENT_MIGRATION_VERSION);
     ui.notifications.info("OpenD6 Space: Migration complete.");
+
+    // Prompted only after the version is recorded, so the post-reload pass is
+    // a clean no-op instead of re-running the steps.
+    if (reloadAfterMigration) {
+      await foundry.applications.settings.SettingsConfig.reloadConfirm({ world: true });
+    }
   } catch (err) {
     logError("migration", "Migration failed:", err);
     ui.notifications.error("OpenD6 Space: Migration failed. Check the console for details.");
@@ -145,6 +165,53 @@ export function registerMigrationSetting() {
     type: String,
     default: "0",
   });
+}
+
+/**
+ * Set by migration steps whose changes only take effect after a world reload
+ * (e.g. settings the actor schema is built from). Checked by `migrateWorld()`
+ * once the migration version has been recorded.
+ */
+let reloadAfterMigration = false;
+
+/**
+ * #199: convert the legacy fixed-slot settings (`custom_field_N`, `_short`,
+ * `_type`, `_actor_types` and `customize_caN_name`, `_name_short`, `_active`)
+ * into the dynamic `custom_fields` / `custom_attributes` definition arrays.
+ *
+ * The legacy keys are no longer registered, so their values are read raw from
+ * the world settings storage via `readRawWorldSetting` (their `Setting`
+ * documents survive; values are JSON-encoded). Migrated definitions keep ids
+ * `cf1`–`cf4` / `ca1`–`ca4` so per-actor data and `attributes_sorting` entries
+ * stay attached. A target setting that is already populated is never
+ * overwritten, which also makes a re-run a no-op.
+ */
+async function migrateCustomSlotSettings() {
+  debug("migration", "Converting legacy custom field/attribute slot settings...");
+
+  let converted = 0;
+
+  const fieldDefs = legacyCustomFieldDefs(readRawWorldSetting);
+  const currentFields = game.settings.get("nonex-ist-od6s", "custom_fields") as unknown;
+  if (fieldDefs.length > 0 && (!Array.isArray(currentFields) || currentFields.length === 0)) {
+    await game.settings.set("nonex-ist-od6s", "custom_fields", fieldDefs as never);
+    converted += fieldDefs.length;
+  }
+
+  const attrDefs = legacyCustomAttributeDefs(readRawWorldSetting);
+  const currentAttrs = game.settings.get("nonex-ist-od6s", "custom_attributes") as unknown;
+  if (attrDefs.length > 0 && (!Array.isArray(currentAttrs) || currentAttrs.length === 0)) {
+    await game.settings.set("nonex-ist-od6s", "custom_attributes", attrDefs as never);
+    converted += attrDefs.length;
+    // This session's schema normally already contains these attributes — the
+    // pre-migration fallback in `getSchemaCustomAttributes()` converts the
+    // same legacy values at init — but prompt for a reload anyway as a safety
+    // net so a fallback failure can't leave a session whose actor saves drop
+    // the migrated attribute data.
+    reloadAfterMigration = true;
+  }
+
+  debug("migration", `Converted ${converted} legacy custom slots.`);
 }
 
 /**

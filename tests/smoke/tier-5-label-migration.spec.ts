@@ -20,7 +20,7 @@
  */
 
 import {test, expect} from "@playwright/test";
-import {loginAndWaitReady, evalInWorld} from "./helpers/foundry-page.js";
+import {loginAndWaitReady, evalInWorld, isNewerVersion} from "./helpers/foundry-page.js";
 
 const ACTOR_NAME = "smoke-label-migration";
 // Mixed-case legacy keys exactly as the oldest worlds stored them. These map
@@ -130,8 +130,10 @@ test.describe.serial("legacy OD6S.* stored-label migration", () => {
         expect(result.cpShortText.length).toBeGreaterThan(0);
         expect(result.chartypeText).not.toMatch(/^(OD6S|NONEX_IST_OD6S)\./);
 
-        // Migration ran and stamped the current version.
-        expect(result.version).toBe("3.0.2");
+        // Migration ran and advanced the version past the step under test.
+        // Don't pin the suite-wide terminal version — it moves with every new
+        // migration step.
+        expect(isNewerVersion(result.version, "3.0.1")).toBe(true);
     });
 
     test("repairs legacy labels on world items, embedded items, and unlinked token actors", async ({page}) => {

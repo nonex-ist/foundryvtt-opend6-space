@@ -1,9 +1,15 @@
 import { attributesSchema } from "./fields/attributes";
 import { commonSchema } from "./fields/common";
+import { migrateCustomFieldSlots } from "./custom-fields-migration";
 
 const fields = foundry.data.fields;
 
 export default class NPCData extends foundry.abstract.TypeDataModel {
+  static migrateData(source: Record<string, unknown>) {
+    migrateCustomFieldSlots(source);
+    return super.migrateData(source);
+  }
+
   static defineSchema() {
     return {
       ...attributesSchema(),

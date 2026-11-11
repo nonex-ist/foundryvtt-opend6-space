@@ -66,8 +66,11 @@ export async function loginAndWaitReady(page: Page): Promise<void> {
         // page also contains a "Return to Setup" form whose submit button
         // would otherwise match.
         const form = page.locator('#join-game-form');
-        await form.locator('select[name="userid"]').waitFor({state: "visible"});
-        await form.locator('select[name="userid"]').selectOption({label: USER});
+        // 14.370 renamed the user select `userid` → `userId`; accept both so
+        // the suite still runs against older v14 builds.
+        const userSelect = form.locator('select[name="userId"], select[name="userid"]').first();
+        await userSelect.waitFor({state: "visible"});
+        await userSelect.selectOption({label: USER});
         await form.locator('input[name="password"]').fill(PASSWORD);
         await form.locator('button[type="submit"]').click();
         // Foundry's join form is a GET to /join — confirm we navigated
@@ -147,4 +150,21 @@ export async function expectNoConsoleErrors(
         page.off("console", onError);
     }
     expect(errors, "console errors during action").toEqual([]);
+}
+
+/**
+ * Minimal dotted-version compare for spec assertions running in Node
+ * (mirrors `foundry.utils.isNewerVersion` for plain x.y.z strings).
+ * Lets migration specs assert "version advanced past the step under test"
+ * instead of pinning the suite-wide terminal migration version, which moves
+ * with every new migration step.
+ */
+export function isNewerVersion(a: string, b: string): boolean {
+    const pa = a.split(".").map(Number);
+    const pb = b.split(".").map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        const d = (pa[i] ?? 0) - (pb[i] ?? 0);
+        if (d !== 0) return d > 0;
+    }
+    return false;
 }

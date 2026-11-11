@@ -231,7 +231,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
                 if (skill !== undefined && skill.name !== '' && isSkillItem(skill) && hasAttributes) {
                     if (skill.system.min === true || String(skill.system.min).toLowerCase() === 'true') {
                         rollMin = od6sutilities.getDiceFromScore(item.system.score +
-                            rollData.actor.system.attributes[item.system.attribute].score).dice * OD6S.pipsPerDice;
+                            (rollData.actor.system.attributes[item.system.attribute]?.score ?? 0)).dice * OD6S.pipsPerDice;
                     }
                 }
                 if(OD6S.skillUsed && OD6S.autoSkillUsed) {
@@ -240,7 +240,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
             } else if (isSkillItem(item)) {
                 if ((item.system.min === true || String(item.system.min).toLowerCase() === 'true') && hasAttributes) {
                     rollMin = od6sutilities.getDiceFromScore(item.system.score +
-                        rollData.actor.system.attributes[item.system.attribute].score).dice * OD6S.pipsPerDice;
+                        (rollData.actor.system.attributes[item.system.attribute]?.score ?? 0)).dice * OD6S.pipsPerDice;
                 }
                 if(OD6S.skillUsed && OD6S.autoSkillUsed) {
                     await item.update({'system.used.value': true});
@@ -257,7 +257,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
                         if (skill !== undefined && skill.name !== '' && isSkillItem(skill) && hasAttributes) {
                             if (skill.system.min === true || String(skill.system.min).toLowerCase() === 'true') {
                                 rollMin = od6sutilities.getDiceFromScore(spec.system.score +
-                                    rollData.actor.system.attributes[skill.system.attribute].score).dice * OD6S.pipsPerDice;
+                                    (rollData.actor.system.attributes[skill.system.attribute]?.score ?? 0)).dice * OD6S.pipsPerDice;
                             }
                             if(OD6S.skillUsed && OD6S.autoSkillUsed) {
                                 await spec.update({'system.used.value': true});
@@ -272,7 +272,7 @@ export async function executeRollAction(rollData: RollData): Promise<unknown> {
                     if (skill !== undefined && skill.name !== '' && isSkillItem(skill) && hasAttributes) {
                         if (skill.system.min === true || String(skill.system.min).toLowerCase() === 'true') {
                             rollMin = od6sutilities.getDiceFromScore(skill.system.score +
-                                rollData.actor.system.attributes[skill.system.attribute].score).dice * OD6S.pipsPerDice;
+                                (rollData.actor.system.attributes[skill.system.attribute]?.score ?? 0)).dice * OD6S.pipsPerDice;
                         }
                         if(OD6S.skillUsed && OD6S.autoSkillUsed) {
                             await skill.update({'system.used.value': true});

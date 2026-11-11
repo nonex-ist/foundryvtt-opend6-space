@@ -102,10 +102,10 @@ export function commonSchema() {
       skills: new fields.ObjectField({ initial: {} }),
       specializations: new fields.ObjectField({ initial: {} }),
     }),
-    custom1: new fields.SchemaField({ value: new fields.StringField({ initial: "" }) }),
-    custom2: new fields.SchemaField({ value: new fields.StringField({ initial: "" }) }),
-    custom3: new fields.SchemaField({ value: new fields.StringField({ initial: "" }) }),
-    custom4: new fields.SchemaField({ value: new fields.StringField({ initial: "" }) }),
+    // World-defined header-field values, keyed by slot id from the
+    // `custom_fields` setting (#199). Values are strings or numbers depending
+    // on the slot's configured type.
+    customfields: new fields.ObjectField({ initial: {} }),
     labels: new fields.ObjectField({ initial: {} }),
     tags: new fields.ArrayField(new fields.StringField()),
     use_wild_die: new fields.BooleanField({ initial: true }),

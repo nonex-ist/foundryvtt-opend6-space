@@ -12,6 +12,8 @@ import {registerAttributeSettings} from "./attributes";
 import {registerAutomationSettings} from "./automation";
 import {registerMiscSettings} from "./misc";
 import {registerChatColorSettings} from "./chat-colors";
+import {registerCustomSlotSettings, getSchemaCustomAttributes} from "./custom-slots";
+import {CORE_ATTRIBUTE_KEYS} from "../attributes";
 
 export {updateRerollInitiative} from "./combat";
 
@@ -27,6 +29,7 @@ export async function registerSettings() {
     registerAttributeSettings();
     registerMiscSettings();
     registerChatColorSettings();
+    registerCustomSlotSettings();
 
     updateConfig();
 }
@@ -113,26 +116,6 @@ export function updateConfig() {
         game.settings.get('nonex-ist-od6s', 'customize_technical_name') : game.i18n.localize('NONEX_IST_OD6S.CHAR_TECHNICAL');
     OD6S.attributes.tec.shortName = game.settings.get('nonex-ist-od6s', 'customize_technical_name_short') ?
         game.settings.get('nonex-ist-od6s', 'customize_technical_name_short') : game.i18n.localize('NONEX_IST_OD6S.CHAR_TECHNICAL_SHORT');
-
-    OD6S.attributes.ca1.name = game.settings.get('nonex-ist-od6s', 'customize_ca1_name') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca1_name') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_01');
-    OD6S.attributes.ca1.shortName = game.settings.get('nonex-ist-od6s', 'customize_ca1_name_short') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca1_name_short') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_01_SHORT');
-
-    OD6S.attributes.ca2.name = game.settings.get('nonex-ist-od6s', 'customize_ca2_name') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca2_name') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_02');
-    OD6S.attributes.ca2.shortName = game.settings.get('nonex-ist-od6s', 'customize_ca2_name_short') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca2_name_short') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_02_SHORT');
-
-    OD6S.attributes.ca3.name = game.settings.get('nonex-ist-od6s', 'customize_ca3_name') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca3_name') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_03');
-    OD6S.attributes.ca3.shortName = game.settings.get('nonex-ist-od6s', 'customize_ca3_name_short') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca3_name_short') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_03_SHORT');
-
-    OD6S.attributes.ca4.name = game.settings.get('nonex-ist-od6s', 'customize_ca4_name') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca4_name') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_04');
-    OD6S.attributes.ca4.shortName = game.settings.get('nonex-ist-od6s', 'customize_ca4_name_short') ?
-        game.settings.get('nonex-ist-od6s', 'customize_ca4_name_short') : game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_04_SHORT');
 
     OD6S.attributes.met.name = game.settings.get('nonex-ist-od6s', 'customize_metaphysics_name') ?
         game.settings.get('nonex-ist-od6s', 'customize_metaphysics_name') : game.i18n.localize('NONEX_IST_OD6S.CHAR_METAPHYSICS');
@@ -282,10 +265,33 @@ export function updateConfig() {
 
     OD6S.stunDamageIncrement = game.settings.get('nonex-ist-od6s','stun_damage_increment')
 
+    // Rebuild the dynamic custom-attribute entries: drop everything that isn't
+    // a core attribute, then re-add the slots after `met` in definition order.
+    // Sourced from the schema-stable view, NOT the live setting — updateConfig
+    // re-runs on every renderSettingsConfig, and the registry must keep
+    // matching the schema baked at init or actor preparation crashes. Their
+    // `active` flag lives on the definition (there is no per-slot
+    // `customize_*_active` setting), so it is applied here and skipped in the
+    // loop below.
+    for (const key of Object.keys(OD6S.attributes)) {
+        if (!CORE_ATTRIBUTE_KEYS.includes(key)) delete OD6S.attributes[key];
+    }
+    const metSort = OD6S.attributes.met.sort;
+    getSchemaCustomAttributes().forEach((def, i) => {
+        OD6S.attributes[def.id] = {
+            name: def.name || game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE'),
+            shortName: def.short || def.name || game.i18n.localize('NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_SHORT'),
+            active: def.active,
+            sort: metSort + 1 + i,
+        };
+    });
+
     const attrSort = game.settings.get('nonex-ist-od6s','attributes_sorting');
     for (const attribute in OD6S.attributes) {
         const key = "customize_" + attribute + "_active";
-        OD6S.attributes[attribute].active = game.settings.get('nonex-ist-od6s', key);
+        if (game.settings.settings.has(`nonex-ist-od6s.${key}`)) {
+            OD6S.attributes[attribute].active = game.settings.get('nonex-ist-od6s', key);
+        }
         if(typeof(attrSort[attribute]) !== "undefined") {
             OD6S.attributes[attribute].sort = attrSort[attribute].sort;
         }

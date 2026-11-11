@@ -50,6 +50,9 @@ const SELECTORS = {
         worldTitleInput: 'form#world-create input[name="title"]',
         worldSystemSelect: 'form#world-create select[name="system"]',
         worldFormSubmit: 'form#world-create button[type="submit"]',
+        // "Install Dependency Automatically" in the package-dependency
+        // DialogV2 WorldCreate opens when a required module is missing.
+        dependencyAutoInstall: 'dialog button[data-action="automatic"]',
     },
 };
 
@@ -101,6 +104,14 @@ export async function ensureWorldLaunched(
         );
     }
 
+    // Surface page-side failures. The setup screens report problems via
+    // console errors and ui.notifications, neither of which reaches the
+    // Playwright log otherwise — a failed world creation is silent.
+    page.on("console", (m) => {
+        if (m.type() === "error") log(`[setup-driver] console.error: ${m.text()}`);
+    });
+    page.on("pageerror", (e) => log(`[setup-driver] pageerror: ${e.message}`));
+
     // Cap iterations so a misbehaving Foundry can't spin us forever.
     const MAX_HOPS = 6;
     for (let hop = 0; hop < MAX_HOPS; hop++) {
@@ -110,6 +121,7 @@ export async function ensureWorldLaunched(
         await page.goto("/", {waitUntil: "networkidle"});
         const url = page.url();
         log(`[setup-driver] hop ${hop}: ${url}`);
+        await snapshot(page, `hop-${hop}`, log);
 
         if (url.includes("/auth")) {
             await driveAuth(page, adminKey);
@@ -314,11 +326,43 @@ async function createWorld(page: Page, opts: EnsureWorldOptions): Promise<void> 
         await systemSelect.selectOption({label: opts.system});
     }
 
+    await snapshot(page, "create-world-filled", opts.log);
     await page.locator(SELECTORS.setup.worldFormSubmit).first().click();
 
-    // After creation Foundry usually returns to /setup with the new tile
-    // present. Re-enter the loop to launch it.
-    await page.waitForLoadState("domcontentloaded");
+    // On a fresh data dir the system's required module (socketlib) isn't
+    // installed yet, so WorldCreate opens an "Install Package Dependencies"
+    // DialogV2 and blocks creation until it's answered. Accept the automatic
+    // install when it shows up; if it doesn't within a few seconds, the
+    // dependencies are already present.
+    const autoInstall = page.locator(SELECTORS.setup.dependencyAutoInstall).first();
+    const prompted = await autoInstall.waitFor({state: "visible", timeout: 8_000})
+        .then(() => true, () => false);
+    if (prompted) {
+        opts.log?.(`[setup-driver] installing missing package dependencies`);
+        await autoInstall.click();
+    }
+
+    // WorldCreate submits with `launch: true` and navigates off /setup once
+    // the world exists (dependency download + creation can take a while).
+    // If it doesn't, fall through: the next loop hop finds the new tile.
+    await page.waitForURL((u) => !u.pathname.startsWith("/setup"), {timeout: 120_000})
+        .catch(() => undefined);
+    await snapshot(page, "create-world-submitted", opts.log);
+}
+
+/**
+ * Save a full-page screenshot under test-results/setup-driver/ and log any
+ * visible Foundry notifications. Diagnostics only — never throws.
+ */
+async function snapshot(page: Page, name: string, log?: (msg: string) => void): Promise<void> {
+    try {
+        await page.screenshot({path: `test-results/setup-driver/${name}.png`, fullPage: true});
+        const notes = await page.locator("#notifications li, .notification")
+            .evaluateAll((els) => els.map((e) => (e.textContent ?? "").trim()).filter(Boolean));
+        if (notes.length) log?.(`[setup-driver] notifications @${name}: ${notes.join(" | ")}`);
+    } catch {
+        // Page may be mid-navigation; diagnostics are best-effort.
+    }
 }
 
 /**

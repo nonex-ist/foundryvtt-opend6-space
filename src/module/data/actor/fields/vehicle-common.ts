@@ -144,6 +144,11 @@ export function vehicleCommonSchema() {
       short_label: new fields.StringField({ initial: "NONEX_IST_OD6S.SHEET_MODE_SHORT" }),
       value: new fields.StringField({ initial: "normal" }),
     }),
+    // World-defined header-field values, keyed by slot id from the
+    // `custom_fields` setting (#199). The legacy fixed slots never existed on
+    // vehicle/starship schemas even though their headers rendered the inputs,
+    // so submitted values were silently dropped — this field closes that gap.
+    customfields: new fields.ObjectField({ initial: {} }),
     roll_mod: new fields.NumberField({ initial: 0 }),
   };
 }

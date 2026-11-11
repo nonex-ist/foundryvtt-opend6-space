@@ -74,50 +74,6 @@ export function registerAttributeSettings() {
         onChange: (value: boolean) => (OD6S.attributes.tec.active = value)
     })
 
-    game.settings.register("nonex-ist-od6s", "customize_ca1_active", {
-        name: game.i18n.localize("NONEX_IST_OD6S.CONFIG_CA1_ACTIVE"),
-        scope: "world",
-        config: false,
-        od6sCustomAttribute: true,
-        type: Boolean,
-        default: false,
-        requiresReload: true,
-        onChange: (value: boolean) => (OD6S.attributes.ca1.active = value)
-    })
-
-    game.settings.register("nonex-ist-od6s", "customize_ca2_active", {
-        name: game.i18n.localize("NONEX_IST_OD6S.CONFIG_CA2_ACTIVE"),
-        scope: "world",
-        config: false,
-        od6sCustomAttribute: true,
-        type: Boolean,
-        default: false,
-        requiresReload: true,
-        onChange: (value: boolean) => (OD6S.attributes.ca2.active = value)
-    })
-
-    game.settings.register("nonex-ist-od6s", "customize_ca3_active", {
-        name: game.i18n.localize("NONEX_IST_OD6S.CONFIG_CA3_ACTIVE"),
-        scope: "world",
-        config: false,
-        od6sCustomAttribute: true,
-        type: Boolean,
-        default: false,
-        requiresReload: true,
-        onChange: (value: boolean) => (OD6S.attributes.ca3.active = value)
-    })
-
-    game.settings.register("nonex-ist-od6s", "customize_ca4_active", {
-        name: game.i18n.localize("NONEX_IST_OD6S.CONFIG_CA4_ACTIVE"),
-        scope: "world",
-        config: false,
-        od6sCustomAttribute: true,
-        type: Boolean,
-        default: false,
-        requiresReload: true,
-        onChange: (value: boolean) => (OD6S.attributes.ca4.active = value)
-    })
-
     game.settings.register("nonex-ist-od6s", "customize_met_active", {
         name: game.i18n.localize("NONEX_IST_OD6S.CONFIG_MET_ACTIVE"),
         scope: "world",
