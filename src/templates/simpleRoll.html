@@ -9,12 +9,12 @@
         <div class="flexrow flex-group-left">
             <div class="dice flexrow flex-group-left" data-dice="{{dice}}">
                 <label for="dice">{{localize 'NONEX_IST_OD6S.DICE'}}</label>
-                <input type="number" onfocus="this.value=''" data-dtype="Number"
+                <input type="number" onfocus="this.select()" data-dtype="Number"
                        max="99" id="dice" name="dice" value="{{dice}}">
             </div>
             <div class="pips flexrow flex-group-left" data-pips="{{pips}}">
                 <label for="pips">{{localize 'NONEX_IST_OD6S.PIPS'}}</label>
-                <input type="number" onfocus="this.value=''" data-dtype="Number"
+                <input type="number" onfocus="this.select()" data-dtype="Number"
                        max="99" id="pips" name="pips" placeholder="0">
             </div>
         </div>

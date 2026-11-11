@@ -1,10 +1,10 @@
 import {od6sroll} from "../../apps/roll";
-import {od6sInitRoll} from "../../apps/init-roll";
 import {od6sadvance} from "../advance";
 import {od6sspecialize} from "../specialize";
 import {od6sattributeedit} from "../attribute-edit";
 import {od6sutilities} from "../../system/utilities";
 import OD6S from "../../config/config-od6s";
+import * as logger from "../../system/logger";
 
  
 
@@ -34,10 +34,9 @@ function recalcScoreFromInput(
 }
 
 /**
- * Register the play-mode-safe roll triggers (skill/attribute/spec/init click,
- * weapon-action click, body-points roll). Bound regardless of `isEditable` —
- * V2 sheets render in PLAY mode by default, where `isEditable` is false, but
- * rolling is a play-mode action and must work for any owner.
+ * Register the roll triggers (skill/attribute/spec click, weapon-action
+ * click, body-points roll). Bound for any owner regardless of `isEditable`
+ * (derived from update permission in v14; there is no PLAY/EDIT sheet mode).
  */
 export function registerRollListeners(
     root: HTMLElement,
@@ -48,8 +47,6 @@ export function registerRollListeners(
     const rollDialog = new (od6sroll);
     root.querySelectorAll<HTMLElement>('.rolldialog').forEach((elem) =>
         elem.addEventListener('click', rollDialog._onRollEvent.bind(sheet)));
-    root.querySelectorAll<HTMLElement>('.initrolldialog').forEach((elem) =>
-        elem.addEventListener('click', od6sInitRoll._onInitRollDialog.bind(sheet) as unknown as EventListener));
     root.querySelectorAll<HTMLElement>('.actionroll').forEach((elem) =>
         elem.addEventListener('click', rollDialog._onRollItem.bind(sheet)));
 
@@ -77,14 +74,6 @@ export function registerScoreListeners(
     const advanceDialog = new (od6sadvance);
     root.querySelectorAll<HTMLElement>('.advancedialog').forEach((elem) =>
         elem.addEventListener('click', advanceDialog._onAdvance.bind(sheet)));
-
-    // Attribute context menu (no-op handlers preserved)
-    root.querySelectorAll<HTMLElement>('.attributedialog').forEach((elem) =>
-        elem.addEventListener('contextmenu', () => {}));
-
-    // Skill context menu (no-op handlers preserved)
-    root.querySelectorAll<HTMLElement>('.skilldialog').forEach((elem) =>
-        elem.addEventListener('contextmenu', () => {}));
 
     // Skill specialization
     const specializeDialog = new (od6sspecialize);
@@ -149,23 +138,39 @@ export function registerScoreListeners(
 
             if (item) {
                 await item.update({'system.used.value': ct.checked})
-                    .catch((err: unknown) => console.error('Failed to update item used status:', err));
+                    .catch((err: unknown) => {
+                        logger.error('sheet', 'Failed to update item used status:', err);
+                        ui.notifications.error(String((err as Error)?.message ?? err));
+                    });
             }
         }));
 
     // Event listener for Session Reset button
     root.querySelectorAll<HTMLElement>('.session-reset-button').forEach((elem) =>
-        elem.addEventListener('click', () => {
+        elem.addEventListener('click', async () => {
+            const ok = await foundry.applications.api.DialogV2.confirm({
+                window: {title: game.i18n.localize('NONEX_IST_OD6S.RESET_SESSION')},
+                content: `<p>${game.i18n.localize('NONEX_IST_OD6S.CONFIRM_SESSION_RESET')}</p>`,
+            });
+            if (!ok) return;
             const checkboxes = root.querySelectorAll<HTMLInputElement>('.skill-used-checkbox, .spec-used-checkbox');
+            const updates: Array<Record<string, unknown>> = [];
             checkboxes.forEach((checkbox) => {
                 const itemId = checkbox.dataset.itemId;
-                const item = sheet.document.items.get(itemId);
+                const item = itemId ? sheet.document.items.get(itemId) : undefined;
                 if (item) {
-                    item.update({'system.used.value': false}).catch((err: unknown) => console.error(err));
+                    updates.push({_id: item.id, 'system.used.value': false});
                     checkbox.checked = false;
                 } else {
-                    console.error("Item not found for reset: ", itemId);
+                    logger.error('sheet', 'Item not found for session reset:', itemId);
                 }
             });
+            if (updates.length === 0) return;
+            try {
+                await sheet.document.updateEmbeddedDocuments('Item', updates);
+            } catch (err: unknown) {
+                logger.error('sheet', 'Session reset failed:', err);
+                ui.notifications.error(String((err as Error)?.message ?? err));
+            }
         }));
 }

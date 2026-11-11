@@ -3,40 +3,40 @@
     <div class="grid grid-2col">
         <div class="flexrow flex-group-left">
             <label for="actor.system.maneuverability.score">{{localize actor.system.maneuverability.label}}:</label>
-            <input title="{{localize actor.system.maneuverability.label}}" name="system.maneuverability.score" type="text"
+            <input id="actor.system.maneuverability.score" title="{{localize actor.system.maneuverability.label}}" name="system.maneuverability.score" type="text"
                    value="{{actor.system.maneuverability.score}}" data-dtype="{{actor.system.maneuverability.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.toughness.score">{{getToughnessName 'vehicle'}}:</label>
-            <input title="{{getToughnessName 'vehicle'}}" name="system.toughness.score" type="text"
+            <input id="actor.system.toughness.score" title="{{getToughnessName 'vehicle'}}" name="system.toughness.score" type="text"
                    value="{{actor.system.toughness.score}}" data-dtype="{{actor.system.toughness.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.shields.value">{{localize actor.system.shields.label}}:</label>
-            <input title="{{localize actor.system.shields.label}}" name="system.shields.value" type="text"
+            <input id="actor.system.shields.value" title="{{localize actor.system.shields.label}}" name="system.shields.value" type="text"
                    value="{{actor.system.shields.value}}" data-dtype="{{actor.system.shields.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.price.value">{{localize actor.system.price.label}}:</label>
-            <input title="{{localize actor.system.price.label}}" name="system.price.value" type="text"
+            <input id="actor.system.price.value" title="{{localize actor.system.price.label}}" name="system.price.value" type="text"
                    value="{{actor.system.price.value}}" data-dtype="{{actor.system.price.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.cost.value">{{localize actor.system.cost.label}}:</label>
-            <input title="{{localize actor.system.cost.label}}" name="system.cost.value" type="text"
+            <input id="actor.system.cost.value" title="{{localize actor.system.cost.label}}" name="system.cost.value" type="text"
                    value="{{actor.system.cost.value}}" data-dtype="{{actor.system.cost.type}}"/>
         </div>
         {{#if (gt actor.system.shields.value 0)}}
             <div class="flexrow flex-group-left">
                 <label for="actor.system.shields.skill.value">{{localize 'NONEX_IST_OD6S.SHIELDS'}} {{localize 'NONEX_IST_OD6S.SKILL'}}:</label>
-                <input title="{{localize 'NONEX_IST_OD6S.SHIELDS'}} {{localize 'NONEX_IST_OD6S.SKILL'}}"
+                <input id="actor.system.shields.skill.value" title="{{localize 'NONEX_IST_OD6S.SHIELDS'}} {{localize 'NONEX_IST_OD6S.SKILL'}}"
                        name="system.shields.skill.value" type="text"
                        value="{{actor.system.shields.skill.value}}" data-dtype="String"/>
             </div>
         {{/if}}
         <div class="flexrow flex-group-left">
             <label for="actor.system.armor.score">{{localize actor.system.armor.label}}:</label>
-            <input title="{{localize actor.system.armor.label}}" name="system.armor.score" type="text"
+            <input id="actor.system.armor.score" title="{{localize actor.system.armor.label}}" name="system.armor.score" type="text"
                    value="{{actor.system.armor.score}}" data-dtype="{{actor.system.armor.type}}"/>
         </div>
     </div>
@@ -69,7 +69,7 @@
                     <div class="flexrow flex-group-left">
                         <label for="actor.system.sensors.skill">{{localize 'NONEX_IST_OD6S.SENSORS'}} {{localize 'NONEX_IST_OD6S.SKILL'}}
                             :</label>
-                        <input title="{{localize 'NONEX_IST_OD6S.SENSORS'}} {{localize 'NONEX_IST_OD6S.SKILL'}}"
+                        <input id="actor.system.sensors.skill" title="{{localize 'NONEX_IST_OD6S.SENSORS'}} {{localize 'NONEX_IST_OD6S.SKILL'}}"
                                name="system.sensors.skill" type="text"
                                value="{{actor.system.sensors.skill}}" data-dtype="String"/>
                     </div>

@@ -4,17 +4,13 @@ import {executeRollAction} from "./roll-helpers/roll-execute";
 import {isVehicleActor, isActionItem} from "../system/type-guards";
 import {getDifficulty, applyDifficultyEffects, applyDamageEffects} from "./roll-helpers/roll-difficulty";
 import {getEffectMod, getRange, cancelAction} from "./roll-helpers/roll-effects";
+import {detectSensorAction} from "./roll-helpers/roll-defense";
 import type {RollData, IncomingRollData} from "./roll-helpers/roll-data";
 
 export class od6sroll {
 
     rollData: RollData | undefined;
     static rollData: RollData | undefined;
-
-    activateListeners(html: HTMLElement) {
-        // @ts-expect-error super reference in mixin-style class
-        super.activateListeners(html);
-    }
 
     async _onRollItem(event: Event) {
         const actor = (this as any).actor as Actor;
@@ -29,15 +25,13 @@ export class od6sroll {
                 return actor.rollAction(sys.itemId);
             } else if (sys.subtype === 'vehiclesensors') {
                 if (game.settings.get('nonex-ist-od6s', 'sensors')) {
-                    if (item.name.includes(game.i18n.localize('NONEX_IST_OD6S.SENSORS_PASSIVE'))) {
-                        return actor.rollAction('vehiclesensorspassive');
-                    } else if (item.name.includes(game.i18n.localize('NONEX_IST_OD6S.SENSORS_SCAN'))) {
-                        return actor.rollAction('vehiclesensorsscan');
-                    } else if (item.name.includes(game.i18n.localize('NONEX_IST_OD6S.SENSORS_SEARCH'))) {
-                        return actor.rollAction('vehiclesensorssearch');
-                    } else if (item.name.includes(game.i18n.localize('NONEX_IST_OD6S.SENSORS_FOCUS'))) {
-                        return actor.rollAction('vehiclesensorsfocus');
-                    }
+                    const sensorAction = detectSensorAction(item.name, {
+                        passive: game.i18n.localize('NONEX_IST_OD6S.SENSORS_PASSIVE'),
+                        scan: game.i18n.localize('NONEX_IST_OD6S.SENSORS_SCAN'),
+                        search: game.i18n.localize('NONEX_IST_OD6S.SENSORS_SEARCH'),
+                        focus: game.i18n.localize('NONEX_IST_OD6S.SENSORS_FOCUS'),
+                    });
+                    if (sensorAction) return actor.rollAction(sensorAction);
                 }
             } else {
                 return actor.rollAction(sys.subtype);
@@ -70,25 +64,29 @@ export class od6sroll {
         await od6sroll._onRollDialog(eventData);
     }
 
-    async rollPurchase(data: IncomingRollData) {
-        await (this as any)._onRollDialog(data);
-    }
-
     static async _onRollDialog(data: IncomingRollData) {
         const result = await setupRollData(data);
         if (result === false || result === undefined) return;
 
-        this.rollData = result;
+        // Each dialog owns its own RollData; the id is stable, so a still-open
+        // previous dialog is closed first (its close handler cancels *its*
+        // roll via its own data, e.g. removing an explosive's Region).
+        await RollDialog.closeCurrent();
 
-        new RollDialog(this, () => void od6sroll.rollAction()).render({force: true});
+        // Compatibility: most recent roll data (nothing in src/module reads it).
+        od6sroll.rollData = result;
+
+        const dialog = new RollDialog(result, async () => { await executeRollAction(result); });
+        RollDialog.current = dialog;
+        void dialog.render({force: true});
     }
 
-    static async cancelAction(_ev?: Event) {
-        await cancelAction(this.rollData as RollData);
+    static async cancelAction(rollData: RollData | undefined = od6sroll.rollData) {
+        if (rollData) await cancelAction(rollData);
     }
 
-    static async rollAction() {
-        return await executeRollAction(this.rollData as RollData);
+    static async rollAction(rollData: RollData | undefined = od6sroll.rollData) {
+        return await executeRollAction(rollData as RollData);
     }
 
     static async getDifficulty(rollData: RollData) {

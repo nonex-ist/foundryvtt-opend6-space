@@ -140,7 +140,7 @@ async function runSimpleRoll(result: SimpleRollResult): Promise<void> {
     if (wild) {
         dice -= 1;
         if (dice < 0) {
-            ui.notifications.warn("NONEX_IST_OD6S.NOT_ENOUGH_DICE");
+            ui.notifications.warn(game.i18n.localize("NONEX_IST_OD6S.NOT_ENOUGH_DICE"));
             return;
         }
         if (dice > 0) rollString = dice + "d6" + game.i18n.localize("NONEX_IST_OD6S.BASE_DIE_FLAVOR");

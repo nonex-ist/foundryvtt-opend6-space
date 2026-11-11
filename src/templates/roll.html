@@ -28,11 +28,11 @@
             <div data-characterpoints="{{characterpoints}}">{{ localize 'NONEX_IST_OD6S.USE_CHARACTER_POINTS'}}</div>
             <div class="flexrow flex-group-center">
                 <div class="boxed cpcost cpcost-{{cpcostcolor}}">{{characterpoints}}</div>
-                <div class="flex-group-center cpup">
-                    <i class="fas fa-plus-square"></i>
+                <div class="flex-group-center cpup" role="button" tabindex="0" title="{{localize 'NONEX_IST_OD6S.CP_INCREASE'}}" aria-label="{{localize 'NONEX_IST_OD6S.CP_INCREASE'}}">
+                <i class="fas fa-plus-square" aria-hidden="true"></i>
                 </div>
-                <div class="flex-group-center cpdown">
-                    <i class="fas fa-minus-square"></i>
+                <div class="flex-group-center cpdown" role="button" tabindex="0" title="{{localize 'NONEX_IST_OD6S.CP_DECREASE'}}" aria-label="{{localize 'NONEX_IST_OD6S.CP_DECREASE'}}">
+                <i class="fas fa-minus-square" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@
             <div class="flexrow flex-group-left vehiclespeed" data-type="vehiclespeed"
                  data-speed="{{vehiclespeed}}">
                 <label for="vehiclespeed">{{localize 'NONEX_IST_OD6S.VEHICLE_ATTACK_SPEED'}}</label>
-                <select name="vehiclespeed" id="vehiclespeed" style="width: 70px;">
+                <select name="vehiclespeed" id="vehiclespeed" style="min-width: 70px; width: auto;">
                     {{#each (getVehicleSpeeds) as |speed key|}}
                         <option value="{{key}}" {{#if (eq key ../vehiclespeed)}}selected{{/if}}>
                             {{localize speed.name}}
@@ -71,7 +71,7 @@
             <div class="flexrow flex-group-left vehicleterraindifficulty" data-type="vehicleterraindifficulty"
                  data-speed="{{vehicleterraindifficulty}}">
                 <label for="vehicleterraindifficulty">{{localize 'NONEX_IST_OD6S.TERRAIN_DIFFICULTY'}}</label>
-                <select name="vehicleterraindifficulty" id="vehicleterraindifficulty" style="width: 70px;">
+                <select name="vehicleterraindifficulty" id="vehicleterraindifficulty" style="min-width: 70px; width: auto;">
                     {{#each (getTerrainDifficulties) as |terrain key|}}
                         <option value="{{key}}" {{#if (eq key ../vehicleterraindifficulty)}}selected{{/if}}>
                             {{localize key}}
@@ -105,7 +105,7 @@
     {{#if (ne attribute null)}}
         <div class="flexrow flex-group-left useattribute" data-attribute="{{attribute}}">
             <label for="useattribute">{{localize 'NONEX_IST_OD6S.ATTRIBUTE'}}</label>
-            <select name="useattribute" id="useattribute" style="width: 70px;">
+            <select name="useattribute" id="useattribute" style="min-width: 70px; width: auto;">
                 {{#each actor.system.attributes as |attr key|}}
                     <option value="{{key}}" {{#if (eq key ../attribute)}}selected{{/if}}>{{getAttributeName key}}</option>
                 {{/each}}
@@ -251,7 +251,7 @@
             <div class="flexrow flex-group-left vehiclespeed" data-type="vehiclespeed"
                  data-speed="{{vehiclespeed}}">
                 <label for="vehiclespeed">{{localize 'NONEX_IST_OD6S.VEHICLE_ATTACK_SPEED'}}</label>
-                <select name="vehiclespeed" id="vehiclespeed" style="width: 70px;">
+                <select name="vehiclespeed" id="vehiclespeed" style="min-width: 70px; width: auto;">
                     {{#each (getVehicleSpeeds) as |speed key|}}
                         <option value="{{key}}" {{#if (eq key ../vehiclespeed)}}selected{{/if}}>
                             {{localize speed.name}}
@@ -262,7 +262,7 @@
             <div class="flexrow flex-group-left vehiclecollisiontype" data-type="vehiclecollisiontype"
                  data-speed="{{vehiclecollisiontype}}">
                 <label for="vehiclecollisiontype">{{localize 'NONEX_IST_OD6S.VEHICLE_COLLISION_TYPE'}}</label>
-                <select name="vehiclecollisiontype" id="vehiclecollisiontype" style="width: 70px;">
+                <select name="vehiclecollisiontype" id="vehiclecollisiontype" style="min-width: 70px; width: auto;">
                     {{#each (getCollisionTypes) as |collision key|}}
                         <option value="{{key}}" {{#if (eq key ../vehiclecollisiontype)}}selected{{/if}}>
                             {{localize collision.name}}
@@ -273,7 +273,7 @@
             <div class="flexrow flex-group-left vehicleterraindifficulty" data-type="vehicleterraindifficulty"
                  data-speed="{{vehicleterraindifficulty}}">
                 <label for="vehicleterraindifficulty">{{localize 'NONEX_IST_OD6S.TERRAIN_DIFFICULTY'}}</label>
-                <select name="vehicleterraindifficulty" id="vehicleterraindifficulty" style="width: 70px;">
+                <select name="vehicleterraindifficulty" id="vehicleterraindifficulty" style="min-width: 70px; width: auto;">
                     {{#each (getTerrainDifficulties) as |terrain key|}}
                         <option value="{{key}}" {{#if (eq key ../vehicleterraindifficulty)}}selected{{/if}}>
                             {{localize key}}
@@ -288,7 +288,7 @@
                     {{#unless (displayRange subtype)}}
                         <div class="flexrow flex-group-left range" data-range="{{range}}">
                             <label for="range">{{localize 'NONEX_IST_OD6S.RANGE'}}</label>
-                            <select name="range" id="range" style="width:50px">
+                            <select name="range" id="range" style="min-width: 50px; width: auto;">
                                 {{#each (getRanges) as |r key|}}
                                     <option value="{{key}}" title="{{localize r.name}}"
                                             {{#if (eq key ../modifiers.range)}}selected{{/if}}>
@@ -302,7 +302,7 @@
                     {{#if (eq subtype 'rangedattack') }}
                         <div class="flexrow flex-group-left attackoption modifier" data-type="attackoption">
                             <label for="attackoption">{{localize 'NONEX_IST_OD6S.ATTACK_OPTIONS'}}</label>
-                            <select name="attackoption" id="attackoption" style="width: 50px;">
+                            <select name="attackoption" id="attackoption" style="min-width: 50px; width: auto;">
                                 {{#each (getAttackOptions "rangedattack") as |option key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.attackoption)}}selected{{/if}}>
@@ -323,7 +323,7 @@
                     {{#if (eq subtype 'meleeattack') }}
                         <div class="flexrow flex-group-left attackoption modifier">
                             <label for="attackoption">{{localize 'NONEX_IST_OD6S.ATTACK_OPTIONS'}}</label>
-                            <select name="attackoption" id="attackoption" style="width: 70px;">
+                            <select name="attackoption" id="attackoption" style="min-width: 70px; width: auto;">
                                 {{#each (getAttackOptions "meleeattack") as |option key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.attackoption)}}selected{{/if}}>
@@ -336,7 +336,7 @@
                     {{#if (eq subtype 'brawlattack') }}
                         <div class="flexrow flex-group-left attackoption modifier" data-type="attackoption">
                             <label for="attackoption">{{localize 'NONEX_IST_OD6S.ATTACK_OPTIONS'}}</label>
-                            <select name="attackoption" id="attackoption" style="width: 70px;">
+                            <select name="attackoption" id="attackoption" style="min-width: 70px; width: auto;">
                                 {{#each (getAttackOptions "brawlattack") as |option key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.attackoption)}}selected{{/if}}>
@@ -352,7 +352,7 @@
                     <div class="column">
                         <div class="flexrow flex-group-left calledshot modifier" data-type="calledshot">
                             <label for="calledshot">{{localize "NONEX_IST_OD6S.CALLED_SHOT"}}</label>
-                            <select name="calledshot" id="calledshot" style="width: 70px;">
+                            <select name="calledshot" id="calledshot" style="min-width: 70px; width: auto;">
                                 {{#each (getCalledShot) as |cs key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.calledshot)}}selected{{/if}}>
@@ -363,7 +363,7 @@
                         </div>
                         <div class="flexrow flex-group-left cover modifier" data-type="cover">
                             <label for="cover">{{localize "NONEX_IST_OD6S.COVER"}}</label>
-                            <select name="cover" id="cover" style="width: 70px;">
+                            <select name="cover" id="cover" style="min-width: 70px; width: auto;">
                                 {{#each (getCover "NONEX_IST_OD6S.COVER") as |cv key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.cover)}}selected{{/if}}>
@@ -394,7 +394,7 @@
                     <div class="column">
                         <div class="flexrow flex-group-left coverlight modifier" data-type="coverlight">
                             <label for="coverlight">{{localize "NONEX_IST_OD6S.COVER_LIGHT"}}</label>
-                            <select name="coverlight" id="coverlight" style="width: 70px;">
+                            <select name="coverlight" id="coverlight" style="min-width: 70px; width: auto;">
                                 {{#each (getCover "NONEX_IST_OD6S.COVER_LIGHT") as |cv key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.coverlight)}}selected{{/if}}>
@@ -405,7 +405,7 @@
                         </div>
                         <div class="flexrow flex-group-left coversmoke modifier" data-type="coversmoke">
                             <label for="coversmoke">{{localize "NONEX_IST_OD6S.COVER_SMOKE"}}</label>
-                            <select name="coversmoke" id="coversmoke" style="width: 70px;">
+                            <select name="coversmoke" id="coversmoke" style="min-width: 70px; width: auto;">
                                 {{#each (getCover "NONEX_IST_OD6S.COVER_SMOKE") as |cv key|}}
                                     <option value="{{key}}" title="{{localize (concat key "_DESCRIPTION")}}"
                                             {{#if (eq key ../modifiers.coversmoke)}}selected{{/if}}>

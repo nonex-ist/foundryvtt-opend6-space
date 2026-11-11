@@ -88,7 +88,6 @@ export class OD6SActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
         if (actor.type === "character" || actor.type === "npc" || actor.type === "creature") {
             Object.assign(actor, prepareCharacterItems(context.items));
-            await this._setCommonFlags();
         } else if (actor.type === "vehicle") {
             Object.assign(actor, prepareVehicleItems(context.items, OD6S.cargo_hold));
         } else if (actor.type === "starship") {
@@ -115,19 +114,6 @@ export class OD6SActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
         return context;
     }
 
-    async _setCommonFlags() {
-        const actor = this.document;
-        if (typeof actor.getFlag("nonex-ist-od6s", "fatepointeffect") === "undefined") {
-            await actor.setFlag("nonex-ist-od6s", "fatepointeffect", false);
-        }
-        if (typeof actor.getFlag("nonex-ist-od6s", "crew") === "undefined") {
-            await actor.setFlag("nonex-ist-od6s", "crew", "");
-        }
-        if (typeof actor.getFlag("nonex-ist-od6s", "hasTakenTurn") === "undefined") {
-            await actor.setFlag("nonex-ist-od6s", "hasTakenTurn", false);
-        }
-    }
-
     /* -------------------------------------------- */
     /*  Render & Event Listeners                     */
     /* -------------------------------------------- */
@@ -139,12 +125,10 @@ export class OD6SActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
         bindPrimaryTabs(this, root);
 
-        // Roll triggers must be bound for any owner regardless of edit mode —
-        // V2 sheets render in PLAY mode by default (isEditable === false), but
-        // rolling a skill/attack is a play-mode action. See issue #76.
-        // Effect management (edit/delete/toggle) is similarly a play-mode
-        // action; gating it behind edit mode hid the trash icon's behavior
-        // (#165) since the template still rendered it.
+        // Roll triggers and effect management (edit/delete/toggle) are bound
+        // for any owner, independent of `isEditable` (which in v14 is derived
+        // purely from update permission; there is no PLAY/EDIT sheet mode).
+        // See issues #76 and #165.
         if (this.actor.isOwner) {
             registerRollListeners(root, this);
             registerCombatRollListeners(root, this);
@@ -162,6 +146,11 @@ export class OD6SActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
         root.querySelectorAll(".track_stuns_counter").forEach((elem) =>
             elem.addEventListener("click", async (ev) => {
                 ev.preventDefault();
+                const ok = await foundry.applications.api.DialogV2.confirm({
+                    window: {title: game.i18n.localize("NONEX_IST_OD6S.RESET")},
+                    content: `<p>${game.i18n.localize("NONEX_IST_OD6S.CONFIRM_RESET_STUNS")}</p>`,
+                });
+                if (!ok) return;
                 await this.document.update({system: {stuns: {value: 0}}});
                 await this.render();
             }));

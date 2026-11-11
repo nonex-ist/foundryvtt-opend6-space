@@ -39,6 +39,8 @@
 
 .damaged {
   color: $c-bad;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .modifier-button {

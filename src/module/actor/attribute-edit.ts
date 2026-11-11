@@ -4,10 +4,6 @@ import {od6sutilities} from "../system/utilities";
 
 export class od6sattributeedit {
 
-    activateListeners(html: any) {
-        // @ts-expect-error super reference in mixin-style class
-        super.activateListeners(html);
-    }
 
     async _onAttributeEdit(event: any) {
         event.preventDefault();
@@ -22,7 +18,7 @@ export class od6sattributeedit {
             {score});
 
         const result = await foundry.applications.api.DialogV2.input({
-            window: {title: game.i18n.localize("NONEX_IST_OD6S.EDIT") + " " + label + "!"},
+            window: {title: game.i18n.format("NONEX_IST_OD6S.EDIT_NAMED", {name: label})},
             content,
             ok: {label: game.i18n.localize("NONEX_IST_OD6S.EDIT_ATTRIBUTE")},
         });

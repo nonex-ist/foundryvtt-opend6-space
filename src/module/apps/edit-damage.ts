@@ -22,8 +22,8 @@ export class OD6SEditDamage extends HandlebarsApplicationMixin(ApplicationV2) {
             minimizable: true,
         },
         position: {
-            width: 100,
-            height: 200,
+            width: 320,
+            height: "auto",
         },
         form: {
             handler: OD6SEditDamage.#onSubmit,

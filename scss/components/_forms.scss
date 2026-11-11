@@ -166,6 +166,11 @@
           outline: none;
           color: $c-accent-bright;
         }
+
+        &:focus-visible {
+          outline: 2px solid $c-accent-bright;
+          outline-offset: 1px;
+        }
       }
     }
   }
@@ -251,6 +256,32 @@
     height: 8em;
     min-height: 300px;
     overflow: hidden;
+  }
+
+  // Sheet root gets .locked (actor-sheet.ts cssClass) when the viewer cannot
+  // edit the document; hide mutating controls for them.
+  .locked {
+    .item-add,
+    .item-delete,
+    .spec-delete,
+    .advanceup,
+    .advancedown {
+      display: none;
+    }
+  }
+
+  .sheet-mode-banner {
+    margin-top: 4px;
+    padding: 4px 10px;
+    border: 1px solid $c-warning;
+    border-left-width: 4px;
+    border-radius: 3px;
+    background: rgba(232, 167, 64, 0.12);
+    color: $c-warning;
+    font-size: 0.85em;
+    font-weight: 600;
+    width: max-content;
+    max-width: 100%;
   }
 
   .sheet-mode {

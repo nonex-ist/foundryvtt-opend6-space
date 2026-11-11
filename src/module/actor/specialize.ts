@@ -31,11 +31,6 @@ interface SpecializeSheetLike {
 
 export class od6sspecialize {
 
-    activateListeners(html: HTMLElement | JQuery)
-    {
-        // @ts-expect-error super reference in mixin-style class
-        super.activateListeners(html);
-    }
 
     async _onSpecialize(this: SpecializeSheetLike, event: Event) {
         event.preventDefault();

@@ -46,41 +46,32 @@ export class OD6SActor extends Actor {
     async _onCreate(data: object, options: object, user: User) {
         await super._onCreate(data, options, user);
         if (game.user.isGM || this.isOwner) {
+            // Defaults per actor type, applied as a single prototypeToken
+            // update (previously up to three sequential updates).
+            let tokenUpdate: Record<string, unknown>;
             if (this.type === 'character') {
-                const update: Record<string, unknown> = {};
-                update.system = {
-                    'created.value': false
-                }
-                update.id = this.id;
-                await this.prototypeToken.update({
-                    _id: this.id,
-                    id: this.id,
+                tokenUpdate = {
                     displayName: CONST.TOKEN_DISPLAY_MODES.HOVER,
                     vision: true,
                     actorLink: true,
-                    disposition: 1
-                });
-                await this.update(update);
-            } else {
-                await this.prototypeToken.update({
-                    _id: this.id,
-                    id: this.id,
-                    displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER
-                });
-            }
-
-            if (this.type === 'container') {
-                await this.prototypeToken.update({
-                    _id: this.id,
-                    id: this.id,
+                    disposition: 1,
+                };
+            } else if (this.type === 'container') {
+                tokenUpdate = {
+                    displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
                     vision: false,
                     actorLink: true,
-                    disposition: 0
-                });
-                const update: Record<string, unknown> = {};
-                update.id = this.id;
-                update[`ownership.default`] = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
-                await this.update(update);
+                    disposition: 0,
+                };
+            } else {
+                tokenUpdate = {displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER};
+            }
+            await this.prototypeToken.update({_id: this.id, id: this.id, ...tokenUpdate});
+
+            if (this.type === 'character') {
+                await this.update({id: this.id, system: {'created.value': false}});
+            } else if (this.type === 'container') {
+                await this.update({id: this.id, 'ownership.default': CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER});
             }
         }
     }

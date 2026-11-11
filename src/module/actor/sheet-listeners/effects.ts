@@ -19,6 +19,11 @@ export function registerEffectListeners(
     root.querySelectorAll<HTMLElement>('.effect-delete').forEach((elem) =>
         elem.addEventListener('click', async (ev: Event) => {
             const ct = ev.currentTarget as HTMLElement;
+            const ok = await foundry.applications.api.DialogV2.confirm({
+                window: {title: game.i18n.localize('NONEX_IST_OD6S.DELETE')},
+                content: `<p>${game.i18n.localize('NONEX_IST_OD6S.CONFIRM_DELETE_EFFECT')}</p>`,
+            });
+            if (!ok) return;
             await sheet.document.deleteEmbeddedDocuments('ActiveEffect', [ct.dataset.effectId]);
         }));
 

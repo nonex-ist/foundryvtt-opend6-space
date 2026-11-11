@@ -48,8 +48,7 @@ export class OD6SItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         };
     }
 
-    async _renderHTML(_context: object, options: object): Promise<Record<string, HTMLElement>> {
-        const context = await this._prepareContext(options);
+    async _renderHTML(context: object, _options: object): Promise<Record<string, HTMLElement>> {
         const html = await foundry.applications.handlebars.renderTemplate(this.template, context);
         const tempEl = document.createElement("div");
         tempEl.innerHTML = html;

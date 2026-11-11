@@ -1,6 +1,7 @@
 import {od6sutilities} from "../system/utilities";
 import OD6S from "../config/config-od6s";
 import {OD6SInitiative} from "../system/initative";
+import {error as logError} from "../system/logger";
 
 /**
  * Clear an actor's action list
@@ -80,7 +81,16 @@ export function registerCombatHooks() {
         }
     })
 
-    Hooks.on("preUpdateCombat", async (Combat, data, options, userId) => {
+    // preUpdateCombat is a synchronous hook: the bookkeeping below runs
+    // fire-and-forget and the handler itself never returns a value, so it can
+    // neither cancel the update nor leak an unhandled rejection.
+    Hooks.on("preUpdateCombat", (Combat, data, options, userId) => {
+        void endOfRoundBookkeeping(Combat, data, options, userId).catch((err: unknown) => {
+            logError('combat-hooks', 'end-of-round bookkeeping failed', err);
+        });
+    })
+
+    async function endOfRoundBookkeeping(Combat: any, data: any, options: any, userId: string) {
         // End-of-round stuff here
         if (data.turn === 0) {
             // Initiative
@@ -103,8 +113,7 @@ export function registerCombatHooks() {
                         if (rounds < 1) {
                             // Remove any stun status effects
                             const effect = combatant.actor.effects.contents.find(
-                                (i: any) => i.name === game.i18n.localize(CONFIG!.statusEffects.find(
-                                    e => e.id === 'stunned')!.name));
+                                (i: any) => i.statuses?.has('stunned'));
 
                             if (typeof (effect) !== 'undefined') {
                                 await combatant.actor.deleteEmbeddedDocuments("ActiveEffect", [effect.id]);
@@ -158,7 +167,7 @@ export function registerCombatHooks() {
                 }
             }
         }
-    })
+    }
 
     Hooks.on("deleteCombat", async function (Combat) {
         // Combat is over, clear all combatant action lists

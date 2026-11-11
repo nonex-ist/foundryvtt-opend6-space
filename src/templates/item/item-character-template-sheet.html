@@ -3,7 +3,7 @@
         <img class="profile-img" src="{{item.img}}" data-action="editImage" data-edit="img" title="{{item.name}}"
              alt="{{localize 'NONEX_IST_OD6S.ALT_ITEM_IMAGE'}}"/>
         <div class="header-fields">
-            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'NONEX_IST_OD6S.NAME'}}"/></h1>
         </div>
     </header>
 
@@ -27,14 +27,14 @@
             {{!-- As you add new fields, add them in here! --}}
             <div>{{localize 'NONEX_IST_OD6S.TYPE'}}: {{localize "NONEX_IST_OD6S.CHARACTER_TEMPLATE"}}</div>
             <div class="flexrow flex-group-center">
-                <label for="item.system.species">{{getConfig 'speciesLabelName' ''}}:</label>
-                <input title="{{ getConfig 'speciesLabelName' '' }}" name="system.species"
+                <label for="item-system-species">{{getConfig 'speciesLabelName' ''}}:</label>
+                <input id="item-system-species" title="{{ getConfig 'speciesLabelName' '' }}" name="system.species"
                        type="text" value="{{item.system.species}}" data-dtype="String"/>
-                <label for="item.system.move">{{localize 'NONEX_IST_OD6S.CHAR_MOVE'}}:</label>
-                <input class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_MOVE'}}" name="system.move"
+                <label for="item-system-move">{{localize 'NONEX_IST_OD6S.CHAR_MOVE'}}:</label>
+                <input id="item-system-move" class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_MOVE'}}" name="system.move"
                        type="number" value="{{item.system.move}}" data-dtype="Number"/>
-                <label for="item.system.fp">{{getFatePointsShortName}}:</label>
-                <input class="smallinput" title="{{getFatePointsShortName}}" name="system.fp"
+                <label for="item-system-fp">{{getFatePointsShortName}}:</label>
+                <input id="item-system-fp" class="smallinput" title="{{getFatePointsShortName}}" name="system.fp"
                        type="number" value="{{item.system.fp}}" data-dtype="Number"/>
                 <label for="item.system.met">{{getMetaphysicsExtranormalName}}:</label>
                 <input type="checkbox" name="system.met"
@@ -42,14 +42,14 @@
                     {{#if item.system.met}}checked{{/if}}>
             </div>
             <div class="flexrow flex-group-center">
-                <label for="item.system.cp">{{localize 'NONEX_IST_OD6S.CHAR_CHAR_POINTS'}}:</label>
-                <input class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_CHAR_POINTS'}}" name="system.cp"
+                <label for="item-system-cp">{{localize 'NONEX_IST_OD6S.CHAR_CHAR_POINTS'}}:</label>
+                <input id="item-system-cp" class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_CHAR_POINTS'}}" name="system.cp"
                        type="number" value="{{item.system.cp}}" data-dtype="Number"/>
-                <label for="item.system.funds">{{localize 'NONEX_IST_OD6S.CHAR_FUNDS'}}:</label>
-                <input class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_FUNDS'}}" name="system.funds"
+                <label for="item-system-funds">{{localize 'NONEX_IST_OD6S.CHAR_FUNDS'}}:</label>
+                <input id="item-system-funds" class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_FUNDS'}}" name="system.funds"
                        type="number" value="{{item.system.funds}}" data-dtype="Number"/>
-                <label for="item.system.credits">{{localize 'NONEX_IST_OD6S.CHAR_CREDITS'}}:</label>
-                <input class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_CREDITS'}}" name="system.credits"
+                <label for="item-system-credits">{{localize 'NONEX_IST_OD6S.CHAR_CREDITS'}}:</label>
+                <input id="item-system-credits" class="smallinput" title="{{localize 'NONEX_IST_OD6S.CHAR_CREDITS'}}" name="system.credits"
                        type="number" value="{{item.system.credits}}" data-dtype="Number"/>
             </div>
             <div class="grid grid-2col">
@@ -72,7 +72,7 @@
                                              data-label="{{key}}"
                                              data-attrname="{{ key }}"
                                              data-sub="base">
-                                            <a><i class="fas fa-edit"></i></a>
+                                            <a><i class="fas fa-edit" aria-hidden="true"></i></a>
                                         </div>
                                     {{/unless}}
                                 </div>
@@ -94,7 +94,7 @@
                                      data-label="{{key}}"
                                      data-attrname="{{ key }}"
                                      data-sub="base">
-                                    <a><i class="fas fa-edit"></i></a>
+                                    <a><i class="fas fa-edit" aria-hidden="true"></i></a>
                                 </div>
                             </div>
                         </div>

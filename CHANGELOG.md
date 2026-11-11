@@ -10,6 +10,65 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Fixed
+
+- 41 localization keys referenced by sheets, chat cards and settings were
+  missing from `en.json` and rendered as raw keys (e.g. the Opposed Roll card
+  heading, "Add Gear", the `CARD_*` labels, the Auto Stunned setting).
+- Vehicle/starship data was never pushed to crew on sheet render: the hook
+  listened for `renderActorSheet`, which ApplicationV2 sheets do not fire.
+- The `hotbarDrop` handler was re-registered on every settings render, so
+  dropping an item on the hotbar could create several macros.
+- Opening a second roll while a roll dialog was open made the first dialog
+  roll or cancel the second roll's data. Each dialog now owns its roll; a new
+  roll closes (and cancels) the previous dialog.
+- Parry/Dodge/Block character-point limits and vehicle sensor actions were
+  detected by English text and failed in other languages.
+- Item info popup opened empty for world and compendium items.
+- Purchase/Transfer threw instead of warning when the user has no assigned
+  character.
+- Malformed markup: metaphysics attack rows, targeted-attack roll cards
+  (unclosed `<div>`), skill/specialization modifier labels, the explosive
+  dialog trigger branch, a nested `<form>` in the edit-damage dialog.
+- Focusing a numeric field on weapon sheets and several dialogs blanked its
+  value; it now selects the text instead.
+- Combat round advance no longer uses a stale copy of core `nextRound`, so
+  world time advances with the round.
+- Chat log listeners were bound again on every chat log render; chat card
+  lookups now work when the chat log is popped out; "Roll Damage" can no
+  longer be rolled twice from the same card; deleting a roll message without
+  a scene token no longer throws.
+- New items created from a sheet received their initial values under the V1
+  `data` key; sheet render no longer writes flags to the actor.
+- Spanish compendium translation files renamed to the `nonex-ist-od6s.*`
+  prefix so Babele matches them again.
+
+### Changed
+
+- Confirmation prompts for removing an embedded pilot, deleting an effect,
+  resetting the stun counter and Session Reset; the item delete prompt names
+  the item.
+- A banner shows when a sheet is in Advance or Free Edit mode (rolling is
+  disabled there).
+- Selecting a card for an opposed roll is now highlighted and can be undone
+  by clicking it again; Apply Damage warns when the target token is not on
+  the active scene; chat card errors surface as notifications.
+- Hardcoded English tooltips, placeholders and labels in sheets are
+  localized; icon-only controls and many form fields gained accessible
+  names; visible keyboard focus and non-colour cues were added.
+- `system.json` declares `htmlFields` so the server sanitizes descriptions
+  and biographies.
+- v14 deprecations removed ahead of v16: `-=` deletion keys (now
+  `ForcedDeletion`), numeric Active Effect change `mode`, `effect.changes`.
+- Edit Damage / Edit Difficulty dialogs open at a usable width.
+
+### Internal
+
+- Unit test asserting every referenced `NONEX_IST_OD6S.*` key exists in
+  `en.json`; lint warning ceiling lowered from 720/1100 to 195.
+- Dev dependencies updated (audit findings 48 → 3); removed finished one-off
+  codemod scripts and dead V1 `activateListeners` stubs.
+
 ## [3.2.0] - 2026-11-11
 
 ### Changed

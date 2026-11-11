@@ -31,10 +31,10 @@
                            max="99" id="pips" name="pips" value="{{pipsFromScore score}}" readonly>
                 </div>
             {{/if}}
-            <div class="flex-group-center advanceup" data-pipsup="{{pipsFromScore score}}">
+            <div title="{{localize 'NONEX_IST_OD6S.INCREASE_SKILL'}}" aria-label="{{localize 'NONEX_IST_OD6S.INCREASE_SKILL'}}" class="flex-group-center advanceup" data-pipsup="{{pipsFromScore score}}">
                 <i class="fas fa-plus-square"></i>
             </div>
-            <div class="flex-group-center advancedown" data-pipsdown="{{pipsFromScore score}}">
+            <div title="{{localize 'NONEX_IST_OD6S.DECREASE_SKILL'}}" aria-label="{{localize 'NONEX_IST_OD6S.DECREASE_SKILL'}}" class="flex-group-center advancedown" data-pipsdown="{{pipsFromScore score}}">
                 <i class="fas fa-minus-square"></i>
             </div>
         </div>
@@ -52,10 +52,10 @@
                 </div>
             </div>
             <div>
-                <div class="flex-group-center advanceup" data-pipsup="{{base}}" data-dtype="Number">
+                <div title="{{localize 'NONEX_IST_OD6S.INCREASE_SKILL'}}" aria-label="{{localize 'NONEX_IST_OD6S.INCREASE_SKILL'}}" class="flex-group-center advanceup" data-pipsup="{{base}}" data-dtype="Number">
                     <i class="fas fa-plus-square"></i>
                 </div>
-                <div class="flex-group-center advancedown" data-pipsdown="{{base}}" data-dtype="Number">
+                <div title="{{localize 'NONEX_IST_OD6S.DECREASE_SKILL'}}" aria-label="{{localize 'NONEX_IST_OD6S.DECREASE_SKILL'}}" class="flex-group-center advancedown" data-pipsdown="{{base}}" data-dtype="Number">
                     <i class="fas fa-minus-square"></i>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                        {{#if metaphysicsteacher}}checked{{/if}}>
             </div>
             <div class="flexrow flex-group-center" data-cpcost="{{cpcost}}">
-                <p class="cpcost cpcost-{{cpcostcolor}}">CP Cost: {{cpcost}}</p>
+                <p class="cpcost cpcost-{{cpcostcolor}}">{{localize 'NONEX_IST_OD6S.CP_COST'}}: {{cpcost}}</p>
             </div>
         </div>
     {{/if}}
@@ -82,7 +82,7 @@
                    {{#if freeadvance}}checked{{/if}}>
         </div>
         <div class="flexrow flex-group-center" data-cpcost="{{cpcost}}">
-            <p class="cpcost cpcost-{{cpcostcolor}}">CP Cost: {{cpcost}}</p>
+            <p class="cpcost cpcost-{{cpcostcolor}}">{{localize 'NONEX_IST_OD6S.CP_COST'}}: {{cpcost}}</p>
         </div>
     </div>
     <footer class="form-footer">

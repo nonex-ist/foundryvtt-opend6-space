@@ -372,6 +372,11 @@
       outline: none;
       border-color: $c-accent-border;
     }
+
+    &:focus-visible {
+      outline: 2px solid $c-accent-bright;
+      outline-offset: 1px;
+    }
   }
 
   // ── Damage button ─────────────────────────────────────────────────────
@@ -592,4 +597,11 @@
   &.nonex-ist-od6s-roll-badge--self  { color: var(--nonex-ist-od6s-chat-color-self,  #4fb6c4); }
   &.nonex-ist-od6s-roll-badge--gm    { color: var(--nonex-ist-od6s-chat-color-gm,    #7a6dc4); }
   &.nonex-ist-od6s-roll-badge--blind { color: var(--nonex-ist-od6s-chat-color-blind, #8a93a6); }
+}
+
+// Card queued as the first side of an opposed roll (see chat-log-listeners.ts).
+.message-oppose-button.opposed-selected {
+  outline: 2px solid $c-accent-bright;
+  outline-offset: 1px;
+  font-weight: bold;
 }

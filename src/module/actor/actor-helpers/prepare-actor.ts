@@ -76,7 +76,7 @@ export async function prepareDerivedActorData(actor: Actor): Promise<void> {
 
     for (const effect of actor.allApplicableEffects()) {
         if (!effect.active) continue;
-        changes.push(...effect.changes.filter((c) => c.type === "custom" && !c.key.match(itemRegex)));
+        changes.push(...effect.system.changes.filter((c) => c.type === "custom" && !c.key.match(itemRegex)));
     }
 
     for (const change of changes) {

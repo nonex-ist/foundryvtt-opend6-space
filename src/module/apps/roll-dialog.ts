@@ -1,7 +1,8 @@
  
 import {od6sutilities} from "../system/utilities";
 import OD6S, {type CharacterPointLimits} from "../config/config-od6s";
-import {od6sroll} from "./roll";
+import {cancelAction} from "./roll-helpers/roll-effects";
+import {buildDefenseNames, detectDefenseKind} from "./roll-helpers/roll-defense";
 import {isCharacterActor} from "../system/type-guards";
 import {MESSAGE_MODES} from "../hooks/chat-mode";
 import type {RollData} from "./roll-helpers/roll-data";
@@ -9,27 +10,30 @@ import type {RollData} from "./roll-helpers/roll-data";
 
 const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
 
-/** Minimal sheet handle the dialog reads `rollData` from. */
-interface RollDialogActorSheet {
-    rollData: RollData | undefined;
-}
-
 export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
-    actorSheet: RollDialogActorSheet;
+    /** The dialog most recently opened and not yet closed (see {@link closeCurrent}). */
+    static current: RollDialog | undefined;
+
     rollData: RollData;
     cpLimit: CharacterPointLimits;
     onSubmit: () => void | Promise<void>;
 
-    constructor(actorSheet: RollDialogActorSheet, onSubmit: () => void | Promise<void>, options: object = {}) {
+    constructor(rollData: RollData, onSubmit: () => void | Promise<void>, options: object = {}) {
         super(options);
-        if (!actorSheet.rollData) {
-            throw new Error("RollDialog requires actorSheet.rollData to be populated");
+        if (!rollData) {
+            throw new Error("RollDialog requires rollData to be populated");
         }
-        this.actorSheet = actorSheet;
-        this.rollData = actorSheet.rollData;
+        this.rollData = rollData;
         this.cpLimit = OD6S.characterPointLimits;
         this.onSubmit = onSubmit;
+    }
+
+    /** Closes the open roll dialog, if any; its close handler cancels its own roll. */
+    static async closeCurrent(): Promise<void> {
+        const prev = RollDialog.current;
+        RollDialog.current = undefined;
+        if (prev) await prev.close();
     }
 
     static DEFAULT_OPTIONS = {
@@ -82,8 +86,9 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     async _onClose(_options: object): Promise<void> {
+        if (RollDialog.current === this) RollDialog.current = undefined;
         if (!this.#submitted) {
-            await od6sroll.cancelAction();
+            await cancelAction(this.rollData);
         }
     }
 
@@ -113,6 +118,16 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         preview.textContent = String(dice > 0 ? dice : 0);
     }
 
+    /*
+     * Re-render policy (issue #193): handlers for fields that only store a value
+     * (text/number inputs, and the target/range/cover/called-shot selects, whose
+     * chosen option is already in the DOM and drives no other visible field)
+     * update `rollData` and at most patch the preview in place. Handlers that
+     * change which fields are shown or the displayed dice/cost keep a full
+     * render(): #useattribute, #difficultylevel (custom-difficulty field),
+     * #attackoption (shots field), .timer/.contact (explosive), cpup/cpdown,
+     * #fatepoint, #wilddie, #fulldefense.
+     */
     _onRender(_context: object, _options: object): void {
         const root = this.element as HTMLElement;
         const find = (sel: string): HTMLElement | null => root.querySelector(sel);
@@ -143,9 +158,9 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             }
 
             if (rollType === "skill") {
-                if (this.rollData.title.includes("Parry")) rollType = "parry";
-                else if (this.rollData.title.includes("Dodge")) rollType = "dodge";
-                else if (this.rollData.title.includes("Block")) rollType = "block";
+                const defense = detectDefenseKind(
+                    this.rollData.title, buildDefenseNames((k) => game.i18n.localize(k)));
+                if (defense) rollType = defense;
             }
             if (this.rollData.subtype === "vehicledodge") rollType = "dodge";
             if (this.rollData.subtype === "parry") rollType = "parry";
@@ -279,10 +294,9 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             this.rollData.shots = numField(ev, 1);
         });
 
-        find("#target")?.addEventListener("change", async (ev) => {
+        find("#target")?.addEventListener("change", (ev) => {
             const tokenId = (ev.target as HTMLSelectElement).value;
             this.rollData.target = this.rollData.targets.find((t) => t.id === tokenId);
-            await this.render();
         });
 
         findAll(".difficultylevel select").forEach((sel) => {
@@ -299,9 +313,8 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             });
         });
 
-        find("#range")?.addEventListener("change", async (ev) => {
+        find("#range")?.addEventListener("change", (ev) => {
             this.rollData.modifiers.range = (ev.target as HTMLSelectElement).value;
-            await this.render();
         });
 
         find("#attackoption")?.addEventListener("change", async (ev) => {
@@ -311,24 +324,20 @@ export class RollDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             await this.render();
         });
 
-        find("#calledshot")?.addEventListener("change", async (ev) => {
+        find("#calledshot")?.addEventListener("change", (ev) => {
             this.rollData.modifiers.calledshot = (ev.target as HTMLSelectElement).value;
-            await this.render();
         });
 
-        find("#cover")?.addEventListener("change", async (ev) => {
+        find("#cover")?.addEventListener("change", (ev) => {
             this.rollData.modifiers.cover = (ev.target as HTMLSelectElement).value;
-            await this.render();
         });
 
-        find("#coverlight")?.addEventListener("change", async (ev) => {
+        find("#coverlight")?.addEventListener("change", (ev) => {
             this.rollData.modifiers.coverlight = (ev.target as HTMLSelectElement).value;
-            await this.render();
         });
 
-        find("#coversmoke")?.addEventListener("change", async (ev) => {
+        find("#coversmoke")?.addEventListener("change", (ev) => {
             this.rollData.modifiers.coversmoke = (ev.target as HTMLSelectElement).value;
-            await this.render();
         });
 
         find("#miscmod")?.addEventListener("change", (ev) => {

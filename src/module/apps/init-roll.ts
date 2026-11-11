@@ -4,12 +4,8 @@ import {MESSAGE_MODES} from "../hooks/chat-mode";
 
 export class od6sInitRoll {
 
-    rollData: any;
-
-    activateListeners(html: any) {
-        // @ts-expect-error super reference in mixin-style class
-        super.activateListeners(html);
-    }
+    /** The currently open initiative dialog; a new request replaces it. */
+    static current: InitRollDialog | undefined;
 
     static async _onInitRollDialog(combat: any, combatant: any) {
         const combatantId = combatant.id;
@@ -18,8 +14,7 @@ export class od6sInitRoll {
         const initScore = actorData.initiative.score + actor.system.roll_mod;
         const dice = od6sutilities.getDiceFromScore(initScore).dice;
         const pips = od6sutilities.getDiceFromScore(initScore).pips;
-        // @ts-expect-error
-        this.rollData = {
+        const rollData = {
             label: game.i18n.localize('NONEX_IST_OD6S.INITIATIVE'),
             title: game.i18n.localize('NONEX_IST_OD6S.INITIATIVE'),
             dice: dice,
@@ -37,14 +32,21 @@ export class od6sInitRoll {
             template: "systems/nonex-ist-od6s/templates/initRoll.html"
         }
 
-        const caller = this as unknown as od6sInitRoll;
-        new InitRollDialog(
-            caller.rollData,
-            () => od6sInitRoll.initRollAction(caller),
-        ).render({force: true});
+        // Stable id: close a still-open previous dialog (initiative has no side
+        // effects to cancel) so each dialog owns its own rollData.
+        const prev = od6sInitRoll.current;
+        od6sInitRoll.current = undefined;
+        if (prev) await prev.close();
+
+        const dialog = new InitRollDialog(
+            rollData,
+            () => od6sInitRoll.initRollAction({rollData}),
+        );
+        od6sInitRoll.current = dialog;
+        void dialog.render({force: true});
     }
 
-    static async initRollAction(caller: any) {
+    static async initRollAction(caller: {rollData: any}) {
         let rollString;
         let cpString;
         const rollData = caller.rollData;

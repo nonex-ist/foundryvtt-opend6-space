@@ -4,6 +4,7 @@ import { isOpposedQueueEmpty, setOpposedQueueEntry } from "../system/utilities/o
 import {promptResistanceRolls} from "../socketlib";
 import {deriveRollMode} from "./chat-mode";
 import {error as logError} from "../system/logger";
+import {forcedDeletion} from "../system/forced-deletion";
 
 function tagRollMode(msg: any, html: HTMLElement) {
     const mode = deriveRollMode(msg);
@@ -47,21 +48,21 @@ export function registerChatHooks() {
             // Delete the template and clear the flag from the item
             let actor;
             if (message.speaker.token !== null && message.speaker.token !== '') {
-                // @ts-expect-error
-                actor = game!.scenes.get(message.speaker.scene).tokens.get(message.speaker.token).object.actor;
+                actor = game.scenes.get(message.speaker.scene ?? '')?.tokens.get(message.speaker.token)?.actor
+                    ?? game.actors.get(message.speaker.actor ?? '');
             } else {
-                actor = game.actors.get(message.speaker.actor);
+                actor = game.actors.get(message.speaker.actor ?? '');
             }
-            const item = actor!.items.find(i => i.id === message.getFlag('nonex-ist-od6s', 'itemId'));
+            const item = actor?.items.find(i => i.id === message.getFlag('nonex-ist-od6s', 'itemId'));
             const regionId = message.getFlag('nonex-ist-od6s', 'template') as string | undefined;
             if (regionId) {
-                const region = canvas.scene.getEmbeddedDocument('Region', regionId);
+                const region = canvas.scene?.getEmbeddedDocument('Region', regionId);
                 if (region) {
-                    await canvas.scene.deleteEmbeddedDocuments('Region', [regionId]);
+                    await canvas.scene!.deleteEmbeddedDocuments('Region', [regionId]);
                 }
                 if (item) {
                     await item.update({
-                        [`flags.nonex-ist-od6s.explosivePending.-=${regionId}`]: null,
+                        [`flags.nonex-ist-od6s.explosivePending.${regionId}`]: forcedDeletion(),
                     });
                 }
             } else if (item) {
@@ -80,8 +81,19 @@ export function registerChatHooks() {
     Hooks.on("updateChatMessage", async (message, data, _diff, _id) => {
         try {
         if (data.blind === false) {
-            const messageLi = document.querySelector(`.message[data-message-id="${data._id}"]`);
-            if (messageLi) (messageLi as any).style.display = '';
+            // Chat/messages may live in detached popout windows, so search every open app's element too.
+            const sel = `.message[data-message-id="${data._id}"]`;
+            const roots: ParentNode[] = [document];
+            const apps = (foundry.applications as unknown as {
+                instances: Map<string, { element?: HTMLElement }>
+            }).instances;
+            for (const app of apps.values()) {
+                const el = app.element;
+                if (el && !document.contains(el)) roots.push(el);
+            }
+            for (const root of roots) {
+                root.querySelectorAll<HTMLElement>(sel).forEach(li => { li.style.display = ''; });
+            }
         }
 
         if (message.getFlag('nonex-ist-od6s','isExplosive') && typeof(data.flags?.["nonex-ist-od6s"]?.success) !== 'undefined') {
@@ -172,25 +184,25 @@ export function registerChatHooks() {
                     // Delete the template and clear the flag from the item
                     let actor;
                     if (msg.speaker.token !== null && msg.speaker.token !== '') {
-                        // @ts-expect-error
-                        actor = game!.scenes.get(msg.speaker.scene).tokens.get(msg.speaker.token).object.actor;
+                        actor = game.scenes.get(msg.speaker.scene ?? '')?.tokens.get(msg.speaker.token)?.actor
+                            ?? game.actors.get(msg.speaker.actor ?? '');
                     } else {
-                        actor = game.actors.get(msg.speaker.actor);
+                        actor = game.actors.get(msg.speaker.actor ?? '');
                     }
-                    const item = actor!.items.find(i => i.id === msg.getFlag('nonex-ist-od6s', 'item'));
+                    const item = actor?.items.find(i => i.id === msg.getFlag('nonex-ist-od6s', 'item'));
 
                     const regionId = msg.getFlag('nonex-ist-od6s', 'template') as string | undefined;
                     if (item && regionId) {
                         await item.update({
-                            [`flags.nonex-ist-od6s.explosivePending.-=${regionId}`]: null,
+                            [`flags.nonex-ist-od6s.explosivePending.${regionId}`]: forcedDeletion(),
                         });
                     }
                     await od6sutilities.wait(100);
 
-                    const region = regionId ? canvas.scene.getEmbeddedDocument('Region', regionId) : null;
+                    const region = regionId ? canvas.scene?.getEmbeddedDocument('Region', regionId) : null;
                     if (region) {
                         await region.setFlag('nonex-ist-od6s', 'handled', true);
-                        await canvas.scene.deleteEmbeddedDocuments('Region', [region.id]);
+                        await canvas.scene!.deleteEmbeddedDocuments('Region', [region.id]);
                     }
                 }
 

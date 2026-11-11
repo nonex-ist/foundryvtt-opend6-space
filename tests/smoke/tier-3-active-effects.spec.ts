@@ -113,8 +113,17 @@ test("actor sheet `.effect-toggle` and `.effect-delete` controls round-trip via 
         ) as HTMLElement | null;
         const hadDelete = !!deleteBtn;
         deleteBtn?.click();
+        // Effect delete now asks for confirmation (DialogV2): click "yes" once it appears.
         const start2 = Date.now();
-        while (actor.effects.get(effectId) && Date.now() - start2 < 2000) {
+        let confirmed = false;
+        while (actor.effects.get(effectId) && Date.now() - start2 < 4000) {
+            if (!confirmed) {
+                const yes = document.querySelector('dialog button[data-action="yes"]') as HTMLElement | null;
+                if (yes) {
+                    yes.click();
+                    confirmed = true;
+                }
+            }
             await new Promise((r) => setTimeout(r, 50));
         }
         const afterDelete = actor.effects.get(effectId) ?? null;

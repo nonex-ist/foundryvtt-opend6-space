@@ -33,6 +33,7 @@ import { SCHEMA_VERSION_KEY } from "./schema-version";
 import { collectLegacyLabelUpdates } from "./migration-labels";
 import { legacyCustomAttributeDefs, legacyCustomFieldDefs } from "./custom-slots";
 import { readRawWorldSetting } from "../config/settings/custom-slots";
+import {forcedDeletion} from "./forced-deletion";
 
 /**
  * Migration steps in version order. Each entry runs when the world's stored
@@ -112,7 +113,7 @@ export async function migrateWorld() {
   // V14 returns a Notification object with a bound .remove(); the project's
   // type stubs predate this, so cast through unknown.
   const inProgress = ui.notifications.info(
-    "OpenD6 Space: Migrating world data — please be patient.",
+    game.i18n.localize("NONEX_IST_OD6S.MIGRATION_IN_PROGRESS"),
     { permanent: true },
   ) as unknown as { remove?: () => void } | undefined;
 
@@ -138,7 +139,7 @@ export async function migrateWorld() {
 
     // Record completion
     await game.settings.set("nonex-ist-od6s", "migrationVersion", CURRENT_MIGRATION_VERSION);
-    ui.notifications.info("OpenD6 Space: Migration complete.");
+    ui.notifications.info(game.i18n.localize("NONEX_IST_OD6S.MIGRATION_COMPLETE"));
 
     // Prompted only after the version is recorded, so the post-reload pass is
     // a clean no-op instead of re-running the steps.
@@ -147,7 +148,7 @@ export async function migrateWorld() {
     }
   } catch (err) {
     logError("migration", "Migration failed:", err);
-    ui.notifications.error("OpenD6 Space: Migration failed. Check the console for details.");
+    ui.notifications.error(game.i18n.localize("NONEX_IST_OD6S.MIGRATION_FAILED"));
   } finally {
     inProgress?.remove?.();
   }
@@ -285,10 +286,10 @@ async function migrateExplosiveTemplateFlags() {
       if (explosiveTemplate) {
         updates.push({
           _id: item.id,
-          "flags.nonex-ist-od6s.-=explosiveTemplate": null,
-          "flags.nonex-ist-od6s.-=explosiveSet": null,
-          "flags.nonex-ist-od6s.-=explosiveOrigin": null,
-          "flags.nonex-ist-od6s.-=explosiveRange": null,
+          "flags.nonex-ist-od6s.explosiveTemplate": forcedDeletion(),
+          "flags.nonex-ist-od6s.explosiveSet": forcedDeletion(),
+          "flags.nonex-ist-od6s.explosiveOrigin": forcedDeletion(),
+          "flags.nonex-ist-od6s.explosiveRange": forcedDeletion(),
         });
       }
     }
@@ -307,10 +308,10 @@ async function migrateExplosiveTemplateFlags() {
     if (explosiveTemplate) {
       worldItemUpdates.push({
         _id: item.id,
-        "flags.nonex-ist-od6s.-=explosiveTemplate": null,
-        "flags.nonex-ist-od6s.-=explosiveSet": null,
-        "flags.nonex-ist-od6s.-=explosiveOrigin": null,
-        "flags.nonex-ist-od6s.-=explosiveRange": null,
+        "flags.nonex-ist-od6s.explosiveTemplate": forcedDeletion(),
+        "flags.nonex-ist-od6s.explosiveSet": forcedDeletion(),
+        "flags.nonex-ist-od6s.explosiveOrigin": forcedDeletion(),
+        "flags.nonex-ist-od6s.explosiveRange": forcedDeletion(),
       });
     }
   }
@@ -334,10 +335,10 @@ async function migrateExplosivePendingFlags() {
   let count = 0;
 
   const drop = {
-    "flags.nonex-ist-od6s.-=explosiveTemplate": null,
-    "flags.nonex-ist-od6s.-=explosiveOrigin": null,
-    "flags.nonex-ist-od6s.-=explosiveRange": null,
-    "flags.nonex-ist-od6s.-=explosiveSet": null,
+    "flags.nonex-ist-od6s.explosiveTemplate": forcedDeletion(),
+    "flags.nonex-ist-od6s.explosiveOrigin": forcedDeletion(),
+    "flags.nonex-ist-od6s.explosiveRange": forcedDeletion(),
+    "flags.nonex-ist-od6s.explosiveSet": forcedDeletion(),
   };
 
   for (const actor of game.actors) {
@@ -387,7 +388,7 @@ async function migrateChatMessageFlags() {
     if (message.getFlag("nonex-ist-od6s", "isExplosive") && message.getFlag("nonex-ist-od6s", "template")) {
       updates.push({
         _id: message.id,
-        "flags.nonex-ist-od6s.-=template": null,
+        "flags.nonex-ist-od6s.template": forcedDeletion(),
         "flags.nonex-ist-od6s.handled": true,
       });
       count++;
@@ -473,7 +474,7 @@ async function migrateLegacyOd6sFlags() {
         legacy,
         { inplace: false },
       ),
-      "flags.-=od6s": null,
+      "flags.od6s": forcedDeletion(),
     };
   };
 

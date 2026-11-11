@@ -2,7 +2,7 @@
     {{#if (eq stage 0) }}
         <div class="flexrow flex-group-left explosive-type">
             <label for="explosive-type">{{localize 'NONEX_IST_OD6S.TYPE'}}:</label>
-            <select name="explosive-type" id="explosive-type" style="width: 70px;">
+            <select name="explosive-type" id="explosive-type" style="min-width: 70px; width: auto;">
                 {{#each options as |option|}}
                     <option value="{{ option }}" {{#if (eq ../type option)}}selected{{/if}}>
                         {{localize option}}
@@ -13,10 +13,10 @@
     {{/if}}
     {{#if (eq stage 1) }}
         {{#if (eq type 'NONEX_IST_OD6S.EXPLOSIVE_TIMER')}}
-            TIMER
+            {{localize 'NONEX_IST_OD6S.EXPLOSIVE_TIMER'}}
         {{/if}}
-        {{# if (eq type 'OS6S.EXPLOSIVE_TRIGGER')}}
-            TRIGGER
+        {{# if (eq type 'NONEX_IST_OD6S.EXPLOSIVE_TRIGGER')}}
+            {{localize 'NONEX_IST_OD6S.EXPLOSIVE_TRIGGER'}}
         {{/if}}
     {{/if}}
     <input name="explosive-type" type="hidden" value="">
@@ -25,7 +25,7 @@
             {{#if (and (eq stage 0)(isExplosivesAuto)) }}
                 {{ localize 'NONEX_IST_OD6S.PLACE_TEMPLATE' }}
             {{else}}
-                {{ localize 'Submit' }}
+                {{ localize 'NONEX_IST_OD6S.SUBMIT' }}
             {{/if}}
         </button>
     </footer>

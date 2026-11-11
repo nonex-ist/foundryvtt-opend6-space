@@ -5,6 +5,7 @@ import { getDiceFromScore } from "./dice";
 import { getActorFromUuid } from "./actors";
 import { isCharacterActor, isVehicleActor, isWeaponItem } from "../type-guards";
 import { MESSAGE_MODES } from "../../hooks/chat-mode";
+import {forcedDeletion} from "../forced-deletion";
 
 /**
  * Resolve a target actor's dodge score for the auto-explosive evade check.
@@ -49,7 +50,7 @@ export function getExplosivePending(item: Item, regionId: string | undefined): E
 /** Delete only the entry for `regionId` from the pending map (preserves other in-flight throws). */
 export async function clearExplosivePending(item: Item, regionId: string | undefined): Promise<void> {
     if (!regionId) return;
-    await item.update({ [`flags.nonex-ist-od6s.explosivePending.-=${regionId}`]: null });
+    await item.update({ [`flags.nonex-ist-od6s.explosivePending.${regionId}`]: forcedDeletion() });
 }
 
 export interface ExplosiveTarget {
@@ -195,7 +196,7 @@ export async function detonateExplosives(combat: Combat): Promise<void> {
         (i: RegionDocument) => i.flags?.["nonex-ist-od6s"]?.explosive === true,
     ) ?? [];
     for (const region of regions) {
-        await region.update({ visibility: 2 }); // Make visible to all
+        await region.update({ visibility: CONST.REGION_VISIBILITY.ALWAYS }); // Make visible to all
         let actor;
         if (typeof(region.getFlag('nonex-ist-od6s','token')) === 'undefined' || region.getFlag('nonex-ist-od6s','token') === '') {
             actor = await getActorFromUuid(region.getFlag('nonex-ist-od6s', 'actor'))

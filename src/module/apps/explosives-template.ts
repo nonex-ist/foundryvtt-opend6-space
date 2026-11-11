@@ -94,7 +94,7 @@ export default class ExplosivesTemplate {
         this.#container = new PIXI.Container();
         this.#circle = new PIXI.Graphics();
         this.#rangeLine = new PIXI.Graphics();
-        this.#rangeMeasure = new PIXI.Text({ text: "0 M" });
+        this.#rangeMeasure = new PIXI.Text({ text: `0 ${game.i18n.localize("NONEX_IST_OD6S.METERS_SHORT")}` });
 
         this.#container.addChild(this.#circle);
         this.#container.addChild(this.#rangeLine);
@@ -190,7 +190,7 @@ export default class ExplosivesTemplate {
         this.#rangeMeasure.x = this.previewX - 30;
         this.#rangeMeasure.y = this.previewY + 60;
         this.#rangeMeasure.style.fill = 0xFFFFFF;
-        this.#rangeMeasure.text = distance + " M";
+        this.#rangeMeasure.text = `${distance} ${game.i18n.localize("NONEX_IST_OD6S.METERS_SHORT")}`;
 
         // Check wall collision
         const origin = { x: this.originX, y: this.originY };
@@ -223,7 +223,7 @@ export default class ExplosivesTemplate {
 
         // Create a Region document with a circular shape
         const regionData = {
-            name: "Explosive",
+            name: game.i18n.localize("NONEX_IST_OD6S.EXPLOSIVE"),
             visibility: 1, // GM only initially
             shapes: [{
                 type: "ellipse",

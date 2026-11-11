@@ -34,9 +34,14 @@ export async function registerSettings() {
     updateConfig();
 }
 
+let hotbarDropRegistered = false;
+
 export function updateConfig() {
-    // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-    Hooks.on("hotbarDrop", (bar: any, data: any, slot: any) => createOD6SMacro(data, slot));
+    // updateConfig re-runs on init, i18nInit and every renderSettingsConfig; register the hook only once.
+    if (!hotbarDropRegistered) {
+        hotbarDropRegistered = true;
+        Hooks.on("hotbarDrop", (bar: any, data: any, slot: any) => createOD6SMacro(data, slot));
+    }
 
     // Misc Rules Options
     OD6S.meleeRange = game.settings.get('nonex-ist-od6s','melee_range');

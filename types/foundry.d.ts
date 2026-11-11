@@ -87,6 +87,7 @@ declare namespace foundry {
     namespace utils {
         function mergeObject<T extends object>(original: T, other: any, options?: MergeObjectOptions): T;
         function deepClone<T>(original: T): T;
+        function escapeHTML(value: string): string;
         function hasProperty(object: object, key: string): boolean;
         function isNewerVersion(v1: string, v2: string): boolean;
         function getProperty(object: object, key: string): any;
@@ -232,6 +233,12 @@ declare namespace foundry {
     }
 
     namespace data {
+        namespace operators {
+            /** v14 marker: a field assigned this value in update data is removed. */
+            class ForcedDeletion {
+                constructor(value?: unknown);
+            }
+        }
         namespace fields {
             class DataField {
                 constructor(options?: DataFieldOptions);
@@ -534,8 +541,9 @@ declare class ActiveEffect extends FoundryDocument {
     /** Whether the effect is currently active (not disabled, not suppressed) */
     active: boolean;
     disabled: boolean;
-    /** Array of attribute changes this effect applies */
+    /** Array of attribute changes this effect applies (v14: shim of `system.changes`) */
     changes: ActiveEffectChange[];
+    declare system: {changes: ActiveEffectChange[]};
     icon: string;
     duration: any;
     toDragData(): any;

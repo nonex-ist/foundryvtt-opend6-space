@@ -4,10 +4,10 @@
              alt="{{localize 'NONEX_IST_OD6S.ALT_ITEM_IMAGE'}}"/>
         <div class="header-fields">
             <div>
-                <h2 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h2>
+                <h2 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'NONEX_IST_OD6S.NAME'}}"/></h2>
                 <div class="flex-left">
                     <div class="resource">
-                        <label class="resource-label" for="item.system.quantity">Quantity</label>
+                        <label class="resource-label" for="item.system.quantity">{{localize 'NONEX_IST_OD6S.QUANTITY'}}</label>
                         <input type="text" name="system.quantity" id="item.system.quantity" value="{{item.system.quantity}}"
                                data-dtype="Number"/>
                     </div>
@@ -72,17 +72,17 @@
             <div>{{localize 'NONEX_IST_OD6S.TYPE'}}: {{localize "NONEX_IST_OD6S.STARSHIP_WEAPON"}}</div>
             <div class="flexrow flex-group-left">
                 <p>{{localize 'NONEX_IST_OD6S.RANGE'}}:</p>
-                <label for="item.system.range.short">{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}:</label>
-                <input title="{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}"
-                       onfocus="this.value=''" data-dtype="Number"
+                <label for="item-system-range-short">{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}:</label>
+                <input id="item-system-range-short" title="{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}"
+                       onfocus="this.select()" data-dtype="Number"
                        name="system.range.short" type="number" value="{{item.system.range.short}}">
-                <label for="item.system.range.medium">{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}:</label>
-                <input title="{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}"
-                       onfocus="this.value=''" data-dtype="Number"
+                <label for="item-system-range-medium">{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}:</label>
+                <input id="item-system-range-medium" title="{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}"
+                       onfocus="this.select()" data-dtype="Number"
                        name="system.range.medium" type="number" value="{{item.system.range.medium}}">
-                <label for="item.system.range.long">{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}:</label>
-                <input title="{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}"
-                       onfocus="this.value=''" data-dtype="Number"
+                <label for="item-system-range-long">{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}:</label>
+                <input id="item-system-range-long" title="{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}"
+                       onfocus="this.select()" data-dtype="Number"
                        name="system.range.long" type="number" value="{{item.system.range.long}}">
             </div>
             <div class="row">
@@ -92,13 +92,13 @@
                         <div class="flexrow flex-group-left editweapondamage"
                              data-item-id="{{item.id}}" data-score="{{item.system.damage.score}}">
                             <label for="dice">{{localize 'NONEX_IST_OD6S.DICE'}}</label>
-                            <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="number" onfocus="this.value=''"
+                            <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="number" onfocus="this.select()"
                                    value="{{diceFromScore item.system.damage.score}}" data-dtype="Number"/>
                         </div>
                         <div class="flexrow flex-group-left editweapondamage"
                              data-item-id="{{item.id}}" data-score="{{item.system.damage.score}}">
                             <label for="pips">{{localize 'NONEX_IST_OD6S.PIPS'}}</label>
-                            <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="number" onfocus="this.value=''"
+                            <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="number" onfocus="this.select()"
                                    value="{{pipsFromScore item.system.damage.score}}" data-dtype="Number"/>
                         </div>
                         <div class="flexrow flex-group-left" title="{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}">
@@ -121,13 +121,13 @@
                         <div class="flexrow flex-group-left editweaponfirecontrol"
                              data-item-id="{{item.id}}" data-score="{{item.system.fire_control.score}}">
                             <label for="dice">{{localize 'NONEX_IST_OD6S.DICE'}}</label>
-                            <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="number" onfocus="this.value=''"
+                            <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="number" onfocus="this.select()"
                                    value="{{diceFromScore item.system.fire_control.score}}" data-dtype="Number"/>
                         </div>
                         <div class="flexrow flex-group-left editweaponfirecontrol"
                              data-item-id="{{item.id}}" data-score="{{item.system.fire_control.score}}">
                             <label for="pips">{{localize 'NONEX_IST_OD6S.PIPS'}}</label>
-                            <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="number" onfocus="this.value=''"
+                            <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="number" onfocus="this.select()"
                                    value="{{pipsFromScore item.system.fire_control.score}}" data-dtype="Number"/>
                         </div>
                     </div>
@@ -135,67 +135,67 @@
             </div>
             <div class="flexrow flex-group-left">
                 <div class="flexrow flex-group-left">
-                    <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_SCALE'}}" for="item.system.scale.score">{{localize
+                    <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_SCALE'}}" for="item-system-scale-score">{{localize
                             'NONEX_IST_OD6S.SCALE'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_SCALE'}}" name="system.scale.score"
-                           onfocus="this.value=''"
+                    <input id="item-system-scale-score" title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_SCALE'}}" name="system.scale.score"
+                           onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.scale.score}}"/>
                 </div>
             </div>
             <div class="flexrow flex-group-left">
                 <div class="flexrow flex-group-left">
-                    <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_CREW'}}" for="item.system.crew.value">{{localize
+                    <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_CREW'}}" for="item-system-crew-value">{{localize
                             'NONEX_IST_OD6S.CREW'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_CREW'}}" name="system.crew.value"
-                           onfocus="this.value=''"
+                    <input id="item-system-crew-value" title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_CREW'}}" name="system.crew.value"
+                           onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.crew.value}}"/>
                 </div>
             </div>
             <div class="flexrow flex-group-left">
-                <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_ARC'}}" for="item.system.arc.value">{{localize
+                <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_ARC'}}" for="item-system-arc-value">{{localize
                         'NONEX_IST_OD6S.ARC'}}</label>
-                <input title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_ARC'}}" name="system.arc.value"
+                <input id="item-system-arc-value" title="{{localize 'NONEX_IST_OD6S.TOOLTIP_STARSHIP_WEAPON_ARC'}}" name="system.arc.value"
                        value="{{item.system.arc.value}}" data-dtype="String"/>
             </div>
             <div class="flexrow flex-group-left">
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.difficulty">{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}" name="system.difficulty"
-                           onfocus="this.value=''"
+                    <label for="item-system-difficulty">{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}</label>
+                    <input id="item-system-difficulty" title="{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}" name="system.difficulty"
+                           onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.difficulty}}"/>
                 </div>
             </div>
             <div class="flexrow flex-group-left">
-                <label for="item.system.attribute.value">{{localize 'NONEX_IST_OD6S.ATTRIBUTE'}}</label>
-                <input title="{{localize 'NONEX_IST_OD6S.ATTRIBUTE'}}" name="system.attribute.value"
+                <label for="item-system-attribute-value">{{localize 'NONEX_IST_OD6S.ATTRIBUTE'}}</label>
+                <input id="item-system-attribute-value" title="{{localize 'NONEX_IST_OD6S.ATTRIBUTE'}}" name="system.attribute.value"
                        value="{{item.system.attribute.value}}" data-dtype="String"/>
             </div>
             <div class="flexrow flex-group-left">
-                <label for="item.system.skill.value">{{localize 'NONEX_IST_OD6S.SKILL'}}</label>
-                <input title="{{localize 'NONEX_IST_OD6S.SKILL'}}" name="system.skill.value"
+                <label for="item-system-skill-value">{{localize 'NONEX_IST_OD6S.SKILL'}}</label>
+                <input id="item-system-skill-value" title="{{localize 'NONEX_IST_OD6S.SKILL'}}" name="system.skill.value"
                        value="{{item.system.skill.value}}" data-dtype="String"/>
             </div>
             <div class="flexrow flex-group-left">
-                <label for="item.system.specialization.value">{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}</label>
-                <input title="{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}" name="system.specialization.value"
+                <label for="item-system-specialization-value">{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}</label>
+                <input id="item-system-specialization-value" title="{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}" name="system.specialization.value"
                        value="{{item.system.specialization.value}}" data-dtype="String"/>
             </div>
             <div class="flexrow flex-group-center">{{localize 'NONEX_IST_OD6S.ACTIVE_EFFECTS'}}</div>
             <div class="flexrow flex-group-center">
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.mods.difficulty">{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}" name="system.mods.difficulty"
-                           onfocus="this.value=''"
+                    <label for="item-system-mods-difficulty">{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}</label>
+                    <input id="item-system-mods-difficulty" title="{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}" name="system.mods.difficulty"
+                           onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.mods.difficulty}}"/>
                 </div>
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.mods.attack">{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}" name="system.mods.attack" onfocus="this.value=''"
+                    <label for="item-system-mods-attack">{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}</label>
+                    <input id="item-system-mods-attack" title="{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}" name="system.mods.attack" onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.mods.attack}}"/>
                 </div>
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.mods.damage">{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}" name="system.mods.damage" onfocus="this.value=''"
+                    <label for="item-system-mods-damage">{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}</label>
+                    <input id="item-system-mods-damage" title="{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}" name="system.mods.damage" onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.mods.damage}}"/>
                 </div>
             </div>
@@ -203,28 +203,28 @@
             <div class="grid grid-2col">
                 <div class="flexrow flex-group-left">
                     <div class="flexrow flex-group-left">
-                        <label title="{{localize item.system.area-units.label}}" for="item.system.area-units.value">{{localize
+                        <label title="{{localize item.system.area-units.label}}" for="item-system-area-units-value">{{localize
                                 system.area-units.label}}</label>
-                        <input title="{{localize item.system.area-units.label}}" name="system.area-units.value"
-                               onfocus="this.value=''"
+                        <input id="item-system-area-units-value" title="{{localize item.system.area-units.label}}" name="system.area-units.value"
+                               onfocus="this.select()"
                                type="number" data-dtype="Number" value="{{item.system.area-units.value}}"/>
                     </div>
                 </div>
                 <div class="flexrow flex-group-left">
                     <div class="flexrow flex-group-left">
-                        <label title="{{localize item.system.mass.label}}" for="item.system.mass.value">{{localize
+                        <label title="{{localize item.system.mass.label}}" for="item-system-mass-value">{{localize
                                 system.mass.label}}</label>
-                        <input title="{{localize item.system.mass.label}}" name="system.mass.value"
-                               onfocus="this.value=''"
+                        <input id="item-system-mass-value" title="{{localize item.system.mass.label}}" name="system.mass.value"
+                               onfocus="this.select()"
                                type="number" data-dtype="Number" value="{{item.system.mass.value}}"/>
                     </div>
                 </div>
                 <div class="flexrow flex-group-left">
                     <div class="flexrow flex-group-left">
-                        <label title="{{localize item.system.energy.label}}" for="item.system.energy.value">{{localize
+                        <label title="{{localize item.system.energy.label}}" for="item-system-energy-value">{{localize
                                 system.energy.label}}</label>
-                        <input title="{{localize item.system.energy.label}}" name="system.energy.value"
-                               onfocus="this.value=''"
+                        <input id="item-system-energy-value" title="{{localize item.system.energy.label}}" name="system.energy.value"
+                               onfocus="this.select()"
                                type="number" data-dtype="Number" value="{{item.system.energy.value}}"/>
                     </div>
                 </div>
