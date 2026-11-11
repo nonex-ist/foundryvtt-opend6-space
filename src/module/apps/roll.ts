@@ -76,7 +76,7 @@ export class od6sroll {
         // Compatibility: most recent roll data (nothing in src/module reads it).
         od6sroll.rollData = result;
 
-        const dialog = new RollDialog(result, async () => { await executeRollAction(result); });
+        const dialog = new RollDialog(result, () => { void executeRollAction(result); });
         RollDialog.current = dialog;
         void dialog.render({force: true});
     }
