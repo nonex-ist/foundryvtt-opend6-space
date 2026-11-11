@@ -1,13 +1,14 @@
 import {od6sutilities} from "../system/utilities";
 import OD6S from "../config/config-od6s";
 import {isCharacterActor} from "../system/type-guards";
-import { isOpposedQueueEmpty, pushOpposedQueue } from "../system/utilities/opposed";
+import { isOpposedQueueEmpty, pushOpposedQueue, clearOpposedQueue, getOpposedQueueEntry } from "../system/utilities/opposed";
 import OD6SEditDifficulty from "../apps/edit-difficulty";
 import {OD6SEditDamage} from "../apps/edit-damage";
 import {OD6SChooseTarget} from "../apps/choose-target";
 import {OD6SHandleWildDieForm} from "../apps/handle-wild-die";
 import {error as logError} from "../system/logger";
 import {MESSAGE_MODES} from "./chat-mode";
+import {forcedDeletion} from "../system/forced-deletion";
 
 // Delegated event helper: attaches a listener on a parent that fires when a child matching selector is the target.
 // Wraps the handler so async failures leave a `[nonex-ist-od6s:chat-log]` breadcrumb instead of unhandled rejections.
@@ -22,23 +23,46 @@ function delegateEvent(
         if (target && parent.contains(target)) {
             // Make ev.currentTarget behave like jQuery delegation
             Object.defineProperty(ev, 'currentTarget', { value: target, configurable: true });
+            const report = (err: unknown) => {
+                logError('chat-log', `${eventType} ${selector} handler failed`, err);
+                ui.notifications.error(err instanceof Error ? err.message : String(err));
+            };
             try {
                 const result = handler(ev);
                 if (result && typeof (result as Promise<void>).catch === 'function') {
-                    (result as Promise<void>).catch(err =>
-                        logError('chat-log', `${eventType} ${selector} handler failed`, err),
-                    );
+                    (result as Promise<void>).catch(report);
                 }
             } catch (err) {
-                logError('chat-log', `${eventType} ${selector} handler failed`, err);
+                report(err);
             }
         }
     });
 }
 
+// Root elements that already have the delegated listeners bound (renderChatLog fires on every re-render).
+const boundRoots = new WeakSet<HTMLElement>();
+
+// Message ids whose damage has been rolled from this client (covers users who cannot write the message flag).
+const damageRolledLocal = new Set<string>();
+let opposedHintShown = false;
+
+/** Find an element by id inside the clicked message's own document/window (chat may be popped out). */
+function findInMessage(target: HTMLElement, id: string): HTMLElement | null {
+    const scope = target.closest('.message, .chat-message') ?? target.ownerDocument;
+    return (scope.querySelector(`[id="${id}"]`) as HTMLElement | null)
+        ?? target.ownerDocument.getElementById(id);
+}
+
+function toggleDisplay(el: HTMLElement | null) {
+    if (!el) return;
+    el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
 export function registerChatLogListeners() {
     Hooks.on('renderChatLog', (log, html, _data) => {
         // In v14, html is an HTMLElement, not jQuery
+        if (boundRoots.has(html)) return;
+        boundRoots.add(html);
 
         delegateEvent(html, 'input', ".explosive-damage", async (ev: Event) => {
             const target = ev.currentTarget as HTMLElement;
@@ -70,32 +94,25 @@ export function registerChatLogListeners() {
 
         delegateEvent(html, "click", ".modifiers-button", async (ev: Event) => {
             const target = ev.currentTarget as HTMLElement;
-            const content = document.getElementById("modifiers-display-" + target.dataset.messageId);
-            if (content!.style.display === "block") {
-                content!.style.display = "none";
-            } else {
-                content!.style.display = "block";
-            }
+            toggleDisplay(findInMessage(target, "modifiers-display-" + target.dataset.messageId));
             game!.messages.get(target.dataset.messageId!)?.render();
         })
 
         delegateEvent(html, "click", ".damage-modifiers-button", async (ev: Event) => {
             const target = ev.currentTarget as HTMLElement;
-            const content = document.getElementById("damage-modifiers-display-" + target.dataset.messageId);
-            if (content!.style.display === "block") {
-                content!.style.display = "none";
-            } else {
-                content!.style.display = "block";
-            }
+            toggleDisplay(findInMessage(target, "damage-modifiers-display-" + target.dataset.messageId));
             game!.messages.get(target.dataset.messageId!)?.render();
         })
 
         delegateEvent(html, "click", ".apply-damage-button", async (ev: Event) => {
             ev.preventDefault();
             const target = ev.currentTarget as HTMLElement;
-            const token = game.scenes.active.tokens.get(target.dataset.tokenId!);
+            const token = game.scenes.active?.tokens.get(target.dataset.tokenId!);
             let actor = token?.actor;
-            if (!actor) return;
+            if (!actor) {
+                ui.notifications.warn(game.i18n.localize('NONEX_IST_OD6S.WARN_TOKEN_NOT_ON_SCENE'));
+                return;
+            }
             const result = target.dataset.result!;
             const isVehicleData = target.dataset.isVehicle === 'true';
             const messageId = target.dataset.messageId!;
@@ -122,8 +139,7 @@ export function registerChatLogListeners() {
                             'system.stuns.value': (+actor.system.stuns.value) + 1,
                         });
                     }
-                    const stunnedName = game.i18n.localize(CONFIG!.statusEffects.find(e => e.id === 'stunned')!.name);
-                    if (!actor.effects.contents.find((i: ActiveEffect) => i.name === stunnedName)) {
+                    if (!actor.effects.contents.find((i: ActiveEffect) => i.statuses.has('stunned'))) {
                         await actor.toggleStatusEffect('stunned', {overlay: false, active: true});
                     }
                 }
@@ -166,7 +182,7 @@ export function registerChatLogListeners() {
             const region = regionId ? canvas.scene.getEmbeddedDocument('Region', regionId) : null;
             if (item && regionId) {
                 await item.update({
-                    [`flags.nonex-ist-od6s.explosivePending.-=${regionId}`]: null,
+                    [`flags.nonex-ist-od6s.explosivePending.${regionId}`]: forcedDeletion(),
                 });
             }
             if (region) await region.setFlag('nonex-ist-od6s', 'handled', true);
@@ -179,6 +195,23 @@ export function registerChatLogListeners() {
             ev.preventDefault();
             const target = ev.currentTarget as HTMLElement;
             const data = target.dataset;
+
+            // One damage roll per attack message: guard with a message flag (mirrors `applied`).
+            // Flag is only writable by the message author / GM; others are guarded for this session.
+            const attackMessage = data.messageId ? game.messages.get(data.messageId) : undefined;
+            if (data.messageId && (damageRolledLocal.has(data.messageId) ||
+                attackMessage?.getFlag('nonex-ist-od6s', 'damageRolled'))) {
+                ui.notifications.info(game.i18n.localize('NONEX_IST_OD6S.ROLL_DAMAGE_ALREADY_ROLLED'));
+                return;
+            }
+            if (data.messageId) damageRolledLocal.add(data.messageId);
+            if (attackMessage?.isOwner) {
+                try {
+                    await attackMessage.setFlag('nonex-ist-od6s', 'damageRolled', true);
+                } catch (err) {
+                    logError('chat-log', 'failed to set damageRolled flag', err);
+                }
+            }
             const dice: { dice: number; pips: number } = {
                 dice: Number(data.damageDice),
                 pips: Number(data.damagePips),
@@ -444,7 +477,7 @@ export function registerChatLogListeners() {
                 // Reveal the explosive region
                 const region = od6sutilities.getTemplateFromMessage(message!).template;
                 if (region) {
-                    await region.update({ visibility: 2 }); // Make visible to all
+                    await region.update({ visibility: CONST.REGION_VISIBILITY.ALWAYS }); // Make visible to all
                 }
             }
         })
@@ -458,12 +491,33 @@ export function registerChatLogListeners() {
                 target: target.dataset.target,
             };
 
+            const control = (target.querySelector('.message-oppose-button') as HTMLElement | null) ?? target;
+            const clearSelected = () => {
+                target.ownerDocument.querySelectorAll('.opposed-selected').forEach(el => {
+                    el.classList.remove('opposed-selected');
+                    el.setAttribute('aria-pressed', 'false');
+                });
+            };
+
             if (!isOpposedQueueEmpty()) {
+                // Second click on the already-selected card deselects it.
+                if (getOpposedQueueEntry(0)?.messageId === data.messageId && !getOpposedQueueEntry(1)) {
+                    clearOpposedQueue();
+                    clearSelected();
+                    return;
+                }
                 pushOpposedQueue(data);
+                clearSelected();
                 // @ts-expect-error - od6sutilities.handleOpposedRoll is added at runtime in od6s.ts
                 return od6sutilities.handleOpposedRoll(data);
             } else {
                 pushOpposedQueue(data);
+                control.classList.add('opposed-selected');
+                control.setAttribute('aria-pressed', 'true');
+                if (!opposedHintShown) {
+                    opposedHintShown = true;
+                    ui.notifications.info(game.i18n.localize('NONEX_IST_OD6S.OPPOSED_SELECTED'));
+                }
             }
         })
 

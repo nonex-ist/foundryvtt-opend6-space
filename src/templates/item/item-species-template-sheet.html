@@ -3,7 +3,7 @@
         <img class="profile-img" src="{{item.img}}" data-action="editImage" data-edit="img" title="{{item.name}}"
              alt="{{localize 'NONEX_IST_OD6S.ALT_ITEM_IMAGE'}}"/>
         <div class="header-fields">
-            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'NONEX_IST_OD6S.NAME'}}"/></h1>
         </div>
     </header>
 
@@ -46,7 +46,7 @@
                                      data-label="{{key}}"
                                      data-attrname="{{ key }}"
                                      data-sub="min">
-                                    <a><i class="fas fa-edit"></i></a>
+                                    <a><i class="fas fa-edit" aria-hidden="true"></i></a>
                                 </div>
                                 <div class="flex-group-center"
                                      title="{{localize 'NONEX_IST_OD6S.ATTRIBUTE_MAX'}}"
@@ -62,7 +62,7 @@
                                      data-label="{{key}}"
                                      data-attrname="{{ key }}"
                                      data-sub="max">
-                                    <a><i class="fas fa-edit"></i></a>
+                                    <a><i class="fas fa-edit" aria-hidden="true"></i></a>
                                 </div>
                             </div>
                         </div>

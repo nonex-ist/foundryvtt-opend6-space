@@ -3,7 +3,7 @@
         <div>
             <div class="grid grid-2col-species">
                 <label for="actor.system.species.content">{{localize actor.system.species.label}}:</label>
-                <input title="{{localize actor.system.species.label}}" name="system.species.content" type="text"
+                <input id="actor.system.species.content" title="{{localize actor.system.species.label}}" name="system.species.content" type="text"
                        value="{{actor.system.species.content}}" placeholder="{{localize actor.system.species.label}}"
                        data-dtype="{{actor.system.species.type}}"/>
             </div>
@@ -12,14 +12,14 @@
     <div class="grid grid-4col header-fields">
         <div class="flexrow flex-group-center">
             <label for="actor.system.move.value">{{localize actor.system.move.label}}:</label>
-            <input title="{{localize actor.system.move.label}}" name="system.move.value" type="number" min="0" max="99"
+            <input id="actor.system.move.value" title="{{localize actor.system.move.label}}" name="system.move.value" type="number" min="0" max="99"
                    value="{{actor.system.move.value}}" placeholder="10" data-dtype="{{actor.system.move.type}}"/>
         </div>
         {{> (getWoundsTemplate)}}
         {{#each (getCustomFields actor.type)}}
             <div class="flexrow flex-group-center">
-                <label for="actor.system.customfields.{{id}}">{{label}}:</label>
-                <input title="{{label}}" name="system.customfields.{{id}}" type="{{inputType}}"
+                <label>{{label}}:</label>
+                <input aria-label="{{label}}" title="{{label}}" name="system.customfields.{{id}}" type="{{inputType}}"
                        value="{{lookup ../actor.system.customfields id}}" data-dtype="{{dtype}}"
                     {{#if (eq inputType "number") }}
                        min="0" max="9999" placeholder="0"
@@ -28,7 +28,7 @@
         {{/each}}
         <div class="flexrow flex-group-left">
             <label for="actor.system.scale.score">{{localize actor.system.scale.label}}:</label>
-            <input title="{{localize actor.system.scale.label}}" name="system.scale.score" type="number" min="0" max="99"
+            <input id="actor.system.scale.score" title="{{localize actor.system.scale.label}}" name="system.scale.score" type="number" min="0" max="99"
                    value="{{actor.system.scale.score}}" placeholder="0" data-dtype="{{actor.system.scale.type}}"/>
         </div>
     </div>

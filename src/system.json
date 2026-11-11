@@ -10,33 +10,119 @@
   },
   "documentTypes": {
     "Actor": {
-      "character": {},
-      "npc": {},
-      "creature": {},
+      "character": {
+        "htmlFields": [
+          "background.content",
+          "description.content",
+          "personality.content"
+        ]
+      },
+      "npc": {
+        "htmlFields": [
+          "description.content"
+        ]
+      },
+      "creature": {
+        "htmlFields": [
+          "description.content"
+        ]
+      },
       "vehicle": {},
       "starship": {},
       "container": {}
     },
     "Item": {
-      "skill": {},
-      "specialization": {},
-      "advantage": {},
-      "disadvantage": {},
-      "specialability": {},
-      "armor": {},
-      "weapon": {},
-      "gear": {},
-      "cybernetic": {},
-      "manifestation": {},
-      "character-template": {},
-      "action": {},
+      "skill": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "specialization": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "advantage": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "disadvantage": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "specialability": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "weapon": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "gear": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "cybernetic": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "manifestation": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "character-template": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "action": {
+        "htmlFields": [
+          "description"
+        ]
+      },
       "vehicle": {},
-      "vehicle-weapon": {},
-      "vehicle-gear": {},
-      "starship-weapon": {},
-      "starship-gear": {},
-      "species-template": {},
-      "item-group": {}
+      "vehicle-weapon": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "vehicle-gear": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "starship-weapon": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "starship-gear": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "species-template": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "item-group": {
+        "htmlFields": [
+          "description"
+        ]
+      }
     }
   },
   "authors": [

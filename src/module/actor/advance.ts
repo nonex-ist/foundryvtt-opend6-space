@@ -5,11 +5,6 @@ import {isCharacterActor, isSpecializationItem} from "../system/type-guards";
 
 export class od6sadvance {
 
-    activateListeners(html: HTMLElement | JQuery)
-    {
-        // @ts-expect-error super reference in mixin-style class
-        super.activateListeners(html);
-    }
 
     async _onAdvance(event: Event) {
         event.preventDefault();

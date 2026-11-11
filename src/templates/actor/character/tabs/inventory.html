@@ -7,7 +7,7 @@
                 </div>
                 <div class="flexrow flex-group-center item-controls"
                      title="{{localize 'NONEX_IST_OD6S.ADD'}} {{localize 'NONEX_IST_OD6S.ARMOR'}}">
-                    <a class="item-add"
+                    <a title="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" class="item-add"
                        data-type="armor">
                         <i class="fas fa-plus"></i></a>
                 </div>
@@ -19,7 +19,7 @@
                             <div class="inv-grid armor-grid">
                                 <div class="equip-checkbox" data-item-id="{{armor._id}}">
                                     <input type="checkbox" name="armor.system.equipped.value"
-                                           id="armor.system.equipped.value" data-dtype="Boolean"
+                                           id="armor.system.equipped.value.{{armor._id}}" data-dtype="Boolean"
                                            title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                         {{#if armor.system.equipped.value}}checked{{/if}}>
                                 </div>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="flexrow flex-group-center item-controls"
                          title="{{localize 'NONEX_IST_OD6S.ADD'}} {{localize 'NONEX_IST_OD6S.WEAPON'}}">
-                        <a class="item-add"
+                        <a title="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" class="item-add"
                            data-type="weapon">
                             <i class="fas fa-plus"></i></a>
                     </div>
@@ -76,7 +76,7 @@
                                     <div class="inv-grid ranged-weapon-grid">
                                         <div class="equip-checkbox" data-item-id="{{weapon._id}}">
                                             <input type="checkbox" name="weapon.system.equipped.value"
-                                                   id="weapon.system.equipped.value" data-dtype="Boolean"
+                                                   id="weapon.system.equipped.value.{{weapon._id}}" data-dtype="Boolean"
                                                    title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                                 {{#if weapon.system.equipped.value}}checked{{/if}}>
                                         </div>
@@ -118,7 +118,7 @@
                                     <div class="inv-grid ranged-weapon-grid">
                                         <div class="equip-checkbox" data-item-id="{{weapon._id}}">
                                             <input type="checkbox" name="weapon.system.equipped.value"
-                                                   id="weapon.system.equipped.value" data-dtype="Boolean"
+                                                   id="weapon.system.equipped.value.{{weapon._id}}" data-dtype="Boolean"
                                                    title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                                 {{#if weapon.system.equipped.value}}checked{{/if}}>
                                         </div>
@@ -172,7 +172,7 @@
                                     <div class="inv-grid ranged-weapon-grid">
                                         <div class="equip-checkbox" data-item-id="{{weapon._id}}">
                                             <input type="checkbox" name="weapon.system.equipped.value"
-                                                   id="weapon.system.equipped.value" data-dtype="Boolean"
+                                                   id="weapon.system.equipped.value.{{weapon._id}}" data-dtype="Boolean"
                                                    title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                                 {{#if weapon.system.equipped.value}}checked{{/if}}>
                                         </div>
@@ -214,7 +214,7 @@
                                     <div class="inv-grid ranged-weapon-grid">
                                         <div class="equip-checkbox" data-item-id="{{weapon._id}}">
                                             <input type="checkbox" name="weapon.system.equipped.value"
-                                                   id="weapon.system.equipped.value" data-dtype="Boolean"
+                                                   id="weapon.system.equipped.value.{{weapon._id}}" data-dtype="Boolean"
                                                    title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                                 {{#if weapon.system.equipped.value}}checked{{/if}}>
                                         </div>
@@ -256,7 +256,7 @@
                                     <div class="inv-grid melee-weapon-grid">
                                         <div class="equip-checkbox" data-item-id="{{weapon._id}}">
                                             <input type="checkbox" name="weapon.system.equipped.value"
-                                                   id="weapon.system.equipped.value" data-dtype="Boolean"
+                                                   id="weapon.system.equipped.value.{{weapon._id}}" data-dtype="Boolean"
                                                    title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                                 {{#if weapon.system.equipped.value}}checked{{/if}}>
                                         </div>
@@ -304,7 +304,7 @@
                     </div>
                     <div class="flexrow flex-group-center item-controls"
                          title="{{localize 'NONEX_IST_OD6S.ADD'}} {{localize 'NONEX_IST_OD6S.GEAR'}}">
-                        <a class="item-add"
+                        <a title="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" class="item-add"
                            data-type="gear">
                             <i class="fas fa-plus"></i></a>
                     </div>
@@ -320,14 +320,14 @@
                                 {{/if}}>
                                     <div class="equip-checkbox" data-item-id="{{gear._id}}">
                                         <input type="checkbox" name="gear.system.equipped.value"
-                                               id="gear.system.equipped.value" data-dtype="Boolean"
+                                               id="gear.system.equipped.value.{{gear._id}}" data-dtype="Boolean"
                                                title="{{localize 'NONEX_IST_OD6S.EQUIPPED'}}"
                                             {{#if gear.system.equipped.value}}checked{{/if}}>
                                     </div>
                                     <div class="edit-quantity" title="{{localize 'NONEX_IST_OD6S.QUANTITY'}}"
                                          data-item-id="{{gear._id}}">
                                         <input type="number" name="gear.system.quantity"
-                                               id="actor.system.quantity" data-dtype="Number"
+                                               id="gear.system.quantity.{{gear._id}}" data-dtype="Number"
                                                value="{{gear.system.quantity}}">
                                     </div>
                                     <div class="flexrow flex-group-left show-item-details"

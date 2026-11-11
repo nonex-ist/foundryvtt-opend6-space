@@ -36,11 +36,14 @@ export async function deleteItem(sheet: ItemCrudSheetLike, ev: Event) {
             const li = ct.closest<HTMLElement>(".item");
             itemId = li?.dataset.itemId;
         }
+        const itemName = (itemId ? sheet.document.items.get(itemId)?.name : undefined) ?? "";
         // V1 Dialog.prompt rendered with the unstyled grey template; use
         // DialogV2.confirm for the same yes/no shape with the V2 styling.
         const ok = await foundry.applications.api.DialogV2.confirm({
             window: {title: game.i18n.localize("NONEX_IST_OD6S.DELETE")},
-            content: `<p>${game.i18n.localize("NONEX_IST_OD6S.DELETE_CONFIRM")}</p>`,
+            content: `<p>${game.i18n.format("NONEX_IST_OD6S.DELETE_CONFIRM_NAMED", {
+                name: foundry.utils.escapeHTML(itemName),
+            })}</p>`,
         });
         if (!ok) return;
         if (itemId) await sheet.document.deleteEmbeddedDocuments('Item', [itemId]);
@@ -75,8 +78,9 @@ export async function addItem(
     let worldItems: Item[] = [];
     let compendiumItems: Item[] = [];
 
-    data.label = game.i18n.localize('NONEX_IST_OD6S.ADD') + " " + game.i18n.localize(OD6S.itemLabels[itemType])
-    data.label_empty = game.i18n.localize('NONEX_IST_OD6S.ADD_EMPTY') + " " + game.i18n.localize(OD6S.itemLabels[itemType])
+    const typeLabel = game.i18n.localize(OD6S.itemLabels[itemType]);
+    data.label = game.i18n.format('NONEX_IST_OD6S.ADD_ITEM_TYPE', {type: typeLabel});
+    data.label_empty = game.i18n.format('NONEX_IST_OD6S.ADD_EMPTY_ITEM_TYPE', {type: typeLabel});
 
     worldItems = game.items.filter((i: Item) => i.type === itemType);
     const cEntries = od6sutilities.getItemsFromCompendiumByType(itemType as OD6SItemType);
@@ -145,15 +149,16 @@ export function onItemCreate(sheet: ItemCrudSheetLike, event: Event) {
     // Grab any data associated with this control.
     const data = foundry.utils.deepClone(header.dataset);
     // Initialize a default name.
-    const name = game.i18n.localize('NONEX_IST_OD6S.NEW') + ' ' + game.i18n.localize('ITEM.Type' + capType);
+    const name = game.i18n.format('NONEX_IST_OD6S.NEW_ITEM_TYPE', {type: game.i18n.localize('ITEM.Type' + capType)});
     // Prepare the item object.
-    const itemData: { name: string; type: string; data: Record<string, string | undefined> } = {
+    // Remove the type from the dataset since it's in the itemData.type prop.
+    delete data["type"];
+    // v14 documents take initial values under `system` (V1 used `data`).
+    const itemData: { name: string; type: string; system: Record<string, string | undefined> } = {
         name,
         type,
-        data,
+        system: data,
     };
-    // Remove the type from the dataset since it's in the itemData.type prop.
-    delete itemData.data["type"];
 
     // Finally, create the item!
     return sheet.document.createEmbeddedDocuments("Item", [itemData]);

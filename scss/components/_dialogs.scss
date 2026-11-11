@@ -52,7 +52,11 @@
     font-weight: 700;
   }
   .cpcost-black { color: $c-text-primary; }
-  .cpcost-red   { color: $c-bad; }
+  .cpcost-red   {
+    color: $c-bad;
+    text-decoration: underline;
+    text-decoration-style: wavy;
+  }
 
   // Roll / submit button — match the gold accent treatment used on the
   // .create-character button so dialog actions feel like the same family.

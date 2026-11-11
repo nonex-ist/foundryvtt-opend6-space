@@ -88,8 +88,8 @@ export function registerInventoryListeners(
                             const effSys = effectItem.system as OD6SEquip & {consumable?: boolean};
                             if (effSys.consumable || e.disabled !== effSys.equipped.value) return;
                             if (!effSys.equipped.value) {
-                                for (const c of e.changes) {
-                                    if (c.key.startsWith('system.items.skills') && c.mode === 2) {
+                                for (const c of e.system.changes) {
+                                    if (c.key.startsWith('system.items.skills') && c.type === "add") {
                                         const t = c.key.split('.');
                                         const foundItem = sheet.document.items.find((i: Item) => i.name === t[3]);
                                         itemUpdates.push({
@@ -162,12 +162,12 @@ export function registerInventoryListeners(
                 const itemName = ct.dataset.itemName!;
                 item = await od6sutilities._getItemFromWorld(itemName);
                 if (item) {
-                    new OD6SItemInfo(item.data).render(true);
+                    new OD6SItemInfo(item).render(true);
                 } else {
                     // Check compendia
                     const compItem = await od6sutilities._getItemFromCompendium(itemName);
                     if (compItem) {
-                        new OD6SItemInfo(compItem.data).render(true);
+                        new OD6SItemInfo(compItem).render(true);
                     }
                 }
             }
@@ -176,7 +176,7 @@ export function registerInventoryListeners(
     // Purchase click event
     root.querySelectorAll<HTMLElement>('.item-purchase').forEach((elem) =>
         elem.addEventListener('click', async (ev: Event) => {
-            if (typeof game.user.character === 'undefined') {
+            if (!game.user.character) {
                 ui.notifications.warn(game.i18n.localize('NONEX_IST_OD6S.WARN_NO_CHARACTER_ASSIGNED'));
                 return;
             }
@@ -191,7 +191,7 @@ export function registerInventoryListeners(
     // Transfer click event
     root.querySelectorAll<HTMLElement>('.item-transfer').forEach((elem) =>
         elem.addEventListener('click', async (ev: Event) => {
-            if (typeof game.user.character === 'undefined') {
+            if (!game.user.character) {
                 ui.notifications.warn(game.i18n.localize('NONEX_IST_OD6S.WARN_NO_CHARACTER_ASSIGNED'));
                 return;
             }

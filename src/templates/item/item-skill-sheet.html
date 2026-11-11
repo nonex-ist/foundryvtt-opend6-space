@@ -3,7 +3,7 @@
         <img class="profile-img" src="{{item.img}}" data-action="editImage" data-edit="img" title="{{item.name}}"
              alt="{{localize 'NONEX_IST_OD6S.ALT_ITEM_IMAGE'}}"/>
         <div class="header-fields">
-            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'NONEX_IST_OD6S.NAME'}}"/></h1>
         </div>
     </header>
 
@@ -28,8 +28,8 @@
         <div class="tab attributes" data-group="primary" data-tab="attributes">
             {{!-- As you add new fields, add them in here! --}}
             <div class="flexrow flex-group-left">
-                <label for="item.system.time_taken">{{localize 'NONEX_IST_OD6S.TIME_TAKEN'}}:</label>
-                <input title="{{localize 'NONEX_IST_OD6S.TIME_TAKEN'}}" name="system.time_taken" type="text"
+                <label for="item-system-time-taken">{{localize 'NONEX_IST_OD6S.TIME_TAKEN'}}:</label>
+                <input id="item-system-time-taken" title="{{localize 'NONEX_IST_OD6S.TIME_TAKEN'}}" name="system.time_taken" type="text"
                        value="{{item.system.time_taken}}"
                        data-time_taken="{{item.system.time_taken}}" data-dtype="String"/>
             </div>
@@ -55,28 +55,28 @@
             {{#unless (flatSkills)}}
                 <div class="flex flex-group-left editskill"
                      data-item-id="{{item.id}}" data-score="{{item.system.score}}" data-base="{{item.system.base}}">
-                    <label for="item.system.die.dice">{{localize 'NONEX_IST_OD6S.DICE'}}:</label>
+                    <label>{{localize 'NONEX_IST_OD6S.DICE'}}:</label>
                     <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="text"
                            value="{{diceFromScore item.system.base}}"
                            data-base="{{item.system.base}}" data-dtype="Number"/>
                 </div>
                 <div class="flex flex-group-left editskill"
                      data-item-id="{{item.id}}" data-score="{{item.system.score}}" data-base="{{item.system.base}}">
-                    <label for="item.system.die.pips">{{localize 'NONEX_IST_OD6S.PIPS'}}:</label>
+                    <label>{{localize 'NONEX_IST_OD6S.PIPS'}}:</label>
                     <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="text"
                            value="{{pipsFromScore item.system.base}}" data-base="{{item.system.base}}" data-dtype="Number"/>
                 </div>
             {{else}}
                 <div class="flex flex-group-left"
                      data-item-id="{{item.id}}" data-score="{{item.system.score}}" data-base="{{item.system.base}}">
-                    <label for="item.system.base">{{localize 'NONEX_IST_OD6S.SCORE'}}:</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.SCORE'}}" name="system.base" type="text" value="{{item.system.base}}"
+                    <label for="item-system-base">{{localize 'NONEX_IST_OD6S.SCORE'}}:</label>
+                    <input id="item-system-base" title="{{localize 'NONEX_IST_OD6S.SCORE'}}" name="system.base" type="text" value="{{item.system.base}}"
                            data-base="{{item.system.base}}" data-dtype="Number"/>
                 </div>
             {{/unless}}
             <div class="flex flex-group-left editmod">
-                <label for=item.system.mod">{{localize 'NONEX_IST_OD6S.MODIFIER'}}</label>
-                <input title="{{localize 'NONEX_IST_OD6S.MODIFIER'}}" name="system.mod" type=number data-dtype="Number"
+                <label for="item-system-mod">{{localize 'NONEX_IST_OD6S.MODIFIER'}}</label>
+                <input id="item-system-mod" title="{{localize 'NONEX_IST_OD6S.MODIFIER'}}" name="system.mod" type=number data-dtype="Number"
                        value="{{item.system.mod}}"/>
             </div>
         </div>

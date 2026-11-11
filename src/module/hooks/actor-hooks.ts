@@ -1,6 +1,7 @@
 import {od6sutilities} from "../system/utilities";
 import OD6S from "../config/config-od6s";
 import {od6sroll} from "../apps/roll";
+import {error as logError} from "../system/logger";
 
 export function registerActorHooks() {
     Hooks.on('preDeleteDocument', async (document, _options, _userId) => {
@@ -200,7 +201,7 @@ export function registerActorHooks() {
                 }
             }
         } else {
-            if (document.actor.getFlag('nonex-ist-od6s', 'crew') !== '') {
+            if (document.actor.getFlag('nonex-ist-od6s', 'crew')) {
                 const vehicle = await od6sutilities.getActorFromUuid(document.actor.getFlag('nonex-ist-od6s', 'crew'));
                 if (vehicle) {
                     try {
@@ -213,9 +214,27 @@ export function registerActorHooks() {
         }
     })
 
-    Hooks.on("renderActorSheet", async (sheet) => {
-        if ((sheet.actor.type === "vehicle" || sheet.actor.type === "starship") && sheet.actor.system.crewmembers.length > 0) {
-            await sheet.actor.sendVehicleData();
+    // ApplicationV2 sheets fire `render<ClassName>` for each class in the
+    // inheritance chain (never the V1 `renderActorSheet` name). sendVehicleData
+    // writes to the *crew* actors, not the vehicle, so it cannot re-render the
+    // vehicle sheet; still, only an owner pushes, and only when the vehicle's
+    // source data changed since the last push, to avoid redundant writes.
+    const lastVehicleSnapshot = new Map<string, string>();
+    Hooks.on("renderOD6SActorSheet", async (sheet: { actor?: Actor }) => {
+        const actor = sheet.actor as (Actor & { sendVehicleData(): Promise<void> }) | undefined;
+        if (!actor || !actor.isOwner) return;
+        if (actor.type !== "vehicle" && actor.type !== "starship") return;
+        const system = actor.system as unknown as { crewmembers?: unknown[]; toObject?: () => unknown };
+        if (!(system.crewmembers && system.crewmembers.length > 0)) return;
+        const snapshot = JSON.stringify([actor.name, system.toObject?.(),
+            actor.items.map(i => (i as unknown as {_source: unknown})._source)]);
+        if (lastVehicleSnapshot.get(actor.uuid) === snapshot) return;
+        lastVehicleSnapshot.set(actor.uuid, snapshot);
+        try {
+            await actor.sendVehicleData();
+        } catch (err) {
+            lastVehicleSnapshot.delete(actor.uuid);
+            logError('crew', 'sendVehicleData failed', err);
         }
     })
 

@@ -44,7 +44,7 @@
             {{localize message.flags.nonex-ist-od6s.wildResult}}
         </div>
     {{else}}
-        <div {{#if user.isGM}}class="wilddiegm" {{else}}class="wilddie"{{/if}} data-message-id="{{message._id}}">
+        <div {{#if user.isGM}}class="wilddiegm" role="button" tabindex="0" title="{{localize 'NONEX_IST_OD6S.CHOOSE_WILD_EFFECT'}}" aria-label="{{localize 'NONEX_IST_OD6S.CHOOSE_WILD_EFFECT'}}" {{else}}class="wilddie"{{/if}} data-message-id="{{message._id}}">
             {{localize message.flags.nonex-ist-od6s.wildResult}}
         </div>
     {{/if}}
@@ -60,9 +60,10 @@
                 {{#if message.flags.nonex-ist-od6s.targetName}}
                     {{message.flags.nonex-ist-od6s.targetName}}
                 {{else}}
-                    {{localize 'NONEX_IST_OD6S.NO_TARGET'}}</div>
+                    {{localize 'NONEX_IST_OD6S.NO_TARGET'}}
                 {{/if}}
             {{/unless}}
+        </div>
         </div>
         {{#unless message.flags.nonex-ist-od6s.isExplosive}}
             {{getHitLocation message.flags.nonex-ist-od6s.targetType message.flags.nonex-ist-od6s.location}}
@@ -72,8 +73,8 @@
         {{#if (eq message.flags.nonex-ist-od6s.difficultyLevel 'NONEX_IST_OD6S.DIFFICULTY_UNKNOWN')}}
             {{#if user.isGM}}
                 <div class="flexrow flex-group-left">
-                    <label for="choose-difficulty">{{localize "NONEX_IST_OD6S.DIFFICULTY"}}:</label>
-                    <select class="choose-difficulty" name="choose-difficulty" id="choose-difficulty" data-message-id="{{message._id}}">
+                    <label for="choose-difficulty-{{message._id}}">{{localize "NONEX_IST_OD6S.DIFFICULTY"}}:</label>
+                    <select class="choose-difficulty" name="choose-difficulty" id="choose-difficulty-{{message._id}}" data-message-id="{{message._id}}">
                         
                             {{#each (getDifficultyLevels) as | level |}}
                                 <option value="{{level}}" {{#if (eq level difficulty)}}selected{{/if}}>{{localize level}}</option>

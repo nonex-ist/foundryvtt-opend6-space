@@ -1,3 +1,4 @@
+import {forcedDeletion} from "../../system/forced-deletion";
 /**
  * Sheet helpers for the freeform `system.labels` map on items.
  * Extracted from item-sheet.ts; behaviour preserved.
@@ -39,6 +40,6 @@ export async function deleteLabel(item: Item, ev: Event): Promise<void> {
     await item.update({
         id: item.id,
         system: item.system,
-        [`system.labels.-=${target.dataset.key}`]: null,
+        [`system.labels.${target.dataset.key}`]: forcedDeletion(),
     });
 }

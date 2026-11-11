@@ -61,7 +61,7 @@
                            value="{{actor.system.dodge.score}}"
                            placeholder="{{ actor.system.dodge.score }}"
                            id="actor.system.dodge.score"
-                           onfocus="this.value=''" type="number" maxlength="2" size="2"/>
+                           onfocus="this.select()" type="number" maxlength="2" size="2"/>
                 </div>
                 <div class="flexrow flex-group-left edit-parry">
                     <label for="parry">{{ localize 'NONEX_IST_OD6S.PARRY' }}:</label>
@@ -69,7 +69,7 @@
                            value="{{actor.system.parry.score}}"
                            placeholder="{{actor.system.parry.score}}"
                            id="actor.system.parry.score"
-                           onfocus="this.value=''" type="number" maxlength="2" size="2"/>
+                           onfocus="this.select()" type="number" maxlength="2" size="2"/>
                 </div>
                 <div class="flexrow flex-group-left edit-block">
                     <label for="block">{{ localize 'NONEX_IST_OD6S.BLOCK' }}:</label>
@@ -77,7 +77,7 @@
                            value="{{actor.system.block.score}}"
                            placeholder="{{actor.system.block.score}}"
                            id="actor.system.block.score"
-                           onfocus="this.value=''" type="number" maxlength="2" size="2"/>
+                           onfocus="this.select()" type="number" maxlength="2" size="2"/>
                 </div>
             </div>
         </div>
@@ -338,7 +338,7 @@
                                      data-item-id="{{action._id}}">
                                     {{# if (eq action.system.subtype 'misc')}}
                                         <input class="editmiscaction" data-item-id="{{action._id}}"
-                                               onfocus="this.value=''" type="text" value="{{action.name}}">
+                                               onfocus="this.select()" type="text" value="{{action.name}}">
                                     {{else}}
                                         {{action.name}}{{#if (eq action.system.subtype "parry")}}
                                         ({{localize 'NONEX_IST_OD6S.PARRY'}}){{/if}}

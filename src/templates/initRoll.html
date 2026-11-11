@@ -4,11 +4,11 @@
         <div data-characterpoints="{{characterpoints}}">{{ localize 'NONEX_IST_OD6S.USE_CHARACTER_POINTS'}}</div>
         <div class="flexrow flex-group-center">
             <div class="boxed cpcost cpcost-{{cpcostcolor}}">{{characterpoints}}</div>
-            <div class="flex-group-center cpup">
-                <i class="fas fa-plus-square"></i>
+            <div class="flex-group-center cpup" role="button" tabindex="0" title="{{localize 'NONEX_IST_OD6S.CP_INCREASE'}}" aria-label="{{localize 'NONEX_IST_OD6S.CP_INCREASE'}}">
+                <i class="fas fa-plus-square" aria-hidden="true"></i>
             </div>
-            <div class="flex-group-center cpdown">
-                <i class="fas fa-minus-square"></i>
+            <div class="flex-group-center cpdown" role="button" tabindex="0" title="{{localize 'NONEX_IST_OD6S.CP_DECREASE'}}" aria-label="{{localize 'NONEX_IST_OD6S.CP_DECREASE'}}">
+                <i class="fas fa-minus-square" aria-hidden="true"></i>
             </div>
         </div>
     </div>
@@ -22,12 +22,12 @@
     <div class="flexrow flex-group-left">
         <div class="bonusdice flexrow flex-group-left usebonus">
             <label for="bonusdice">{{localize 'NONEX_IST_OD6S.USE_BONUS_DICE'}}</label>
-            <input type="number" onfocus="this.value=''" data-dtype="Number"
+            <input type="number" onfocus="this.select()" data-dtype="Number"
                    max="99" id="bonusdice" name="bonusdice" value="{{bonusdice}}">
         </div>
         <div class="bonuspips flexrow flex-group-left usebonus" data-bonuspips="{{bonuspips}}">
             <label for="bonuspips">{{localize 'NONEX_IST_OD6S.USE_BONUS_PIPS'}}</label>
-            <input type="number" onfocus="this.value=''" data-dtype="Number"
+            <input type="number" onfocus="this.select()" data-dtype="Number"
                    max="99" id="bonuspips" name="bonuspips" value="{{bonuspips}}">
         </div>
     </div>

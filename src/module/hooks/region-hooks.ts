@@ -1,5 +1,6 @@
 import {od6sutilities} from "../system/utilities";
 import {error as logError} from "../system/logger";
+import {forcedDeletion} from "../system/forced-deletion";
 
 export function registerRegionHooks() {
     // Scene Region hooks for explosive system
@@ -14,10 +15,10 @@ export function registerRegionHooks() {
                 if (message) {
                     let actor;
                     if (message.speaker.token !== '' && message.speaker.token !== null) {
-                        // @ts-expect-error
-                        actor = game!.scenes.get(message.speaker.scene).tokens.get(message.speaker.token).object.actor;
+                        actor = game.scenes.get(message.speaker.scene ?? '')?.tokens.get(message.speaker.token)?.actor
+                            ?? game.actors.get(message.speaker.actor ?? '');
                     } else {
-                        actor = game.actors.get(message.speaker.actor);
+                        actor = game.actors.get(message.speaker.actor ?? '');
                     }
                     if (!actor) return;
                     const targets = await od6sutilities.getExplosiveTargets(
@@ -54,7 +55,7 @@ export function registerRegionHooks() {
                     // Drop only the entry for this region — other in-flight
                     // throws of the same item retain their own pending state (#40).
                     await item.update({
-                        [`flags.nonex-ist-od6s.explosivePending.-=${region.id}`]: null,
+                        [`flags.nonex-ist-od6s.explosivePending.${region.id}`]: forcedDeletion(),
                     });
                 }
             }

@@ -84,12 +84,12 @@
                                              data-score="{{skill.system.total}}"
                                              data-label="{{skill.name}}"
                                              data-freeadvance="true">
-                                            <a class="item-control item-edit" title="Edit Skill"><i
+                                            <a class="item-control item-edit" title="{{localize 'NONEX_IST_OD6S.EDIT_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.EDIT_ITEM'}}"><i
                                                     class="fas fa-edit"></i></a>
                                             <a data-item-id="{{skill._id}}"
                                                data-type="skill"
                                                class="item-control item-delete"
-                                               title="Delete Skill">
+                                               title="{{localize 'NONEX_IST_OD6S.DELETE_SKILL'}}" aria-label="{{localize 'NONEX_IST_OD6S.DELETE_SKILL'}}">
                                                 <i class="fas fa-trash"></i></a>
                                         </div>{{/if}}
                                 </div>
@@ -104,7 +104,7 @@
                 <div class="flexrow flex-group-center"><b>{{getManifestationsName}}</b></div>
                 <div class="flexrow flex-group-center item-controls"
                      title="{{localize 'NONEX_IST_OD6S.ADD'}} {{localize 'NONEX_IST_OD6S.MANIFESTATION'}}">
-                    <a class="item-add"
+                    <a title="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.CREATE_ITEM'}}" class="item-add"
                        data-type="manifestation">
                         <i class="fas fa-plus"></i></a>
                 </div>
@@ -128,8 +128,8 @@
                             {{else}}
                                 {{#if item.system.attack}}
                                     <div class="skills grid grid-3col-manifestations">
-                                        <div class="attributes flexrow flex-group-center active-checkbox title="{{localize 'NONEX_IST_OD6S.ACTIVE'}}" data-item-id="{{item._id}}">
-                                        <a data-item-id="{{item._id}}" class="item-control">
+                                        <div class="attributes flexrow flex-group-center active-checkbox" title="{{localize 'NONEX_IST_OD6S.ACTIVE'}}" data-item-id="{{item._id}}">
+                                        <a title="{{localize 'NONEX_IST_OD6S.ACTIVE'}}" aria-label="{{localize 'NONEX_IST_OD6S.ACTIVE'}}" data-item-id="{{item._id}}" class="item-control">
                                             <i class="fas fa-circle"></i>
                                         </a>
                                     </div>

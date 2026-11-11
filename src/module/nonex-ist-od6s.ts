@@ -122,7 +122,10 @@ Hooks.once('init', async function () {
     CONFIG.Combat.documentClass = OD6SCombat;
     CONFIG.ui.combat = OD6SCombatTracker;
     CONFIG.ui.compendium = OD6SCompendiumDirectory;
-    CONFIG.statusEffects = OD6S.statusEffects;
+    // v14: CONFIG.statusEffects is a Proxy-backed collection (array + id keys); the
+    // assignment setter is marked @deprecated, so replace its contents in place.
+    CONFIG.statusEffects.length = 0;
+    for (const effect of OD6S.statusEffects) CONFIG.statusEffects.push(effect);
     CONFIG.Dice.terms["w"] = WildDie;
     CONFIG.Dice.terms["b"] = CharacterPointDie;
     CONFIG.Token.objectClass = OD6SToken;

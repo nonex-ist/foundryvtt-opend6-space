@@ -20,5 +20,12 @@ export async function editEffect(item: Item, ev: Event): Promise<void> {
 
 export async function deleteEffect(item: Item, ev: Event): Promise<void> {
     const target = ev.currentTarget as HTMLElement;
-    await item.deleteEmbeddedDocuments("ActiveEffect", [target.dataset.effectId!]);
+    const effectId = target.dataset.effectId;
+    if (!effectId) return;
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: {title: game.i18n.localize("NONEX_IST_OD6S.DELETE")},
+        content: `<p>${game.i18n.localize("NONEX_IST_OD6S.CONFIRM_DELETE_EFFECT")}</p>`,
+    });
+    if (!confirmed) return;
+    await item.deleteEmbeddedDocuments("ActiveEffect", [effectId]);
 }

@@ -36,7 +36,7 @@
                                value="{{actor.system.dodge.score}}"
                                placeholder="{{ actor.system.dodge.score }}"
                                id="actor.system.dodge.score"
-                               onfocus="this.value=''" type="number" maxlength="2" size="2"/>
+                               onfocus="this.select()" type="number" maxlength="2" size="2"/>
                     </div>
                 </div>
                 <div class="flexrow flex-group-left">
@@ -146,10 +146,10 @@
                                     (add actor.system.shields.arcs.front.value actor.system.toughness.score actor.system.armor.score)}}</b>
                             </div>
                             <div class="flexrow flex-group-center">
-                                <div class="arc" data-arc="front" data-direction="up">
+                                <div title="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.FRONT'}}" aria-label="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.FRONT'}}" class="arc" data-arc="front" data-direction="up">
                                     <i class="fas fa-plus-square"></i>
                                 </div>
-                                <div class="arc" data-arc="front" data-direction="down">
+                                <div title="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.FRONT'}}" aria-label="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.FRONT'}}" class="arc" data-arc="front" data-direction="down">
                                     <i class="fas fa-minus-square"></i>
                                 </div>
                             </div>
@@ -177,10 +177,10 @@
                                     (add actor.system.shields.arcs.left.value actor.system.toughness.score actor.system.armor.score)}}</b>
                             </div>
                             <div class="flexrow flex-group-center">
-                                <div class="arc" data-arc="left" data-direction="up">
+                                <div title="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.LEFT'}}" aria-label="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.LEFT'}}" class="arc" data-arc="left" data-direction="up">
                                     <i class="fas fa-plus-square"></i>
                                 </div>
-                                <div class="arc" data-arc="left" data-direction="down">
+                                <div title="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.LEFT'}}" aria-label="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.LEFT'}}" class="arc" data-arc="left" data-direction="down">
                                     <i class="fas fa-minus-square"></i>
                                 </div>
                             </div>
@@ -210,10 +210,10 @@
                                     (add actor.system.shields.arcs.rear.value actor.system.toughness.score actor.system.armor.score)}}</b>
                             </div>
                             <div class="flexrow flex-group-center">
-                                <div class="arc" data-arc="rear" data-direction="up">
+                                <div title="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.REAR'}}" aria-label="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.REAR'}}" class="arc" data-arc="rear" data-direction="up">
                                     <i class="fas fa-plus-square"></i>
                                 </div>
-                                <div class="arc" data-arc="rear" data-direction="down">
+                                <div title="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.REAR'}}" aria-label="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.REAR'}}" class="arc" data-arc="rear" data-direction="down">
                                     <i class="fas fa-minus-square"></i>
                                 </div>
                             </div>
@@ -242,10 +242,10 @@
                                     (add actor.system.shields.arcs.right.value actor.system.toughness.score actor.system.armor.score)}}</b>
                             </div>
                             <div class="flexrow flex-group-center">
-                                <div class="arc" data-arc="right" data-direction="up">
+                                <div title="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.RIGHT'}}" aria-label="{{localize 'NONEX_IST_OD6S.INCREASE'}}: {{localize 'NONEX_IST_OD6S.RIGHT'}}" class="arc" data-arc="right" data-direction="up">
                                     <i class="fas fa-plus-square"></i>
                                 </div>
-                                <div class="arc" data-arc="right" data-direction="down">
+                                <div title="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.RIGHT'}}" aria-label="{{localize 'NONEX_IST_OD6S.DECREASE'}}: {{localize 'NONEX_IST_OD6S.RIGHT'}}" class="arc" data-arc="right" data-direction="down">
                                     <i class="fas fa-minus-square"></i>
                                 </div>
                             </div>
@@ -399,13 +399,13 @@
                              data-item-id="{{weapon._id}}"
                              data-type="weapon">
                             <a class="item-control item-edit small-font" data-item-id="{{weapon._id}}"
-                               title="Edit Weapon">
+                               title="{{localize 'NONEX_IST_OD6S.EDIT_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.EDIT_ITEM'}}">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a data-item-id="{{weapon._id}}"
                                data-type="weapon"
                                class="item-control item-delete small-font"
-                               title="Delete Weapon">
+                               title="{{localize 'NONEX_IST_OD6S.DELETE_ITEM'}}" aria-label="{{localize 'NONEX_IST_OD6S.DELETE_ITEM'}}">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </div>

@@ -1,30 +1,30 @@
 <div>
     <div class="grid-2col-type">
         <label for="actor.system.vehicle_type.value">{{localize actor.system.vehicle_type.label}}:</label>
-        <input title="{{localize actor.system.vehicle_type.label}}" name="system.vehicle_type.value" type="text"
+        <input id="actor.system.vehicle_type.value" title="{{localize actor.system.vehicle_type.label}}" name="system.vehicle_type.value" type="text"
                value="{{actor.system.vehicle_type.value}}" size="12" data-dtype="{{actor.system.vehicle_type.type}}"/>
     </div>
     <div class="grid-4col-vehicle-skill">
         <label for="actor.system.skill.value">{{localize actor.system.skill.label}}:</label>
-        <input title="{{localize actor.system.skill.label}}" name="system.skill.value" type="text"
+        <input id="actor.system.skill.value" title="{{localize actor.system.skill.label}}" name="system.skill.value" type="text"
                value="{{actor.system.skill.value}}" size="12" data-dskill="{{actor.system.skill.skill}}"/>
         <label for="actor.system.specialization.value">{{localize actor.system.specialization.label}}:</label>
-        <input title="{{localize actor.system.specialization.label}}" name="system.specialization.value" type="text"
+        <input id="actor.system.specialization.value" title="{{localize actor.system.specialization.label}}" name="system.specialization.value" type="text"
                value="{{actor.system.specialization.value}}" size="12"
                data-dspecialization="{{actor.system.specialization.specialization}}"/>
     </div>
     <div class="grid grid-4col">
         <div class="flexrow flex-group-left">
             <label for="actor.system.scale.score">{{localize actor.system.scale.label}}:</label>
-            <input title="{{localize actor.system.scale.label}}" name="system.scale.score" type="number" min="0"
+            <input id="actor.system.scale.score" title="{{localize actor.system.scale.label}}" name="system.scale.score" type="number" min="0"
                    max="99"
                    value="{{actor.system.scale.score}}" placeholder="0" data-dtype="{{actor.system.scale.type}}"/>
         </div>
         {{#if actor.system.atmospheric.value}}
             <div class="flex-left">
-                <label for="actor.system.move.value">{{localize actor.system.move.label}}:</label>
+                <label>{{localize actor.system.move.label}}:</label>
                 <div class="grid grid-3col">
-                    <input title="{{localize 'NONEX_IST_OD6S.SPACE_MOVE'}}" name="system.move.value" type="number" min="0"
+                    <input aria-label="{{localize actor.system.move.label}}" title="{{localize 'NONEX_IST_OD6S.SPACE_MOVE'}}" name="system.move.value" type="number" min="0"
                            max="99"
                            value="{{actor.system.move.value}}" placeholder="10"
                            data-dtype="{{actor.system.move.type}}"/>
@@ -38,27 +38,27 @@
             </div>
         {{else}}
             <div class="flexrow flex-group-left">
-                <label for="actor.system.move.value">{{localize actor.system.move.label}}:</label>
-                <input title="{{localize actor.system.move.label}}" name="system.move.value" type="number" min="0"
+                <label>{{localize actor.system.move.label}}:</label>
+                <input aria-label="{{localize actor.system.move.label}}" title="{{localize actor.system.move.label}}" name="system.move.value" type="number" min="0"
                        max="99"
                        value="{{actor.system.move.value}}" placeholder="10" data-dtype="{{actor.system.move.type}}"/>
             </div>
         {{/if}}
         <div class="flexrow flex-group-left">
             <label for="actor.system.interstellar_drive.value">{{localize (getInterstellarDriveName)}}:</label>
-            <input title="{{localize (getInterstellarDriveName)}}" name="system.interstellar_drive.value"
+            <input id="actor.system.interstellar_drive.value" title="{{localize (getInterstellarDriveName)}}" name="system.interstellar_drive.value"
                    type="number" min="0" max="99"
                    value="{{actor.system.interstellar_drive.value}}" placeholder="10"
                    data-dtype="{{actor.system.interstellar_drive.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.crew.value">{{localize actor.system.crew.label}}:</label>
-            <input title="{{localize actor.system.crew.label}}" name="system.crew.value" type="number" min="0" max="99"
+            <input id="actor.system.crew.value" title="{{localize actor.system.crew.label}}" name="system.crew.value" type="number" min="0" max="99"
                    value="{{actor.system.crew.value}}" placeholder="10" data-dtype="{{actor.system.crew.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.passengers.value">{{localize actor.system.passengers.label}}:</label>
-            <input title="{{localize actor.system.passengers.label}}" name="system.passengers.value" type="number"
+            <input id="actor.system.passengers.value" title="{{localize actor.system.passengers.label}}" name="system.passengers.value" type="number"
                    min="0"
                    max="99"
                    value="{{actor.system.passengers.value}}" placeholder="0"
@@ -66,7 +66,7 @@
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.cargo_capacity.value">{{localize actor.system.cargo_capacity.label}}:</label>
-            <input title="{{localize actor.system.cargo_capacity.label}}" name="system.cargo_capacity.value"
+            <input id="actor.system.cargo_capacity.value" title="{{localize actor.system.cargo_capacity.label}}" name="system.cargo_capacity.value"
                    type="number"
                    min="0" max="99"
                    value="{{actor.system.cargo_capacity.value}}" placeholder="0"
@@ -74,20 +74,20 @@
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.length.value">{{localize actor.system.length.label}}:</label>
-            <input title="{{localize actor.system.length.label}}" name="system.length.value" type="number" min="0"
+            <input id="actor.system.length.value" title="{{localize actor.system.length.label}}" name="system.length.value" type="number" min="0"
                    max="99"
                    value="{{actor.system.length.value}}" placeholder="0" data-dtype="{{actor.system.length.type}}"/>
         </div>
         <div class="flexrow flex-group-left">
             <label for="actor.system.tonnage.value">{{localize actor.system.tonnage.label}}:</label>
-            <input title="{{localize actor.system.tonnage.label}}" name="system.tonnage.value" type="number" min="0"
+            <input id="actor.system.tonnage.value" title="{{localize actor.system.tonnage.label}}" name="system.tonnage.value" type="number" min="0"
                    max="99"
                    value="{{actor.system.tonnage.value}}" placeholder="0" data-dtype="{{actor.system.tonnage.type}}"/>
         </div>
         {{#each (getCustomFields actor.type)}}
             <div class="flexrow flex-group-center">
-                <label for="actor.system.customfields.{{id}}">{{label}}:</label>
-                <input title="{{label}}" name="system.customfields.{{id}}" type="{{inputType}}"
+                <label>{{label}}:</label>
+                <input aria-label="{{label}}" title="{{label}}" name="system.customfields.{{id}}" type="{{inputType}}"
                        value="{{lookup ../actor.system.customfields id}}" data-dtype="{{dtype}}"
                     {{#if (eq inputType "number") }}
                        min="0" max="9999" placeholder="0"

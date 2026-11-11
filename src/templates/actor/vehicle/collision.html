@@ -30,7 +30,7 @@
     <div class="flexrow flex-group-left vehiclecollisionmod" data-type="vehiclecollisionmod">
         <label for="vehiclecollisionmod">{{localize 'NONEX_IST_OD6S.VEHICLE_COLLISION_MOD'}}</label>
         <div class="flexrow flex-group-center actionpenalty" data-actionpenalty="{{actionpenalty}}">
-            <input type="number" onfocus="this.value=''" data-dtype="Number" data-mod="{{vehiclecollisionmod}}"
+            <input type="number" onfocus="this.select()" data-dtype="Number" data-mod="{{vehiclecollisionmod}}"
                    title="{{ localize 'NONEX_IST_OD6S.VEHICLE_COLLISION_MOD_HINT'}}"
                    max="99" id="vehiclecollisionmod" name="vehiclecollisionmod"
                    placeholder="{{vehiclecollisionmod}}"><b>D</b>

@@ -1,4 +1,5 @@
 import {repairLegacyLabelKeys} from "../system/migration";
+import {error as logError} from "../system/logger";
 
 const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
 
@@ -60,7 +61,7 @@ export default class od6sMaintenanceConfiguration extends HandlebarsApplicationM
                 );
             }
         } catch (err) {
-            console.error("nonex-ist-od6s | label repair failed", err);
+            logError("maintenance", "label repair failed", err);
             ui.notifications.error(
                 game.i18n.localize("NONEX_IST_OD6S.MAINTENANCE_REPAIR_LABELS_ERROR"),
             );

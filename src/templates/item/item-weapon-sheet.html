@@ -4,11 +4,11 @@
              alt="{{localize 'NONEX_IST_OD6S.ALT_ITEM_IMAGE'}}"/>
         <div class="header-fields">
             <div>
-                <h2 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h2>
+                <h2 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'NONEX_IST_OD6S.NAME'}}"/></h2>
                 <div class="flex-left">
                     <div class="grid grid-2col">
                         <div class="resource">
-                            <label class="resource-label" for="item.system.quantity">Quantity</label>
+                            <label class="resource-label" for="item.system.quantity">{{localize 'NONEX_IST_OD6S.QUANTITY'}}</label>
                             <input type="text" name="system.quantity" id="item.system.quantity"
                                    value="{{item.system.quantity}}"
                                    data-dtype="Number"/>
@@ -101,7 +101,7 @@
                 </select>
             </div>
             <div class="flexrow flex-group-left">
-                <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_VEHICLE_WEAPON_SCALE'}}" for="item.system.scale.value">{{localize
+                <label title="{{localize 'NONEX_IST_OD6S.TOOLTIP_VEHICLE_WEAPON_SCALE'}}">{{localize
                         'NONEX_IST_OD6S.SCALE'}}</label>
                 <input title="{{localize 'NONEX_IST_OD6S.TOOLTIP_VEHICLE_WEAPON_SCALE'}}" name="system.scale.score"
                        type="number" data-dtype="Number" value="{{item.system.scale.score}}"/>
@@ -130,25 +130,25 @@
             {{#if (isRanged item.system.subtype)}}
                 <div class="flexrow flex-group-left">
                     <p>{{localize 'NONEX_IST_OD6S.RANGE'}}:</p>
-                    <label for="item.system.range.short">{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}:</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}"
-                           onfocus="this.value=''" data-dtype="String"
+                    <label for="item-system-range-short">{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}:</label>
+                    <input id="item-system-range-short" title="{{localize 'NONEX_IST_OD6S.RANGE_SHORT'}}"
+                           onfocus="this.select()" data-dtype="String"
                            name="system.range.short" type="text" value="{{item.system.range.short}}">
-                    <label for="item.system.range.medium">{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}:</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}"
-                           onfocus="this.value=''" data-dtype="String"
+                    <label for="item-system-range-medium">{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}:</label>
+                    <input id="item-system-range-medium" title="{{localize 'NONEX_IST_OD6S.RANGE_MEDIUM'}}"
+                           onfocus="this.select()" data-dtype="String"
                            name="system.range.medium" type="text" value="{{item.system.range.medium}}">
-                    <label for="item.system.range.long">{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}:</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}"
-                           onfocus="this.value=''" data-dtype="String"
+                    <label for="item-system-range-long">{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}:</label>
+                    <input id="item-system-range-long" title="{{localize 'NONEX_IST_OD6S.RANGE_LONG'}}"
+                           onfocus="this.select()" data-dtype="String"
                            name="system.range.long" type="text" value="{{item.system.range.long}}">
                 </div>
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.ammo">{{localize 'NONEX_IST_OD6S.AMMO'}}:</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.AMMO'}}" data-dtype="Number" onfocus="this.value=''"
+                    <label for="item-system-ammo">{{localize 'NONEX_IST_OD6S.AMMO'}}:</label>
+                    <input id="item-system-ammo" title="{{localize 'NONEX_IST_OD6S.AMMO'}}" data-dtype="Number" onfocus="this.select()"
                            name="system.ammo" type="number" value="{{item.system.ammo}}">
-                    <label for="item.system.rof">{{localize 'NONEX_IST_OD6S.RATE_OF_FIRE'}}:</label>
-                    <input title="{{localize 'OD6.RATE_OF_FIRE'}}" data-dtye="Number" onfocus="this.value=''"
+                    <label for="item-system-rof">{{localize 'NONEX_IST_OD6S.RATE_OF_FIRE'}}:</label>
+                    <input id="item-system-rof" title="{{localize 'OD6.RATE_OF_FIRE'}}" data-dtye="Number" onfocus="this.select()"
                            name="system.rof" type="number" value="{{item.system.rof}}">
                 </div>
             {{/if}}
@@ -163,7 +163,7 @@
                                  data-item-id="{{item.id}}" data-score="{{item.system.damage.score}}">
                                 <label for="dice">{{localize 'NONEX_IST_OD6S.DICE'}}</label>
                                 <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="number"
-                                       onfocus="this.value=''"
+                                       onfocus="this.select()"
                                        value="{{diceFromScore item.system.damage.score}}" data-dtype="Number"
                                         {{#if item.system.stun.stun_only}}disabled{{/if}}/>
                             </div>
@@ -175,7 +175,7 @@
                                  data-item-id="{{item.id}}" data-score="{{item.system.damage.score}}">
                                 <label for="pips">{{localize 'NONEX_IST_OD6S.PIPS'}}</label>
                                 <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="number"
-                                       onfocus="this.value=''"
+                                       onfocus="this.select()"
                                        value="{{pipsFromScore item.system.damage.score}}" data-dtype="Number"
                                        {{#if item.system.stun.stun_only}}disabled{{/if}}/>
                             </div>
@@ -218,7 +218,7 @@
                                  data-item-id="{{item.id}}" data-score="{{item.system.stun.score}}">
                                 <label for="dice">{{localize 'NONEX_IST_OD6S.DICE'}}</label>
                                 <input title="{{localize 'NONEX_IST_OD6S.DICE'}}" id="dice" type="number"
-                                       onfocus="this.value=''"
+                                       onfocus="this.select()"
                                        value="{{diceFromScore item.system.stun.score}}" data-dtype="Number"/>
                             </div>
                         </div>
@@ -229,14 +229,14 @@
                                  data-item-id="{{item.id}}" data-score="{{item.system.stun.score}}">
                                 <label for="pips">{{localize 'NONEX_IST_OD6S.PIPS'}}</label>
                                 <input title="{{localize 'NONEX_IST_OD6S.PIPS'}}" id="pips" type="number"
-                                       onfocus="this.value=''"
+                                       onfocus="this.select()"
                                        value="{{pipsFromScore item.system.stun.score}}" data-dtype="Number"/>
                             </div>
                         </div>
                     </div>
                     <div class="flexrow flex-group-left">
-                        <label for="item.system.stun.type">{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}:</label>
-                        <select name="system.stun.type" id="item.system.stun.type">
+                        <label>{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}:</label>
+                        <select aria-label="{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}" aria-label="{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}" name="system.stun.type" id="item.system.stun.type">
                             
                                 {{#each (getDamageTypes) as |damagetype key|}}
                                     <option value="{{ key }}" {{#if (eq key @root.item.system.stun.type)}}selected{{/if}}>
@@ -248,8 +248,8 @@
                     </div>
                     <div class="column">
                         <div class="flexrow flex-group-left" title="{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}">
-                            <label for="item.system.stun.stun_only">{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}</label>
-                            <input id="item.system.stun.stun_only" name="system.stun.stun_only" type="checkbox"
+                            <label>{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}</label>
+                            <input aria-label="{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}" aria-label="{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}" id="item.system.stun.stun_only" name="system.stun.stun_only" type="checkbox"
                                    data-dtype="Boolean" {{#if item.system.stun.stun_only}}checked{{/if}}/>
                         </div>
                     </div>
@@ -262,7 +262,7 @@
                         {{localize 'NONEX_IST_OD6S.ZONE'}} {{localize 'NONEX_IST_OD6S.RANGE'}}
                         {{#each item.system.blast_radius as |radius key|}}
                             {{#if (getExplosiveZones key)}}
-                                <input onfocus="this.value=''" data-dtype="Number"
+                                <input onfocus="this.select()" data-dtype="Number"
                                        title="{{localize 'NONEX_IST_OD6S.ZONE'}} {{key}}"
                                        name="system.blast_radius.{{key}}.range" type="number" max="99"
                                        value="{{radius.range}}">
@@ -274,7 +274,7 @@
                 <div class="grid grid-5col">
                     <div>{{localize 'NONEX_IST_OD6S.RANGE'}}</div>
                     {{#each item.system.blast_radius as |radius key|}}
-                        <span class="flexrow flex-group-left"><input onfocus="this.value=''" data-dtype="Number"
+                        <span class="flexrow flex-group-left"><input onfocus="this.select()" data-dtype="Number"
                                                                      title="{{localize 'NONEX_IST_OD6S.ZONE'}} {{key}}"
                                                                      name="system.blast_radius.{{key}}.range"
                                                                      type="number" max="99"
@@ -286,7 +286,7 @@
                 <div class="grid grid-5col">
                     <div>{{localize 'NONEX_IST_OD6S.DAMAGE'}}</div>
                     {{#each item.system.blast_radius as |radius key|}}
-                        <span class="flexrow flex-group-left"><input onfocus="this.value=''" data-dtype="Number"
+                        <span class="flexrow flex-group-left"><input onfocus="this.select()" data-dtype="Number"
                                                                      title="{{localize 'NONEX_IST_OD6S.ZONE'}} {{key}}"
                                                                      name="system.blast_radius.{{key}}.damage"
                                                                      type="number" max="99"
@@ -300,8 +300,8 @@
                 <div class="row">
                     <div class="column">
                         <div class="flexrow flex-group-left">
-                            <label for="item.system.stun.type">{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}:</label>
-                            <select name="system.stun.type" id="item.system.stun.type">
+                            <label>{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}:</label>
+                            <select aria-label="{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}" aria-label="{{localize 'NONEX_IST_OD6S.DAMAGE_TYPE'}}" name="system.stun.type" id="item.system.stun.type">
                                 
                                     {{#each (getDamageTypes) as |damagetype key|}}
                                         <option value="{{ key }}" {{#if (eq key @root.item.system.stun.type)}}selected{{/if}}>
@@ -314,8 +314,8 @@
                     </div>
                     <div class="column">
                         <div class="flexrow flex-group-left" title="{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}">
-                            <label for="item.system.stun.stun_only">{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}</label>
-                            <input id="item.system.stun.stun_only" name="system.stun.stun_only" type="checkbox"
+                            <label>{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}</label>
+                            <input aria-label="{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}" aria-label="{{localize 'NONEX_IST_OD6S.STUN_ONLY'}}" id="item.system.stun.stun_only" name="system.stun.stun_only" type="checkbox"
                                    data-dtype="Boolean" {{#if item.system.stun.stun_only}}checked{{/if}}/>
                         </div>
                     </div>
@@ -323,7 +323,7 @@
                 <div class="grid grid-5col">
                     <div>{{localize 'NONEX_IST_OD6S.RANGE'}}</div>
                     {{#each item.system.blast_radius as |radius key|}}
-                        <span class="flexrow flex-group-left"><input onfocus="this.value=''" data-dtype="Number"
+                        <span class="flexrow flex-group-left"><input onfocus="this.select()" data-dtype="Number"
                                                                      title="{{localize 'NONEX_IST_OD6S.ZONE'}} {{key}}"
                                                                      name="system.blast_radius.{{key}}.stun_range"
                                                                      type="number" max="99"
@@ -335,7 +335,7 @@
                 <div class="grid grid-5col">
                     <div>{{localize 'NONEX_IST_OD6S.DAMAGE'}}</div>
                     {{#each item.system.blast_radius as |radius key|}}
-                        <span class="flexrow flex-group-left"><input onfocus="this.value=''" data-dtype="Number"
+                        <span class="flexrow flex-group-left"><input onfocus="this.select()" data-dtype="Number"
                                                                      title="{{localize 'NONEX_IST_OD6S.ZONE'}} {{key}}"
                                                                      name="system.blast_radius.{{key}}.stun_damage"
                                                                      type="number" max="99"
@@ -359,23 +359,23 @@
                 </select>
             </div>
             <div class="flexrow flex-group-left">
-                <label for="item.system.stats.skill">{{localize 'NONEX_IST_OD6S.SKILL'}}</label>
+                <label>{{localize 'NONEX_IST_OD6S.SKILL'}}</label>
                 <input title="{{localize 'NONEX_IST_OD6S.SKILL'}}" name="system.stats.skill"
                        value="{{item.system.stats.skill}}" data-dtype="String"/>
             </div>
             <div class="flexrow flex-group-left">
-                <label for="item.system.stats.specialization">{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}</label>
-                <input title="{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}" name="system.stats.specialization"
+                <label for="item-system-stats-specialization">{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}</label>
+                <input id="item-system-stats-specialization" title="{{localize 'NONEX_IST_OD6S.SPECIALIZATION'}}" name="system.stats.specialization"
                        value="{{item.system.stats.specialization}}" data-dtype="String"/>
             </div>
             {{# if (and (useParrySkill) (eq item.system.subtype (localize 'NONEX_IST_OD6S.MELEE'))) }}
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.stats.skill">{{localize 'NONEX_IST_OD6S.PARRY_SKILL'}}</label>
+                    <label>{{localize 'NONEX_IST_OD6S.PARRY_SKILL'}}</label>
                     <input title="{{localize 'NONEX_IST_OD6S.PARRY_SKILL'}}" name="system.stats.parry_skill"
                            value="{{item.system.stats.parry_skill}}" data-dtype="String"/>
                 </div>
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.stats.skill">{{localize 'NONEX_IST_OD6S.PARRY_SPECIALIZATION'}}</label>
+                    <label>{{localize 'NONEX_IST_OD6S.PARRY_SPECIALIZATION'}}</label>
                     <input title="{{localize 'NONEX_IST_OD6S.PARRY_SPECIALIZATION'}}" name="system.stats.parry_specialization"
                            value="{{item.system.stats.parry_specialization}}" data-dtype="String"/>
                 </div>
@@ -383,19 +383,19 @@
             <div class="flexrow flex-group-center">{{localize 'NONEX_IST_OD6S.ACTIVE_EFFECTS'}}</div>
             <div class="flexrow flex-group-center">
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.mods.difficulty">{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}" name="system.mods.difficulty"
-                           onfocus="this.value=''"
+                    <label for="item-system-mods-difficulty">{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}</label>
+                    <input id="item-system-mods-difficulty" title="{{localize 'NONEX_IST_OD6S.ATTACK_DIFFICULTY_MODIFIER'}}" name="system.mods.difficulty"
+                           onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.mods.difficulty}}"/>
                 </div>
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.mods.attack">{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}" name="system.mods.attack" onfocus="this.value=''"
+                    <label for="item-system-mods-attack">{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}</label>
+                    <input id="item-system-mods-attack" title="{{localize 'NONEX_IST_OD6S.ATTACK_BONUS'}}" name="system.mods.attack" onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.mods.attack}}"/>
                 </div>
                 <div class="flexrow flex-group-left">
-                    <label for="item.system.mods.damage">{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}</label>
-                    <input title="{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}" name="system.mods.damage" onfocus="this.value=''"
+                    <label for="item-system-mods-damage">{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}</label>
+                    <input id="item-system-mods-damage" title="{{localize 'NONEX_IST_OD6S.DAMAGE_BONUS'}}" name="system.mods.damage" onfocus="this.select()"
                            type="number" data-dtype="Number" value="{{item.system.mods.damage}}"/>
                 </div>
             </div>

@@ -1,10 +1,10 @@
-<form autocomplete="off" onsubmit="event.preventDefault();">
+<div autocomplete="off">
     <div class="flexrow flex-group-center">
         <label for="damageDice">{{localize "NONEX_IST_OD6S.DAMAGE"}}:</label>
-        <input name="damageDice" id="damageDice" type="number" onfocus="this.value=''"
+        <input name="damageDice" id="damageDice" type="number" onfocus="this.select()"
                value="{{data.damageDice.dice}}">
         <label for="damagePips">D+</label>
-        <input name="damagePips" id="damagePips" type="number" onfocus="this.value=''"
+        <input name="damagePips" id="damagePips" type="number" onfocus="this.select()"
                value="{{data.damageDice.pips}}">
     </div>
     <input name="messageId" type="hidden" value="{{data.messageId}}">
@@ -13,4 +13,4 @@
         <button type="submit" name="submit" value="submit">{{localize "NONEX_IST_OD6S.SUBMIT"}}</button>
         <button type="button" name="cancel" data-action="cancel">{{localize "NONEX_IST_OD6S.CANCEL"}}</button>
     </div>
-</form>
+</div>

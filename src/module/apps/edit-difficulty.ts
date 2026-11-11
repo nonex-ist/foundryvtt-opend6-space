@@ -20,8 +20,8 @@ export default class OD6SEditDifficulty extends HandlebarsApplicationMixin(Appli
             minimizable: true,
         },
         position: {
-            width: 100,
-            height: 200,
+            width: 320,
+            height: "auto",
         },
         form: {
             handler: OD6SEditDifficulty.#onSubmit,

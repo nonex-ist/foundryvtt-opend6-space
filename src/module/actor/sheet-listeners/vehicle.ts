@@ -24,6 +24,11 @@ export function registerVehicleListeners(
 
     root.querySelectorAll<HTMLElement>('.embedded-pilot-remove').forEach((elem) =>
         elem.addEventListener('click', async () => {
+            const ok = await foundry.applications.api.DialogV2.confirm({
+                window: {title: game.i18n.localize('NONEX_IST_OD6S.DELETE')},
+                content: `<p>${game.i18n.localize('NONEX_IST_OD6S.CONFIRM_REMOVE_EMBEDDED_PILOT')}</p>`,
+            });
+            if (!ok) return;
             // Remove skills/specs from the base actor.
             // `skills`/`specializations` are sheet-prepared item buckets, not on the Actor type.
             const doc = sheet.document as Actor & {skills: Item[]; specializations: Item[]};
@@ -55,7 +60,15 @@ export function registerVehicleListeners(
         elem.addEventListener('click', async (ev: Event) => {
             const ct = ev.currentTarget as HTMLElement;
             const actor = await od6sutilities.getActorFromUuid(ct.dataset.uuid!);
-            if (actor!.testUserPermission(game.user, "OWNER")) actor!.sheet.render(true)
+            if (!actor) {
+                ui.notifications.warn(game.i18n.localize('NONEX_IST_OD6S.ACTOR_NOT_FOUND'));
+                return;
+            }
+            if (actor.testUserPermission(game.user, "OWNER")) {
+                actor.sheet.render(true);
+            } else {
+                ui.notifications.warn(game.i18n.localize('NONEX_IST_OD6S.WARN_NOT_CREW_OWNER'));
+            }
         }));
 
     // Add/remove crew to vehicles
@@ -64,7 +77,10 @@ export function registerVehicleListeners(
             ev.preventDefault();
             const data: Record<string, unknown> = {};
             data.crew = [];
-            if (typeof (game.scenes.active) === 'undefined') return;
+            if (!game.scenes.active) {
+                ui.notifications.warn(game.i18n.localize('NONEX_IST_OD6S.WARN_NO_ACTIVE_SCENE'));
+                return;
+            }
             let tokens: TokenDocument[] = game.scenes.active.tokens.filter(
                 (t: TokenDocument) => t.actor != null,
             );
