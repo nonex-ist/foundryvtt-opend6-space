@@ -1,5 +1,5 @@
 import OD6S from "../config-od6s";
-import {defineCustomField, defineLabel, defineSetting} from "./helpers";
+import {defineLabel, defineSetting} from "./helpers";
 
 export function registerLabelSettings() {
     defineLabel("customize_species_label",
@@ -21,25 +21,6 @@ export function registerLabelSettings() {
     defineLabel("customize_use_a_fate_point",
         "NONEX_IST_OD6S.CONFIG_CUSTOMIZE_USE_FATE_POINT",
         v => OD6S.useAFatePointName = v);
-
-    // Custom character-sheet fields 1–4: name, name_short, type, actor_types.
-    for (const i of [1, 2, 3, 4] as const) {
-        const base = `NONEX_IST_OD6S.CONFIG_CUSTOM_CHARACTER_SHEET_FIELD_${i}`;
-        defineCustomField(`custom_field_${i}`, base);
-        defineCustomField(`custom_field_${i}_short`, `${base}_SHORT`);
-        defineCustomField(`custom_field_${i}_type`, `${base}_TYPE`, {
-            choices: {
-                number: game.i18n.localize("NONEX_IST_OD6S.NUMBER"),
-                string: game.i18n.localize("NONEX_IST_OD6S.STRING"),
-            },
-        });
-        defineCustomField(`custom_field_${i}_actor_types`,
-            "NONEX_IST_OD6S.CONFIG_CUSTOM_CHARACTER_SHEET_FIELD_ACTOR_TYPES", {
-                type: Number,
-                default: 1,
-                actorType: true,
-            });
-    }
 
     defineLabel("customize_currency_label",
         "NONEX_IST_OD6S.CONFIG_CUSTOMIZE_CURRENCY_LABEL",
@@ -111,22 +92,6 @@ export function registerLabelSettings() {
             `NONEX_IST_OD6S.CONFIG_CUSTOMIZE_${label}_NAME_SHORT`,
             v => OD6S.attributes[attr].shortName = v,
             {requiresReload: false});
-    }
-
-    // Custom attributes ca1–ca4: registered here for their onChange wiring, but
-    // categorised as `od6sCustomAttribute` so they surface in the dedicated
-    // Custom Attributes menu (name + abbreviation + active in one place) rather
-    // than mixed into Custom Labels. See apps/config-custom-attributes.ts.
-    for (const i of [1, 2, 3, 4] as const) {
-        const attr = `ca${i}` as const;
-        defineLabel(`customize_${attr}_name`,
-            `NONEX_IST_OD6S.CONFIG_CUSTOMIZE_CA${i}_NAME`,
-            v => OD6S.attributes[attr].name = v,
-            {category: "od6sCustomAttribute"});
-        defineLabel(`customize_${attr}_name_short`,
-            `NONEX_IST_OD6S.CONFIG_CUSTOMIZE_CA${i}_NAME_SHORT`,
-            v => OD6S.attributes[attr].shortName = v,
-            {requiresReload: false, category: "od6sCustomAttribute"});
     }
 
     defineLabel("customize_body_points_name",

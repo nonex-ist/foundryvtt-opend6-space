@@ -2,8 +2,6 @@ import OD6S from "../config-od6s";
 
 type CategoryFlag =
     | "od6sLabel"
-    | "od6sCustomField"
-    | "od6sCustomAttribute"
     | "od6sDeadliness"
     | "od6sDifficulty"
     | "od6sMiscRules";
@@ -19,8 +17,6 @@ interface DefineSettingOptions<T> {
     choices?: Record<string, string>;
     /** Sets the OD6S category flag (e.g. od6sLabel: true) used by the settings UI to group settings. */
     category?: CategoryFlag;
-    /** Used by custom-field settings to mark the actor-types selector. */
-    actorType?: boolean;
     onChange?: (value: T) => void;
 }
 
@@ -38,7 +34,6 @@ export function defineSetting<T>(key: string, opts: DefineSettingOptions<T>): vo
     if (opts.requiresReload) config.requiresReload = true;
     if (opts.choices) config.choices = opts.choices;
     if (opts.category) config[opts.category] = true;
-    if (opts.actorType) config.actorType = true;
     if (opts.onChange) config.onChange = opts.onChange;
 
     game.settings.register("nonex-ist-od6s", key, config as never);
@@ -63,28 +58,6 @@ export function defineLabel(
         onChange: (value) => {
             if (value) apply(value);
         },
-    });
-}
-
-/** Register a custom-character-sheet field setting (name, name_short, type, or actor_types). */
-export function defineCustomField(
-    key: string,
-    i18nKey: string,
-    opts: {
-        type?: typeof String | typeof Number;
-        default?: string | number;
-        choices?: Record<string, string>;
-        actorType?: boolean;
-    } = {},
-): void {
-    defineSetting(key, {
-        i18nKey,
-        type: opts.type ?? String,
-        default: opts.default ?? "",
-        requiresReload: true,
-        category: "od6sCustomField",
-        actorType: opts.actorType,
-        choices: opts.choices,
     });
 }
 

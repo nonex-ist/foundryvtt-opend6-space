@@ -239,7 +239,7 @@
 
     .ca-row {
       display: grid;
-      grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr) minmax(0, 1fr) auto;
+      grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr) minmax(0, 1fr) auto auto;
       align-items: center;
       gap: 10px;
       padding: 4px 2px;
@@ -263,7 +263,7 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
 
-      span:last-child {
+      span:nth-child(4) {
         text-align: center;
       }
     }
@@ -278,6 +278,37 @@
   // visibility toggles, one fieldset per field.
   .custom-field-card {
     margin-bottom: 12px;
+  }
+
+  // Dynamic-slot controls shared by the Custom Fields and Custom Attributes
+  // menus: per-slot delete buttons, the add-slot bar, and the empty-state note.
+  .slot-delete {
+    width: auto;
+    margin: 0 0 0 6px;
+    padding: 1px 6px;
+    line-height: 1.4;
+    font-size: 0.85em;
+    color: $c-text-muted;
+    background: none;
+    border: none;
+
+    &:hover {
+      color: $c-bad;
+    }
+  }
+
+  .slot-actions {
+    margin: 4px 0 8px;
+
+    button {
+      width: auto;
+      padding: 3px 12px;
+    }
+  }
+
+  .slot-empty {
+    text-align: center;
+    padding: 10px 0;
   }
 
   .cf-grid {

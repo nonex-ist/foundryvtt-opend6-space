@@ -59,54 +59,16 @@
                    max="99"
                    value="{{actor.system.tonnage.value}}" placeholder="0" data-dtype="{{actor.system.tonnage.type}}"/>
         </div>
-        {{#if (ne (getCustomField1) "")}}
-            {{#if (isCustomFieldUsed 1 actor.type)}}
-                <div class="flexrow flex-group-center">
-                    <label for="actor.system.custom1.value">{{getCustomField1Short}}:</label>
-                    <input title="{{getCustomField1Short}}" name="system.custom1.value" type="{{getCustomField1Type}}"
-                           value="{{actor.system.custom1.value}}" data-dtype="{{getCustomField1FType}}"
-                        {{#if (eq (getCustomField1Type) "number") }}
-                           min="0" max="9999" placeholder="0"
-                        {{/if}}/>
-                </div>
-            {{/if}}
-        {{/if}}
-        {{#if (ne (getCustomField2) "")}}
-            {{#if (isCustomFieldUsed 2 actor.type)}}
-                <div class="flexrow flex-group-center">
-                    <label for="actor.system.custom2.value">{{getCustomField2Short}}:</label>
-                    <input title="{{getCustomField2Short}}" name="system.custom2.value" type="{{getCustomField2Type}}"
-                           value="{{actor.system.custom2.value}}" data-dtype="{{getCustomField2FType}}"
-                        {{#if (eq (getCustomField2Type) "number") }}
-                           min="0" max="9999" placeholder="0"
-                        {{/if}}/>
-                </div>
-            {{/if}}
-        {{/if}}
-        {{#if (ne (getCustomField3) "")}}
-            {{#if (isCustomFieldUsed 3 actor.type)}}
-                <div class="flexrow flex-group-center">
-                    <label for="actor.system.custom3.value">{{getCustomField3Short}}:</label>
-                    <input title="{{getCustomField3Short}}" name="system.custom3.value" type="{{getCustomField3Type}}"
-                           value="{{actor.system.custom3.value}}" data-dtype="{{getCustomField3FType}}"
-                        {{#if (eq (getCustomField3Type) "number") }}
-                           min="0" max="9999" placeholder="0"
-                        {{/if}}/>
-                </div>
-            {{/if}}
-        {{/if}}
-        {{#if (ne (getCustomField4) "")}}
-            {{#if (isCustomFieldUsed 4 actor.type)}}
-                <div class="flexrow flex-group-center">
-                    <label for="actor.system.custom4.value">{{getCustomField4Short}}:</label>
-                    <input title="{{getCustomField4Short}}" name="system.custom4.value" type="{{getCustomField4Type}}"
-                           value="{{actor.system.custom4.value}}" data-dtype="{{getCustomField4FType}}"
-                        {{#if (eq (getCustomField4Type) "number") }}
-                           min="0" max="9999" placeholder="0"
-                        {{/if}}/>
-                </div>
-            {{/if}}
-        {{/if}}
+        {{#each (getCustomFields actor.type)}}
+            <div class="flexrow flex-group-center">
+                <label for="actor.system.customfields.{{id}}">{{label}}:</label>
+                <input title="{{label}}" name="system.customfields.{{id}}" type="{{inputType}}"
+                       value="{{lookup ../actor.system.customfields id}}" data-dtype="{{dtype}}"
+                    {{#if (eq inputType "number") }}
+                       min="0" max="9999" placeholder="0"
+                    {{/if}}/>
+            </div>
+        {{/each}}
         <div class="flexrow flex-group-left">
             <label for="actor.system.cover.value">{{localize "NONEX_IST_OD6S.COVER"}}</label>
             <select name="system.cover.value" id="actor.system.cover.value" style="width: 70px;">

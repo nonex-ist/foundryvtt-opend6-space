@@ -1,22 +1,23 @@
-const {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
-
-const NS = "nonex-ist-od6s";
+import OD6SSlotListConfiguration from "./config-slot-list";
+import {getConfiguredCustomAttributes} from "../config/settings/custom-slots";
+import type {CustomAttributeDef} from "../system/custom-slots";
+import { freshSlotId, LEGACY_ATTRIBUTE_ID_PREFIX} from "../system/custom-slots";
 
 /**
- * Custom Attributes menu — one home for the four user-defined, die-rollable
- * attributes (CA1–CA4). Each row sets the attribute's name, abbreviation, and
- * whether it's active. Previously the names lived in Custom Labels and the
- * active toggles in Active Attributes; this consolidates them so a GM configures
- * a custom attribute in a single place. (Ordering still lives in the shared
- * Attribute Sorting menu, alongside the built-in attributes.)
- *
- * Settings are read/written by key so the four rows can be laid out as a grid;
- * they carry the `od6sCustomAttribute` marker only to keep them out of the other
- * menus' filtered lists.
+ * Custom Attributes menu — one home for the world-defined, die-rollable
+ * attributes. Definitions live in the array-valued `custom_attributes` world
+ * setting (#199); each row sets an attribute's name, abbreviation, and whether
+ * it's active, and rows can be added or removed freely. Custom attributes
+ * become real schema fields at init, so every change here needs a world
+ * reload, and deleting a row drops that attribute's per-actor scores the next
+ * time each actor is saved. (Ordering still lives in the shared Attribute
+ * Sorting menu, alongside the built-in attributes.) List handling
+ * (add/delete/save/reload prompt) comes from `OD6SSlotListConfiguration`.
  */
-export default class od6sCustomAttributesConfiguration extends HandlebarsApplicationMixin(ApplicationV2) {
+export default class od6sCustomAttributesConfiguration extends OD6SSlotListConfiguration<CustomAttributeDef> {
 
-    requiresWorldReload = false;
+    protected readonly settingKey = "custom_attributes";
+    protected readonly deleteConfirmKey = "NONEX_IST_OD6S.CONFIG_CA_DELETE_CONFIRM";
 
     static DEFAULT_OPTIONS = {
         id: "nonex-ist-od6s-custom-attributes-configuration",
@@ -32,12 +33,14 @@ export default class od6sCustomAttributesConfiguration extends HandlebarsApplica
             height: "auto",
         },
         form: {
-            handler: od6sCustomAttributesConfiguration.#onSubmit,
+            handler: od6sCustomAttributesConfiguration.onSubmitDefs,
             submitOnChange: true,
             closeOnSubmit: false,
         },
         actions: {
-            closeForm: od6sCustomAttributesConfiguration.#onCloseForm,
+            closeForm: od6sCustomAttributesConfiguration.onCloseForm,
+            addAttribute: od6sCustomAttributesConfiguration.onAddSlot,
+            deleteAttribute: od6sCustomAttributesConfiguration.onDeleteSlot,
         },
     };
 
@@ -48,43 +51,43 @@ export default class od6sCustomAttributesConfiguration extends HandlebarsApplica
     };
 
     async _prepareContext(_options?: object): Promise<object> {
-        const P = "NONEX_IST_OD6S.";
-        const rows = [1, 2, 3, 4].map((i) => {
-            const n = String(i).padStart(2, "0");
-            return {
-                index: i,
-                nameKey: `customize_ca${i}_name`,
-                shortKey: `customize_ca${i}_name_short`,
-                activeKey: `customize_ca${i}_active`,
-                name: game.settings.get(NS, `customize_ca${i}_name`),
-                short: game.settings.get(NS, `customize_ca${i}_name_short`),
-                active: game.settings.get(NS, `customize_ca${i}_active`),
-                namePlaceholder: game.i18n.localize(`${P}CHAR_CUSTOM_ATTRIBUTE_${n}`),
-                shortPlaceholder: game.i18n.localize(`${P}CHAR_CUSTOM_ATTRIBUTE_${n}_SHORT`),
-            };
-        });
+        const rows = this.currentDefs().map((def, i) => ({
+            ...def,
+            index: i + 1,
+            namePlaceholder: game.i18n.localize("NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE"),
+            shortPlaceholder: game.i18n.localize("NONEX_IST_OD6S.CHAR_CUSTOM_ATTRIBUTE_SHORT"),
+        }));
         return {rows};
     }
 
-    static async #onSubmit(
-        this: od6sCustomAttributesConfiguration,
-        _event: Event,
-        _form: HTMLFormElement,
-        formData: {object: Record<string, unknown>},
-    ): Promise<void> {
-        const data = formData.object;
-        for (const key in data) {
-            if (game.settings.get(NS, key) === data[key]) continue;
-            await game.settings.set(NS, key, data[key] as never);
-            const s = game.settings.settings.get(`${NS}.${key}`);
-            if (s?.requiresReload) this.requiresWorldReload = true;
-        }
+    protected currentDefs(): CustomAttributeDef[] {
+        return getConfiguredCustomAttributes();
     }
 
-    static async #onCloseForm(this: od6sCustomAttributesConfiguration): Promise<void> {
-        if (this.requiresWorldReload) {
-            await foundry.applications.settings.SettingsConfig.reloadConfirm({world: true});
-        }
-        await this.close();
+    protected newDef(existing: CustomAttributeDef[]): CustomAttributeDef {
+        return {
+            id: freshSlotId(existing, LEGACY_ATTRIBUTE_ID_PREFIX, () => foundry.utils.randomID(8)),
+            name: "",
+            short: "",
+            active: false,
+        };
+    }
+
+    protected deleteImpact(id: string): string {
+        const count = this.countAffectedActors((actor) => {
+            const attr = (actor as {system?: {attributes?: Record<string, {base?: number; score?: number}>}})
+                .system?.attributes?.[id];
+            return !!attr && (Number(attr.base) !== 0 || Number(attr.score) !== 0);
+        });
+        return game.i18n.format("NONEX_IST_OD6S.CONFIG_CA_DELETE_IMPACT", {count});
+    }
+
+    protected mergeRow(def: CustomAttributeDef, row: Record<string, unknown>): CustomAttributeDef {
+        return {
+            id: def.id,
+            name: String(row.name ?? def.name),
+            short: String(row.short ?? def.short),
+            active: row.active === true,
+        };
     }
 }

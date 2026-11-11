@@ -1,12 +1,12 @@
 import { attributesSchema } from "./fields/attributes";
 import { commonSchema } from "./fields/common";
-import { migrateCharacterSource } from "./character-migration";
+import { migrateCustomFieldSlots } from "./custom-fields-migration";
 
 const fields = foundry.data.fields;
 
 export default class CharacterData extends foundry.abstract.TypeDataModel {
   static migrateData(source: Record<string, unknown>) {
-    migrateCharacterSource(source);
+    migrateCustomFieldSlots(source);
     return super.migrateData(source);
   }
 

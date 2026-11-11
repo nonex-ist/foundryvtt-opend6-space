@@ -5,6 +5,7 @@ import OD6S from "../../config/config-od6s";
 import type { AttributeDef } from "../../config/attributes";
 import {od6sutilities} from "../utilities";
 import {getAttributeName, getAttributeShortName} from "../../macros";
+import {getVisibleCustomFields} from "../../config/settings/custom-slots";
 
 export function registerConfigHelpers() {
     Handlebars.registerHelper('getConfig', function (key, subKey) {
@@ -19,136 +20,11 @@ export function registerConfigHelpers() {
         return game.settings.get('nonex-ist-od6s', config);
     })
 
-    Handlebars.registerHelper('getCustomField1', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_1');
-        if (typeof (customField) === 'undefined') {
-            return "";
-        }
-        return customField;
-    })
-
-    Handlebars.registerHelper('getCustomField1Short', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_1_short');
-        if (typeof (customField) === 'undefined' || customField === '') {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_1');
-        } else {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_1_short');
-        }
-    })
-
-    Handlebars.registerHelper('getCustomField1Type', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_1_type');
-        if (thisType === "string") return "text";
-        if (thisType === "number") return "number";
-        return "";
-    })
-
-    Handlebars.registerHelper('getCustomField1FType', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_1_type')
-        if (thisType === "string") return "String";
-        if (thisType === "number") return "Number";
-        return "";
-    })
-
-    Handlebars.registerHelper('getCustomField2', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_2');
-        if (typeof (customField) === 'undefined') {
-            return "";
-        }
-        return customField;
-    })
-
-    Handlebars.registerHelper('getCustomField2Short', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_2_short');
-        if (typeof (customField) === 'undefined' || customField === '') {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_2');
-        } else {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_2_short');
-        }
-    })
-
-    Handlebars.registerHelper('getCustomField2Type', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_2_type');
-        if (thisType === "string") return "text";
-        if (thisType === "number") return "number";
-        return "";
-    })
-
-
-    Handlebars.registerHelper('getCustomField2FType', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_2_type')
-        if (thisType === "string") return "String";
-        if (thisType === "number") return "Number";
-        return "";
-    })
-
-    Handlebars.registerHelper('getCustomField3', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_3');
-        if (typeof (customField) === 'undefined') {
-            return "";
-        }
-        return customField;
-    })
-
-    Handlebars.registerHelper('getCustomField3Short', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_3_short');
-        if (typeof (customField) === 'undefined' || customField === '') {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_3');
-        } else {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_3_short');
-        }
-    })
-
-    Handlebars.registerHelper('getCustomField3Type', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_3_type');
-        if (thisType === "string") return "text";
-        if (thisType === "number") return "number";
-        return "";
-    })
-
-    Handlebars.registerHelper('getCustomField3FType', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_3_type')
-        if (thisType === "string") return "String";
-        if (thisType === "number") return "Number";
-        return "";
-    })
-
-    Handlebars.registerHelper('getCustomField4', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_4');
-        if (typeof (customField) === 'undefined') {
-            return "";
-        }
-        return customField;
-    })
-
-    Handlebars.registerHelper('getCustomField4Short', function () {
-        const customField = game.settings.get('nonex-ist-od6s', 'custom_field_4_short');
-        if (typeof (customField) === 'undefined' || customField === '') {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_4');
-        } else {
-            return game.settings.get('nonex-ist-od6s', 'custom_field_4_short');
-        }
-    })
-
-    Handlebars.registerHelper('getCustomField4Type', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_4_type');
-        if (thisType === "string") return "text";
-        if (thisType === "number") return "number";
-        return "";
-    })
-
-    Handlebars.registerHelper('getCustomField4FType', function () {
-        const thisType = game.settings.get('nonex-ist-od6s', 'custom_field_4_type')
-        if (thisType === "string") return "String";
-        if (thisType === "number") return "Number";
-        return "";
-    })
-
-    Handlebars.registerHelper('isCustomFieldUsed', function (fieldNum, type) {
-        const field = 'custom_field_' + fieldNum + '_actor_types';
-        const actorTypes = game.settings.get('nonex-ist-od6s', field);
-        const mask = 1 << OD6S.actorMasks[type];
-        return (actorTypes & mask) !== 0;
+    // Header fields defined in the `custom_fields` setting, filtered to those
+    // visible on the given actor type. Each entry carries the display label and
+    // input/dtype attributes, so the header templates just loop the result.
+    Handlebars.registerHelper('getCustomFields', function (actorType) {
+        return getVisibleCustomFields(actorType);
     })
 
     Handlebars.registerHelper('getMetaphysicsName', function () {

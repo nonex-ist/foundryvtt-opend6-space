@@ -57,10 +57,7 @@ interface OD6SAttributes {
     per: OD6SAttributeField;
     tec: OD6SAttributeField;
     met: OD6SAttributeField;
-    ca1: OD6SAttributeField;
-    ca2: OD6SAttributeField;
-    ca3: OD6SAttributeField;
-    ca4: OD6SAttributeField;
+    /** World-defined custom attributes from the `custom_attributes` setting (#199). */
     [key: string]: OD6SAttributeField;
 }
 
@@ -115,6 +112,8 @@ interface OD6SCharacterSystem {
         skills: Record<string, number>;
         specializations: Record<string, number>;
     };
+    /** World-defined header-field values, keyed by `custom_fields` slot id (#199). */
+    customfields: Record<string, string | number>;
     /**
      * Crewmember actors carry a snapshot of their vehicle's data, pushed by
      * `actor-helpers/crew-vehicle.ts:sendVehicleData`. Fields mirror the
@@ -184,6 +183,8 @@ interface OD6SVehicleStringField {
 /** System data for vehicle and starship actor types. */
 interface OD6SVehicleSystem {
     attributes: OD6SAttributes;
+    /** World-defined header-field values, keyed by `custom_fields` slot id (#199). */
+    customfields: Record<string, string | number>;
     sheetmode: { value: string };
     scale: OD6SScoreField;
     toughness: OD6SScoreField;

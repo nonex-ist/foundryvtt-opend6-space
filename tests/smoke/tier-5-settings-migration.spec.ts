@@ -20,7 +20,7 @@
  */
 
 import {test, expect} from "@playwright/test";
-import {loginAndWaitReady, evalInWorld} from "./helpers/foundry-page.js";
+import {loginAndWaitReady, evalInWorld, isNewerVersion} from "./helpers/foundry-page.js";
 
 const ONE_KEY = "wild_die_one_face";
 const SIX_KEY = "wild_die_six_face";
@@ -98,8 +98,10 @@ test.describe.serial("legacy od6s.* world settings migration", () => {
         expect(result.one).toBe(MIGRATED_ONE);
         // Pre-existing new-id value left untouched (no clobber).
         expect(result.six).toBe(PRESET_SIX);
-        // Migration ran and stamped the current version.
-        expect(result.version).toBe("3.0.2");
+        // Migration ran and advanced the version past the step under test.
+        // Don't pin the suite-wide terminal version — it moves with every new
+        // migration step.
+        expect(isNewerVersion(result.version, "3.0.1")).toBe(true);
     });
 
     test.afterAll(async ({browser}) => {

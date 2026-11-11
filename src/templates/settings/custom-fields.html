@@ -1,28 +1,38 @@
 <div class="nonex-ist-od6s-custom-fields">
     <p class="notes">{{localize "NONEX_IST_OD6S.CONFIG_CUSTOM_FIELDS_HINT"}}</p>
 
+    {{#unless fields.length}}
+    <p class="notes slot-empty">{{localize "NONEX_IST_OD6S.CONFIG_CF_NONE"}}</p>
+    {{/unless}}
+
     {{#each fields}}
     <fieldset class="custom-field-card">
-        <legend>{{localize "NONEX_IST_OD6S.CONFIG_CF_CARD"}} {{index}}</legend>
+        <legend>
+            {{localize "NONEX_IST_OD6S.CONFIG_CF_CARD"}} {{index}}
+            <button type="button" class="slot-delete" data-action="deleteField" data-id="{{id}}"
+                    data-tooltip="{{localize 'NONEX_IST_OD6S.DELETE'}}">
+                <i class="fas fa-trash"></i>
+            </button>
+        </legend>
         <div class="cf-grid">
-            <label for="{{nameKey}}">{{localize "NONEX_IST_OD6S.CONFIG_CF_NAME"}}</label>
-            <input type="text" name="{{nameKey}}" id="{{nameKey}}" value="{{name}}"
+            <label for="defs.{{id}}.name">{{localize "NONEX_IST_OD6S.CONFIG_CF_NAME"}}</label>
+            <input type="text" name="defs.{{id}}.name" id="defs.{{id}}.name" value="{{name}}"
                    placeholder="{{localize 'NONEX_IST_OD6S.CONFIG_CF_NAME_PLACEHOLDER'}}">
 
-            <label for="{{shortKey}}">{{localize "NONEX_IST_OD6S.CONFIG_CF_SHORT"}}</label>
-            <input type="text" name="{{shortKey}}" id="{{shortKey}}" value="{{short}}">
+            <label for="defs.{{id}}.short">{{localize "NONEX_IST_OD6S.CONFIG_CF_SHORT"}}</label>
+            <input type="text" name="defs.{{id}}.short" id="defs.{{id}}.short" value="{{short}}">
 
-            <label for="{{typeKey}}">{{localize "NONEX_IST_OD6S.CONFIG_CF_TYPE"}}</label>
-            <select name="{{typeKey}}" id="{{typeKey}}">
+            <label for="defs.{{id}}.type">{{localize "NONEX_IST_OD6S.CONFIG_CF_TYPE"}}</label>
+            <select name="defs.{{id}}.type" id="defs.{{id}}.type">
                 {{selectOptions ../typeChoices selected=type}}
             </select>
 
             <label>{{localize "NONEX_IST_OD6S.CONFIG_CF_SHOW_ON"}}</label>
             <div class="cf-actors">
-                <input type="hidden" name="{{actorTypesKey}}" value="{{mask}}">
+                <input type="hidden" name="defs.{{id}}.actorTypes" value="{{actorTypes}}">
                 {{#each actors}}
                 <label class="cf-actor">
-                    <input type="checkbox" name="{{../actorTypesKey}}" value="{{type}}" {{#if checked}}checked{{/if}}>
+                    <input type="checkbox" name="defs.{{../id}}.actorTypes" value="{{type}}" {{#if checked}}checked{{/if}}>
                     {{label}}
                 </label>
                 {{/each}}
@@ -30,6 +40,12 @@
         </div>
     </fieldset>
     {{/each}}
+
+    <div class="slot-actions">
+        <button type="button" data-action="addField">
+            <i class="fas fa-plus"></i> {{localize "NONEX_IST_OD6S.CONFIG_CF_ADD"}}
+        </button>
+    </div>
 
     <div class="submit">
         <span class="save-note"><i class="fas fa-circle-check"></i> {{localize "NONEX_IST_OD6S.SETTINGS_AUTOSAVE_NOTE"}}</span>

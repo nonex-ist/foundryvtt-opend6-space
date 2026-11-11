@@ -102,7 +102,7 @@ export class OD6SItem extends Item {
             if (this.system.isAdvancedSkill) {
                 return this.system.score;
             } else {
-                return this.actor.system.attributes[this.system.attribute.toLowerCase()].score + this.system.score;
+                return (this.actor.system.attributes[this.system.attribute.toLowerCase()]?.score ?? 0) + this.system.score;
             }
         }
         if (isAnyWeaponItem(this)
@@ -114,7 +114,7 @@ export class OD6SItem extends Item {
                 && (this.system.fire_control?.score as unknown) !== ''
                 ? this.system.fire_control.score
                 : 0;
-            let score = this.actor.system.attributes[stats.attribute.toLowerCase()].score;
+            let score = (this.actor.system.attributes[stats.attribute.toLowerCase()]?.score ?? 0);
             const spec = this.actor.items.find(i => i.name === stats.specialization && i.type === 'specialization');
             if (spec !== undefined && isSpecializationItem(spec)) {
                 return score + fireControlScore + spec.system.score;
@@ -252,13 +252,13 @@ export class OD6SItem extends Item {
                 if (!isSkillItem(item) && !isSpecializationItem(item)) break;
                 const sys = item.system;
                 if (OD6S.flatSkills) {
-                    rollData.score = +(actorData.attributes[sys.attribute.toLowerCase()].score);
+                    rollData.score = +((actorData.attributes[sys.attribute.toLowerCase()]?.score ?? 0));
                     flatPips = (+sys.score)
                 } else {
                     if (sys.isAdvancedSkill) {
                         rollData.score = (+sys.score);
                     } else {
-                        rollData.score = (+sys.score) + actorData.attributes[sys.attribute.toLowerCase()].score;
+                        rollData.score = (+sys.score) + (actorData.attributes[sys.attribute.toLowerCase()]?.score ?? 0);
                     }
                 }
                 break;
@@ -288,10 +288,10 @@ export class OD6SItem extends Item {
                     if (skill && (isSkillItem(skill) || isSpecializationItem(skill))) {
                         const skillSys = skill.system;
                         if(OD6S.flatSkills) {
-                            rollData.score = (+actorData.attributes[skillSys.attribute.toLowerCase()].score);
+                            rollData.score = (+(actorData.attributes[skillSys.attribute.toLowerCase()]?.score ?? 0));
                             flatPips = (+skillSys.score);
                         } else {
-                            rollData.score = (+skillSys.score) + (+actorData.attributes[skillSys.attribute.toLowerCase()].score);
+                            rollData.score = (+skillSys.score) + (+(actorData.attributes[skillSys.attribute.toLowerCase()]?.score ?? 0));
                         }
                     } else {
                         rollData.score = actorData.attributes[OD6S.actions.parry.base.toLowerCase()].score;
@@ -304,10 +304,10 @@ export class OD6SItem extends Item {
                     if (spec && isSpecializationItem(spec)) {
                         const specSys = spec.system;
                         if(OD6S.flatSkills) {
-                            rollData.score = (+actorData.attributes[specSys.attribute.toLowerCase()].score);
+                            rollData.score = (+(actorData.attributes[specSys.attribute.toLowerCase()]?.score ?? 0));
                             flatPips = (+specSys.score);
                         } else {
-                            rollData.score = (+specSys.score) + (+actorData.attributes[specSys.attribute.toLowerCase()].score);
+                            rollData.score = (+specSys.score) + (+(actorData.attributes[specSys.attribute.toLowerCase()]?.score ?? 0));
                         }
                         found = true;
                     }
@@ -391,7 +391,7 @@ export class OD6SItem extends Item {
                         && typeof skill.system.score !== 'undefined') {
                         const skillSys = skill.system;
                         if(OD6S.flatSkills) {
-                            rollData.score = (+actorData.attributes[skillSys.attribute.toLowerCase()].score);
+                            rollData.score = (+(actorData.attributes[skillSys.attribute.toLowerCase()]?.score ?? 0));
                             flatPips = (+skillSys.score);
                         } else {
                             // Advanced-skill check is on the resolved skill, not
@@ -403,18 +403,18 @@ export class OD6SItem extends Item {
                             if(skillSys.isAdvancedSkill) {
                                 rollData.score = (+skillSys.score);
                             } else {
-                                rollData.score = (+skillSys.score) + (+actorData.attributes[skillSys.attribute.toLowerCase()].score);
+                                rollData.score = (+skillSys.score) + (+(actorData.attributes[skillSys.attribute.toLowerCase()]?.score ?? 0));
                             }
                         }
                     } else {
                         // Search compendia for the skill and use the attribute
                         skill = (await od6sutilities._getItemFromWorld(name)) as Item | undefined;
                         if (skill && isSkillItem(skill)) {
-                            rollData.score = (+actorData.attributes[skill.system.attribute.toLowerCase()].score);
+                            rollData.score = (+(actorData.attributes[skill.system.attribute.toLowerCase()]?.score ?? 0));
                         } else {
                             skill = (await od6sutilities._getItemFromCompendium(name)) as Item | undefined;
                             if (skill && isSkillItem(skill)) {
-                                rollData.score = (+actorData.attributes[skill.system.attribute.toLowerCase()].score);
+                                rollData.score = (+(actorData.attributes[skill.system.attribute.toLowerCase()]?.score ?? 0));
                             } else {
                                 // Cannot find, use defaults for the type
                                 for (const a in OD6S.actions) {

@@ -10,7 +10,25 @@ GitLab wiki at <https://gitlab.com/vtt2/opend6-space/-/wikis/Release-Notes>.
 
 ## [Unreleased]
 
+### Changed
+
+- Custom Fields and Custom Attributes are no longer capped at four fixed slots
+  each — both are now dynamic lists managed from their settings menus, with
+  add/delete controls. Definitions live in the new `custom_fields` /
+  `custom_attributes` world settings; per-actor field values move from
+  `system.custom1`–`custom4` to `system.customfields.<id>`, and custom
+  attributes become schema fields built from the definitions at init (adding
+  or removing one prompts a world reload). Existing worlds are migrated
+  automatically — legacy slot settings, per-actor values, and attribute data
+  (ids `cf1`–`cf4` / `ca1`–`ca4`) all carry over. (#199)
+- Verified against Foundry VTT 14.370 (`compatibility.verified` bumped from
+  14.364).
+
 ### Fixed
+
+- Custom fields enabled for vehicles and starships now actually save: their
+  header sheets rendered the inputs, but the vehicle/starship schemas had no
+  backing field, so entered values were silently dropped. (#199)
 
 - Custom Field 1 now saves correctly on character actors. The character schema
   accidentally overrode `custom1` with a bare string field while the sheet
